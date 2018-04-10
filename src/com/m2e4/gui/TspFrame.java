@@ -10,7 +10,7 @@ public class TspFrame extends JFrame implements ActionListener {
         setLayout(new FlowLayout());
         setTitle("TSP panel");
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        setSize(400, 400);
+        setSize(200, 300);
 
         setVisible(false);
     }
