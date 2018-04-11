@@ -1,2 +1,2 @@
 # KBS2a
-Java applicatie voor de magazijn robot
+Java applicatie voor de magazijn robots
