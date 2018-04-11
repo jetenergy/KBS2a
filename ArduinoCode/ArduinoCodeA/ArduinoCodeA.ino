@@ -7,15 +7,15 @@ void setup() {
 }
 
 void loop() {
-  if(Serial.available()>0){ //if data has been written to the Serial stream
+  if(Serial.available() > 0){ //if data has been written to the Serial stream
     data=Serial.read();
   
     if(data == '1') 
-      digitalWrite(LEDpin,HIGH);
+      digitalWrite(LEDpin, HIGH);
     else if(data == '0') 
-      digitalWrite(LEDpin,LOW);
+      digitalWrite(LEDpin, LOW);
     else 
-      digitalWrite(LEDpin,HIGH);
+      digitalWrite(LEDpin, HIGH);
   }
 }
 
