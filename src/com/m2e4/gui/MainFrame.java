@@ -1,5 +1,7 @@
 package com.m2e4.gui;
 
+import com.m2e4.arduino.ArduinoClass;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +14,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private TspCFrame TspContFrame;
     private BppCFrame BppContFrame;
 
-    public MainFrame() {
+    public MainFrame(ArduinoClass arduino) {
         setLayout(new FlowLayout());
         setTitle("Main Panel");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -20,7 +22,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         TspSimFrame = new TspFrame();
         BppSimFrame = new BppFrame();
-        TspContFrame = new TspCFrame();
+        TspContFrame = new TspCFrame(arduino);
         BppContFrame = new BppCFrame();
 
 
