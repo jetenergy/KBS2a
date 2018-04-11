@@ -11,13 +11,13 @@ public class TspCFrame extends JFrame implements ActionListener {
     private JButton JBOn, JBOff;
     private ArduinoClass arduino;
 
-    public TspCFrame(ArduinoClass arduino) {
+    public TspCFrame() {
         setLayout(new FlowLayout());
         setTitle("TSP Controll panel");
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setSize(300, 500);
 
-        this.arduino = arduino;
+        arduino = new ArduinoClass("COM3");
 
         JBOn = new JButton("ON");
         JBOn.addActionListener(this);

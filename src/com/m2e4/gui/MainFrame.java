@@ -14,7 +14,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private TspCFrame TspContFrame;
     private BppCFrame BppContFrame;
 
-    public MainFrame(ArduinoClass arduino) {
+    public MainFrame() {
         setLayout(new FlowLayout());
         setTitle("Main Panel");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -22,7 +22,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         TspSimFrame = new TspFrame();
         BppSimFrame = new BppFrame();
-        TspContFrame = new TspCFrame(arduino);
+        TspContFrame = new TspCFrame();
         BppContFrame = new BppCFrame();
 
 
