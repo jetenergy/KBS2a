@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame implements ActionListener {
-    private JButton JbTspSim, JbBppSim, JTspControl, JbBppControl;
+    private JButton JbTspSim, JbBppSim, JbTspControl, JbBppControl;
     private TspFrame TspSimFrame;
     private BppFrame BppSimFrame;
     private TspCFrame TspContFrame;
@@ -32,9 +32,9 @@ public class MainFrame extends JFrame implements ActionListener {
         JbBppSim = new JButton("BPP Simulator");
         JbBppSim.addActionListener(this);
         add(JbBppSim);
-        JTspControl = new JButton("TSP Control");
-        JTspControl.addActionListener(this);
-        add(JTspControl);
+        JbTspControl = new JButton("TSP Control");
+        JbTspControl.addActionListener(this);
+        add(JbTspControl);
         JbBppControl = new JButton("BPP Control");
         JbBppControl.addActionListener(this);
         add(JbBppControl);
@@ -54,7 +54,7 @@ public class MainFrame extends JFrame implements ActionListener {
                 BppSimFrame.setVisible(true);
             }
         }
-        if (e.getSource() == JTspControl) {
+        if (e.getSource() == JbTspControl) {
             if (!TspContFrame.isVisible()) {
                 TspContFrame.setVisible(true);
             }
