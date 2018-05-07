@@ -1,5 +1,6 @@
 package com.m2e4.gui;
 
+import arduino.PortDropdownMenu;
 import com.m2e4.arduino.ArduinoClass;
 
 import javax.swing.*;
@@ -9,10 +10,13 @@ import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame implements ActionListener {
     private JButton JbTspSim, JbBppSim, JbTspControl, JbBppControl;
+    private PortDropdownMenu PdmPort;
     private TspFrame TspSimFrame;
     private BppFrame BppSimFrame;
     private TspCFrame TspContFrame;
     private BppCFrame BppContFrame;
+
+    private static String port;
 
     public MainFrame() {
         setLayout(new FlowLayout());
@@ -38,6 +42,12 @@ public class MainFrame extends JFrame implements ActionListener {
         JbBppControl = new JButton("BPP Control");
         JbBppControl.addActionListener(this);
         add(JbBppControl);
+
+        PdmPort = new PortDropdownMenu();
+        PdmPort.refreshMenu();
+        port = (String)PdmPort.getSelectedItem();
+        PdmPort.addActionListener(e -> port = (String)PdmPort.getSelectedItem());
+        add(PdmPort);
 
         setVisible(true);
     }
@@ -65,4 +75,6 @@ public class MainFrame extends JFrame implements ActionListener {
             }
         }
     }
+
+    public static String getPort() { return port; }
 }

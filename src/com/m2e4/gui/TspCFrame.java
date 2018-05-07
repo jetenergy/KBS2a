@@ -17,8 +17,6 @@ public class TspCFrame extends JFrame implements ActionListener {
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setSize(300, 500);
 
-        arduino = new ArduinoClass("COM3");
-
         JBOn = new JButton("ON");
         JBOn.addActionListener(this);
         add(JBOn);
@@ -37,5 +35,11 @@ public class TspCFrame extends JFrame implements ActionListener {
         if (e.getSource() == JBOff) {
             arduino.ArduinoWrite('0');
         }
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        if (b) arduino = new ArduinoClass(MainFrame.getPort());
+        super.setVisible(b);
     }
 }
