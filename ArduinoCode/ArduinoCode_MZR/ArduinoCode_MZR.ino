@@ -32,7 +32,7 @@ void loop() {
     }
 
     if(iets.length() != 0) {
-        //VoorbeelCommando
+        //VoorbeeldCommando
         if(iets == "WhoDis"){
             Serial.print(RName);
         }

@@ -6,13 +6,12 @@ import com.m2e4.arduino.ArduinoClass;
 import javax.swing.*;
 import java.awt.*;
 
-public class ArduinoPanel extends JPanel {
+class ArduinoPanel extends JPanel {
     private PortDropdownMenu PdmPort1, PdmPort2;
-    private JButton Refresh, CheckBots;
 
-    private static String port1, port2;
+    private String port1, port2;
 
-    public ArduinoPanel() {
+    ArduinoPanel() {
         setLayout(new FlowLayout());
         setPreferredSize(new Dimension(300, 100));
 
@@ -29,7 +28,7 @@ public class ArduinoPanel extends JPanel {
         PdmPort2.setSelectedIndex(PdmPort2.getItemCount() - 1);
         add(PdmPort2);
 
-        Refresh = new JButton("Refresh Ports");
+        JButton Refresh = new JButton("Refresh Ports");
         Refresh.addActionListener(e -> {
             PdmPort1.refreshMenu();
             PdmPort2.refreshMenu();
@@ -37,48 +36,76 @@ public class ArduinoPanel extends JPanel {
         });
         add(Refresh);
 
-        CheckBots = new JButton("Check bots");
+        JButton CheckBots = new JButton("Set Ports");
         CheckBots.addActionListener(e -> {
             getArduinos();
         });
         add(CheckBots);
     }
 
-    public static void getArduinos() {
-
-        System.out.println(getPort1());
-        ArduinoClass arduino = new ArduinoClass(getPort1());
-        boolean islive = false;
-        while (!islive) {
-            if (arduino.ArduinoRead().equals("Ready")) {
-                islive = true;
-            }
+    private void getArduinos() {
+        resetPort();
+        String port = getPort1();
+        String arduino = whoDis(port);
+        if (arduino != null) {
+            setPort(port, arduino);
+            System.out.println(port + ", " + arduino);
+        } else {
+            System.out.println("Port: " + port + " is not accesible.");
         }
-        arduino.ArduinoWrite("WhoDis");
-        System.out.println(arduino.ArduinoRead());
-        arduino.ArduinoClose();
-        //TspCFrame.setArduino(getPort1());
-
-        System.out.println(getPort2());
-        arduino = new ArduinoClass(getPort2());
-        islive = false;
-        while (!islive) {
-            if (arduino.ArduinoRead().equals("Ready")) {
-                islive = true;
-            }
+        port = getPort2();
+        arduino = whoDis(port);
+        if (arduino != null) {
+            setPort(port, arduino);
+            System.out.println(port + ", " + arduino);
+        } else {
+            System.out.println("Port: " + port + " is not accesible.");
         }
-        arduino.ArduinoWrite("WhoDis");
-        String hank = arduino.ArduinoRead();
-
-        System.out.println(hank);
-        arduino.ArduinoClose();
     }
 
-    public static String getPort1() {
+    private String whoDis(String port) {
+        boolean islive = false;
+        int counter = 50;
+        ArduinoClass arduino = new ArduinoClass(port);
+        while (!islive) {
+            if (arduino.read().equals("Ready")) {
+                islive = true;
+            }
+            if (counter < 0) {
+                System.out.println("Timeout");
+                break;
+            }
+            counter--;
+        }
+        if (islive) {
+            arduino.write("WhoDis");
+            String ItMe = arduino.read();
+            arduino.close();
+            return ItMe;
+        }
+        else return null;
+    }
+
+    private void setPort(String port, String location) {
+        if (location.equals("MZR")) {
+            //MagaZijnRobot
+            TspCFrame.setArduino(port);
+        } else if (location.equals("IPR")) {
+            //InPakRobot
+            BppCFrame.setArduino(port);
+        }
+    }
+
+    private void resetPort() {
+        TspCFrame.clearArduino();
+        BppCFrame.clearArduino();
+    }
+
+    private String getPort1() {
         return port1;
     }
 
-    public static String getPort2() {
+    private String getPort2() {
         return port2;
     }
 }
