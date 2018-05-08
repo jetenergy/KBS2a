@@ -12,8 +12,15 @@ public class ArduinoClass {
         arduino.serialWrite(c);
     }
 
+    public void ArduinoWrite(String s) {
+        arduino.serialWrite(s);
+    }
+
+    public String ArduinoRead() {
+        return arduino.serialRead().replace("\n", "");
+    }
+
     public void ArduinoClose() {
-        //ob.close();
         arduino.closeConnection();
     }
 

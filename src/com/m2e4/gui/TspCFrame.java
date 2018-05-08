@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 
 public class TspCFrame extends JFrame implements ActionListener {
     private JButton JBOn, JBOff;
-    private ArduinoClass arduino;
+    private static ArduinoClass arduino;
 
     public TspCFrame() {
         setLayout(new FlowLayout());
@@ -27,19 +27,30 @@ public class TspCFrame extends JFrame implements ActionListener {
         setVisible(false);
     }
 
+    public static void setArduino(String port) {
+        if (arduino != null) {
+            arduino.ArduinoClose();
+        }
+        arduino = new ArduinoClass(port);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == JBOn) {
             arduino.ArduinoWrite('1');
+
         }
         if (e.getSource() == JBOff) {
             arduino.ArduinoWrite('0');
+            arduino.ArduinoWrite("WhoDis");
+            System.out.println(arduino.ArduinoRead());
+            arduino.ArduinoClose();
         }
     }
 
     @Override
     public void setVisible(boolean b) {
-        if (b) arduino = new ArduinoClass(MainFrame.getPort());
+        //if (b) arduino = new ArduinoClass(MainFrame.getPort());
         super.setVisible(b);
     }
 }
