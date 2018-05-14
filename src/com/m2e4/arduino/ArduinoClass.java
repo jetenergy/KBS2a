@@ -8,12 +8,19 @@ public class ArduinoClass {
         arduino.openConnection();
     }
 
-    public void ArduinoWrite(char c) {
-        arduino.serialWrite(c);
+    public void write(char _char) {
+        arduino.serialWrite(_char);
     }
 
-    public void ArduinoClose() {
-        //ob.close();
+    public void write(String _string) {
+        arduino.serialWrite(_string);
+    }
+
+    public String read() {
+        return arduino.serialRead().replace("\n", "");
+    }
+
+    public void close() {
         arduino.closeConnection();
     }
 

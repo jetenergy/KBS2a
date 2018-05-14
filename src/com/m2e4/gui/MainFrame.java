@@ -1,7 +1,5 @@
 package com.m2e4.gui;
 
-import com.m2e4.arduino.ArduinoClass;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,13 +16,12 @@ public class MainFrame extends JFrame implements ActionListener {
         setLayout(new FlowLayout());
         setTitle("Main Panel");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(200, 200);
+        setSize(300, 300);
 
         TspSimFrame = new TspFrame();
         BppSimFrame = new BppFrame();
         TspContFrame = new TspCFrame();
         BppContFrame = new BppCFrame();
-
 
         JbTspSim = new JButton("TSP Simulator");
         JbTspSim.addActionListener(this);
@@ -38,6 +35,9 @@ public class MainFrame extends JFrame implements ActionListener {
         JbBppControl = new JButton("BPP Control");
         JbBppControl.addActionListener(this);
         add(JbBppControl);
+
+        ArduinoPanel ArduinoConfigPanel = new ArduinoPanel();
+        add(ArduinoConfigPanel);
 
         setVisible(true);
     }
