@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class TspCFrame extends JFrame implements ActionListener {
+public class TspCFrame extends JFrame {
     private JButton JBOn, JBOff;
 
     private static ArduinoClass arduino;
@@ -19,10 +19,10 @@ public class TspCFrame extends JFrame implements ActionListener {
         setSize(300, 500);
 
         JBOn = new JButton("ON");
-        JBOn.addActionListener(this);
+        JBOn.addActionListener(e -> arduino.write("WhereAreYou-null;null"));
         add(JBOn);
         JBOff = new JButton("OFF");
-        JBOff.addActionListener(this);
+        JBOff.addActionListener(e -> arduino.write("a-null;null"));
         add(JBOff);
 
         setVisible(false);
@@ -38,17 +38,6 @@ public class TspCFrame extends JFrame implements ActionListener {
     public static void clearArduino() {
         if (arduino != null) {
             arduino.close();
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == JBOn) {
-            arduino.write('1');
-
-        }
-        if (e.getSource() == JBOff) {
-            arduino.write('0');
         }
     }
 }

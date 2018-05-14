@@ -53,13 +53,15 @@ class ArduinoPanel extends JPanel {
         } else {
             System.out.println("Port: " + port + " is not accesible.");
         }
-        port = getPort2();
-        arduino = whoDis(port);
-        if (arduino != null) {
-            setPort(port, arduino);
-            System.out.println(port + ", " + arduino);
-        } else {
-            System.out.println("Port: " + port + " is not accesible.");
+        if (!getPort1().equals(getPort2())) {
+            port = getPort2();
+            arduino = whoDis(port);
+            if (arduino != null) {
+                setPort(port, arduino);
+                System.out.println(port + ", " + arduino);
+            } else {
+                System.out.println("Port: " + port + " is not accesible.");
+            }
         }
     }
 
@@ -70,15 +72,17 @@ class ArduinoPanel extends JPanel {
         while (!islive) {
             if (arduino.read().equals("Ready")) {
                 islive = true;
+                break;
             }
             if (counter < 0) {
                 System.out.println("Timeout");
+                arduino.close();
                 break;
             }
             counter--;
         }
         if (islive) {
-            arduino.write("WhoDis");
+            arduino.write("WhoDis-null;null");
             String ItMe = arduino.read();
             arduino.close();
             return ItMe;
