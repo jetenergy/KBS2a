@@ -1,8 +1,5 @@
 package com.m2e4.gui;
 
-import arduino.PortDropdownMenu;
-import com.m2e4.arduino.ArduinoClass;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,25 +7,21 @@ import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame implements ActionListener {
     private JButton JbTspSim, JbBppSim, JbTspControl, JbBppControl;
-    private PortDropdownMenu PdmPort;
     private TspFrame TspSimFrame;
     private BppFrame BppSimFrame;
     private TspCFrame TspContFrame;
     private BppCFrame BppContFrame;
 
-    private static String port;
-
     public MainFrame() {
         setLayout(new FlowLayout());
         setTitle("Main Panel");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setSize(200, 200);
+        setSize(300, 300);
 
         TspSimFrame = new TspFrame();
         BppSimFrame = new BppFrame();
         TspContFrame = new TspCFrame();
         BppContFrame = new BppCFrame();
-
 
         JbTspSim = new JButton("TSP Simulator");
         JbTspSim.addActionListener(this);
@@ -43,11 +36,8 @@ public class MainFrame extends JFrame implements ActionListener {
         JbBppControl.addActionListener(this);
         add(JbBppControl);
 
-        PdmPort = new PortDropdownMenu();
-        PdmPort.refreshMenu();
-        port = (String)PdmPort.getSelectedItem();
-        PdmPort.addActionListener(e -> port = (String)PdmPort.getSelectedItem());
-        add(PdmPort);
+        ArduinoPanel ArduinoConfigPanel = new ArduinoPanel();
+        add(ArduinoConfigPanel);
 
         setVisible(true);
     }
@@ -75,6 +65,4 @@ public class MainFrame extends JFrame implements ActionListener {
             }
         }
     }
-
-    public static String getPort() { return port; }
 }

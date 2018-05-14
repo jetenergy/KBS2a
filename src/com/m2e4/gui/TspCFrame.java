@@ -9,9 +9,10 @@ import java.awt.event.ActionListener;
 
 public class TspCFrame extends JFrame implements ActionListener {
     private JButton JBOn, JBOff;
-    private ArduinoClass arduino;
 
-    public TspCFrame() {
+    private static ArduinoClass arduino;
+
+    TspCFrame() {
         setLayout(new FlowLayout());
         setTitle("TSP Controll panel");
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -27,19 +28,27 @@ public class TspCFrame extends JFrame implements ActionListener {
         setVisible(false);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == JBOn) {
-            arduino.ArduinoWrite('1');
+    public static void setArduino(String port) {
+        if (arduino != null) {
+            arduino.close();
         }
-        if (e.getSource() == JBOff) {
-            arduino.ArduinoWrite('0');
+        arduino = new ArduinoClass(port);
+    }
+
+    public static void clearArduino() {
+        if (arduino != null) {
+            arduino.close();
         }
     }
 
     @Override
-    public void setVisible(boolean b) {
-        if (b) arduino = new ArduinoClass(MainFrame.getPort());
-        super.setVisible(b);
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == JBOn) {
+            arduino.write('1');
+
+        }
+        if (e.getSource() == JBOff) {
+            arduino.write('0');
+        }
     }
 }
