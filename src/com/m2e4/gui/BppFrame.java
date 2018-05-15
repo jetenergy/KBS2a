@@ -1,72 +1,54 @@
 package com.m2e4.gui;
 
-import com.m2e4.arduino.ArduinoClass;
-
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class BppFrame extends JFrame implements ActionListener {
-    private ArduinoClass arduino;
+public class BppFrame extends JFrame {
 
     public BppFrame() {
         setLayout(new BorderLayout());
         setTitle("BPP simulatie");
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        setSize(640, 420);
+        setSize(960, 420);
 
 
+        JPanel JpTop, JpBottom;
         JPanel JpItems, JpSolution, JpBest, JpOptions, JpLog;
-        JSplitPane JspRoot, JspTop1, JspTop2, JspBottom;
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
 
-        // TOP PANE
         JpItems = new JPanel();
         JpItems.setLayout(new FlowLayout());
-        JpItems.setBackground(Color.CYAN);
-        JpItems.setMinimumSize(new Dimension(120, 200));
+        JpItems.setBorder(border);
 
         JpSolution = new JPanel();
         JpSolution.setLayout(new FlowLayout());
-        JpSolution.setBackground(Color.BLUE);
+        JpSolution.setBorder(border);
 
         JpBest = new JPanel();
         JpBest.setLayout(new FlowLayout());
+        JpBest.setBorder(border);
 
-        JspTop1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, JpItems, JpSolution);
-        JspTop1.setDividerLocation(200);
+        JpTop = new JPanel();
+        JpTop.setLayout(new GridLayout(1, 3));
+        JpTop.add(JpItems);
+        JpTop.add(JpSolution);
+        JpTop.add(JpBest);
+        add(JpTop, BorderLayout.CENTER);
 
-        JspTop2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, JspTop1, JpBest);
-        JspTop2.setDividerLocation(420);
-
-        // BOTTOM PANE
         JpOptions = new JPanel();
         JpOptions.setLayout(new FlowLayout());
+        JpOptions.setBorder(border);
 
         JpLog = new JPanel();
         JpLog.setLayout(new FlowLayout());
+        JpLog.setBorder(border);
 
-        JspBottom = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, JpOptions, JpLog);
-        JspBottom.setDividerLocation(320);
-
-
-        JSplitPane JspX = new JSplitPane(JSplitPane.VERTICAL_SPLIT, JspTop2, JspBottom);
-        JspX.setDividerLocation(280);
-
-        add(JspX, BorderLayout.CENTER);
-
-
-        setVisible(false);
+        JpBottom = new JPanel();
+        JpBottom.setLayout(new GridLayout(1, 2));
+        JpBottom.add(JpOptions);
+        JpBottom.add(JpLog);
+        add(JpBottom, BorderLayout.SOUTH);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
-
-    @Override
-    public void setVisible(boolean b) {
-        if (b) arduino = new ArduinoClass(MainFrame.getPort());
-        super.setVisible(b);
-    }
 }
