@@ -28,8 +28,10 @@ public class LoggerFactory {
         private JTextPane pane;
         private static AttributeSet setInfo = StyleContext.getDefaultStyleContext()
                 .addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.BLACK);
-        private static AttributeSet setWarning = StyleContext.getDefaultStyleContext()
+        private static AttributeSet setDebug = StyleContext.getDefaultStyleContext()
                 .addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.BLUE);
+        private static AttributeSet setWarning = StyleContext.getDefaultStyleContext()
+                .addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.ORANGE);
         private static AttributeSet setError = StyleContext.getDefaultStyleContext()
                 .addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.RED);
 
@@ -46,6 +48,7 @@ public class LoggerFactory {
             pane.setCaretPosition(pane.getDocument().getLength());
             switch (level) {
                 case INFO: pane.setCharacterAttributes(setInfo, false); break;
+                case DEBUG: pane.setCharacterAttributes(setDebug, false); break;
                 case WARNING: pane.setCharacterAttributes(setWarning, false); break;
                 case ERROR: pane.setCharacterAttributes(setError, false); break;
             }
@@ -65,10 +68,11 @@ public class LoggerFactory {
 
     /**
      * Used to indicate an error level for Logger instances
-     * INFO = Black, WARNING = Blue, ERROR = Red
+     * INFO = Black, DEBUG = Blue, WARNING = Orange, ERROR = Red
      */
     public enum ErrorLevel {
         INFO,
+        DEBUG,
         WARNING,
         ERROR
     }
