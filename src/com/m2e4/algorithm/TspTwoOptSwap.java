@@ -1,24 +1,28 @@
 package com.m2e4.algorithm;
 
+import com.m2e4.DataBase.Product;
+
 import java.util.ArrayList;
 
 public class TspTwoOptSwap {
 
     private static final int iteraties = 50;
 
-    public static void TwoOptSwap(ArrayList<Product> products) {
+    public static ArrayList<Product> TwoOptSwap(ArrayList<Product> products) {
         int bestDistance = 999999;
+        System.out.println(products);
+        System.out.println(products.size());
         ArrayList<Product> huidigeBest = new ArrayList<>();
         for (int x = 0; x < iteraties; x++) {
             for (int i = 0; i < products.size(); i++) {
                 for (int k = i+1; k < products.size(); k++) {
                     //wissel function
                     ArrayList<Product> dezeIteratie = new ArrayList<>();
-                    for(int c = 0; c < i-1; c++){
+                    for(int c = 0; c <= i-1; c++){
                         dezeIteratie.add(products.get(c));
                     }
 
-                    for(int c = k; c > i; c--){
+                    for(int c = k; c >= i; c--){
                         dezeIteratie.add(products.get(c));
                     }
 
@@ -30,10 +34,14 @@ public class TspTwoOptSwap {
                     for(int z = 1; z < dezeIteratie.size(); z++){
                         totalDistance += dezeIteratie.get(z-1).abs(dezeIteratie.get(z));
                     }
-
+                    if (totalDistance < bestDistance) {
+                        bestDistance = totalDistance;
+                        huidigeBest = dezeIteratie;
+                    }
                 }
             }
         }
+        return huidigeBest;
     }
 
     public int distance(int[] array){

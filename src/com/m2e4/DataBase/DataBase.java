@@ -36,9 +36,6 @@ public class DataBase {
                 int y = resultSet.getInt("Y");
                 products.add(new Product(naam, hoogte, breedte, x, y));
             }
-            System.out.println(products);
-            Collections.shuffle(products);
-            System.out.println(products);
             return products;
             /*preparedStatement = connect.prepareStatement("insert into  feedback.comments values (default, ?, ?, ?, ? , ?, ?)");
             // "myuser, webpage, datum, summary, COMMENTS from feedback.comments");

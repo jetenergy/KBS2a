@@ -1,6 +1,7 @@
 package com.m2e4;
 
 import com.m2e4.DataBase.DataBase;
+import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.gui.MainFrame;
 
 public class Main {
@@ -21,5 +22,7 @@ public class Main {
         catch (Exception e) {
             System.out.println(e);
         }
+
+        System.out.println(TspTwoOptSwap.TwoOptSwap(dbc.products));
     }
 }
