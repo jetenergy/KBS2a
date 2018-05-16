@@ -1,16 +1,25 @@
 package com.m2e4.gui;
 
+import com.m2e4.gui.tsp.SettingsPanel;
+import com.m2e4.gui.tsp.ViewPanel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class TspFrame extends JFrame implements ActionListener {
-    public TspFrame() {
+    TspFrame() {
         setLayout(new FlowLayout());
         setTitle("TSP panel");
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        setSize(200, 300);
+        setSize(500, 600);
+
+        ViewPanel viewPanel = new ViewPanel();
+        add(viewPanel);
+
+        SettingsPanel settings = new SettingsPanel(getSize());
+        add(settings);
 
         setVisible(false);
     }
