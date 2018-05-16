@@ -4,16 +4,12 @@ import java.util.ArrayList;
 
 public class TspTwoOptSwap {
 
-    private ArrayList<Product> productArray;
-    private int[] row;
-
     private static final int iteraties = 50;
 
     public static void TwoOptSwap(ArrayList<Product> products) {
         int bestDistance = 999999;
         ArrayList<Product> huidigeBest = new ArrayList<>();
-        for (int x = 0; x < iteraties; x++){
-            //Collections.shuffle(products);
+        for (int x = 0; x < iteraties; x++) {
             for (int i = 0; i < products.size(); i++) {
                 for (int k = i+1; k < products.size(); k++) {
                     //wissel function
@@ -30,6 +26,10 @@ public class TspTwoOptSwap {
                         dezeIteratie.add(products.get(c));
                     }
                     // bereken de totaal afstand
+                    int totalDistance = 0;
+                    for(int z = 1; z < dezeIteratie.size(); z++){
+                        totalDistance += dezeIteratie.get(z-1).abs(dezeIteratie.get(z));
+                    }
 
                 }
             }
@@ -42,13 +42,5 @@ public class TspTwoOptSwap {
                 totalDistance = Math.abs(array[x-1] - array[x]);
         }
         return totalDistance;
-    }
-}
-
-class Product {
-    public int abs(Product compare) {
-        int x = Math.abs(this.getX() - compare.getX());
-        int y = Math.abs(this.getY() - compare.getY());
-        return x+y;
     }
 }
