@@ -11,7 +11,7 @@ public class Product {
 
     }
 
-    Product(String naam, double hoogte, double breedte, int x, int y) {
+    public Product(String naam, double hoogte, double breedte, int x, int y) {
         this.naam = naam;
         this.hoogte = hoogte;
         this.breedte = breedte;
