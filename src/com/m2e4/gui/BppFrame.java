@@ -7,18 +7,29 @@ import java.awt.*;
 public class BppFrame extends JFrame {
 
     private Object[][] itemData;
+    // TODO: Use itemData for items storage
 
     public BppFrame() {
         setLayout(new BorderLayout());
         setTitle("BPP simulatie");
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        setSize(960, 420);
-        setMinimumSize(new Dimension(800, 420));
+        setSize(960, 500);
+        setMinimumSize(new Dimension(940, 420));
 
 
         JPanel JpTop, JpBottom;
         JPanel JpItems, JpSolution, JpBest, JpOptions, JpLog;
         Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
+
+        JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), new Object[]{ "Item", "Hoogte" });
+        JPanel solutionPanel = new JPanel();
+        JPanel bestPanel = new JPanel();
+        JRadioButton algoBranchandbound = new JRadioButton("Branch-and-Bound");
+        JRadioButton algoTwoFase = new JRadioButton("Two Fase");
+        JRadioButton algoBruteForce = new JRadioButton("Brute Force");
+        JRadioButton algoCustom = new JRadioButton("Eigen Oplossing");
+        JTextPane TaLog = new JTextPane();
+
 
         JpItems = new JPanel();
         JpItems.setLayout(new FlowLayout());
@@ -27,30 +38,28 @@ public class BppFrame extends JFrame {
             JPanel container = new JPanel();
             container.setLayout(new GridLayout(2, 1));
 
-            JTable table = new JTable((itemData != null ? itemData : new Object[][]{}), new Object[]{ "Item", "Hoogte" });
-
-            container.add(table.getTableHeader());
-            container.add(table);
+            container.add(itemTable.getTableHeader());
+            container.add(itemTable);
 
             JpItems.add(new JScrollPane(container));
         }
 
         JpSolution = new JPanel();
-        JpSolution.setLayout(new FlowLayout());
         JpSolution.setBorder(border);
         {
             JLabel title = new JLabel("Huidige oplossing");
 
             JpSolution.add(title);
+            JpSolution.add(solutionPanel);
         }
 
         JpBest = new JPanel();
-        JpBest.setLayout(new FlowLayout());
         JpBest.setBorder(border);
         {
             JLabel title = new JLabel("Beste oplossing");
 
             JpBest.add(title);
+            JpBest.add(bestPanel);
         }
 
         JpTop = new JPanel();
@@ -92,10 +101,11 @@ public class BppFrame extends JFrame {
             JPanel algos = new JPanel();
             algos.setLayout(layout);
             {
-                JRadioButton algoBranchandbound = new JRadioButton("Branch-and-Bound");
-                JRadioButton algoTwoFase = new JRadioButton("Two Fase");
-                JRadioButton algoBruteForce = new JRadioButton("Brute Force");
-                JRadioButton algoCustom = new JRadioButton("Eigen Oplossing");
+                ButtonGroup group = new ButtonGroup();
+                group.add(algoBranchandbound);
+                group.add(algoTwoFase);
+                group.add(algoBruteForce);
+                group.add(algoCustom);
 
                 algos.add(algoBranchandbound);
                 algos.add(algoTwoFase);
@@ -146,6 +156,19 @@ public class BppFrame extends JFrame {
         JpLog = new JPanel();
         JpLog.setLayout(new FlowLayout());
         JpLog.setBorder(border);
+        {
+            TaLog.setBorder(border);
+            Dimension size = new Dimension(360, 110);
+            TaLog.setPreferredSize(size);
+            TaLog.setMaximumSize(size);
+            TaLog.setEditable(false);
+
+            JButton save = new JButton("Opslaan");
+            save.addActionListener(e -> saveLog());
+
+            JpLog.add(TaLog);
+            JpLog.add(save);
+        }
 
         JpBottom = new JPanel();
         JpBottom.setLayout(new GridLayout(1, 2));
@@ -167,6 +190,11 @@ public class BppFrame extends JFrame {
     }
 
     private void showStatistics() {
+
+    }
+
+
+    private void saveLog() {
 
     }
 
