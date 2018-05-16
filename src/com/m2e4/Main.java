@@ -2,6 +2,7 @@ package com.m2e4;
 
 import com.m2e4.DataBase.DataBase;
 import com.m2e4.algorithm.TspGreedy;
+import com.m2e4.algorithm.TspSimulatedAnnealing;
 import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.gui.MainFrame;
 
@@ -26,5 +27,6 @@ public class Main {
 
         System.out.println(TspTwoOptSwap.TwoOptSwap(dbc.products));
         System.out.println(TspGreedy.Greedy(dbc.products));
+        System.out.println(TspSimulatedAnnealing.SimulatedAnnealing(dbc.products));
     }
 }
