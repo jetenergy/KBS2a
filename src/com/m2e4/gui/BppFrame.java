@@ -1,5 +1,7 @@
 package com.m2e4.gui;
 
+import com.m2e4.LoggerFactory;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -29,6 +31,8 @@ public class BppFrame extends JFrame {
         JRadioButton algoBruteForce = new JRadioButton("Brute Force");
         JRadioButton algoCustom = new JRadioButton("Eigen Oplossing");
         JTextPane TaLog = new JTextPane();
+
+        LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
 
 
         JpItems = new JPanel();
@@ -157,16 +161,16 @@ public class BppFrame extends JFrame {
         JpLog.setLayout(new FlowLayout());
         JpLog.setBorder(border);
         {
-            TaLog.setBorder(border);
             Dimension size = new Dimension(360, 110);
-            TaLog.setPreferredSize(size);
-            TaLog.setMaximumSize(size);
             TaLog.setEditable(false);
 
             JButton save = new JButton("Opslaan");
             save.addActionListener(e -> saveLog());
 
-            JpLog.add(TaLog);
+            JScrollPane pane = new JScrollPane(new JPanel().add(TaLog));
+            pane.setPreferredSize(size);
+            pane.setMaximumSize(size);
+            JpLog.add(pane);
             JpLog.add(save);
         }
 
@@ -175,6 +179,9 @@ public class BppFrame extends JFrame {
         JpBottom.add(JpOptions);
         JpBottom.add(JpLog);
         add(JpBottom, BorderLayout.SOUTH);
+
+
+        logger.println("BPP simulator geopend");
     }
 
     private void startResume() {
