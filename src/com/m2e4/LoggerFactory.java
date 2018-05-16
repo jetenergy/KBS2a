@@ -6,6 +6,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class LoggerFactory {
 
@@ -52,8 +54,12 @@ public class LoggerFactory {
             if (!pane.isEditable()) editable = false;
 
             if (!editable) pane.setEditable(true);
-            pane.replaceSelection(text + "\r\n");
+            pane.replaceSelection(String.format("[%s][%s] %s\r\n",
+                    LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME), level, text));
             if (!editable) pane.setEditable(false);
+        }
+        public void println(String text) {
+            println(text, ErrorLevel.INFO);
         }
     }
 
