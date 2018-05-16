@@ -11,8 +11,6 @@ public class TspTwoOptSwap {
 
     public static ArrayList<Product> TwoOptSwap(ArrayList<Product> products) {
         int bestDistance = 999999;
-        System.out.println(products);
-        System.out.println(products.size());
         ArrayList<Product> huidigeBest = new ArrayList<>();
         for (int x = 0; x < iteraties; x++) {
             for (int i = 0; i < products.size(); i++) {

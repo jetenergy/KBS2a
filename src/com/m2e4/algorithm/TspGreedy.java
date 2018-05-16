@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class TspGreedy {
 
     public static ArrayList<Product> Greedy(ArrayList<Product> producten){
-        System.out.println(producten);
         int huidigeAfstand = 999999;
         int nieuweAfstand;
 
