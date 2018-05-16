@@ -4,12 +4,37 @@ import com.m2e4.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
+import java.util.Random;
 
 public class BppFrame extends JFrame {
 
     private Object[][] itemData;
-    // TODO: Use itemData for items storage
+    private Object[] columnNames = new Object[]{ "Item", "Hoogte" };
+
+    private JPanel JpTop, JpBottom;
+    private JPanel JpItems, JpSolution, JpBest, JpOptions, JpLog;
+    private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
+
+    private JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), columnNames);
+    private JPanel solutionPanel = new JPanel();
+    private JPanel bestPanel = new JPanel();
+    private JButton startControl = new JButton("Start / Hervatten");
+    private JButton stopControl = new JButton("Stop");
+    private JButton pauseControl = new JButton("Pauze");
+    private JButton statisticsControl = new JButton("Statistieken");
+    private JRadioButton algoBranchandbound = new JRadioButton("Branch-and-Bound");
+    private JRadioButton algoTwoFase = new JRadioButton("Two Fase");
+    private JRadioButton algoBruteForce = new JRadioButton("Brute Force");
+    private JRadioButton algoCustom = new JRadioButton("Eigen Oplossing");
+    private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 1, 50, 1));
+    private JSpinner spSizeMin = new JSpinner(new SpinnerNumberModel(1.0, 1.0, 4.0, 0.01));
+    private JSpinner spSizeMax = new JSpinner(new SpinnerNumberModel(4.0, 2, 5.0, 0.01));
+    private JTextPane TaLog = new JTextPane();
+
+    private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
 
     public BppFrame() {
         setLayout(new BorderLayout());
@@ -19,33 +44,19 @@ public class BppFrame extends JFrame {
         setMinimumSize(new Dimension(940, 420));
 
 
-        JPanel JpTop, JpBottom;
-        JPanel JpItems, JpSolution, JpBest, JpOptions, JpLog;
-        Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
-
-        JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), new Object[]{ "Item", "Hoogte" });
-        JPanel solutionPanel = new JPanel();
-        JPanel bestPanel = new JPanel();
-        JRadioButton algoBranchandbound = new JRadioButton("Branch-and-Bound");
-        JRadioButton algoTwoFase = new JRadioButton("Two Fase");
-        JRadioButton algoBruteForce = new JRadioButton("Brute Force");
-        JRadioButton algoCustom = new JRadioButton("Eigen Oplossing");
-        JTextPane TaLog = new JTextPane();
-
-        LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
-
-
         JpItems = new JPanel();
         JpItems.setLayout(new FlowLayout());
         JpItems.setBorder(border);
         {
             JPanel container = new JPanel();
-            container.setLayout(new GridLayout(2, 1));
-
-            container.add(itemTable.getTableHeader());
+//            container.setLayout(new GridLayout(2, 1));
+            container.setLayout(new BorderLayout());
+            container.add(itemTable.getTableHeader(), BorderLayout.NORTH);
             container.add(itemTable);
 
-            JpItems.add(new JScrollPane(container));
+            JScrollPane scrollPane = new JScrollPane(container);
+            scrollPane.setPreferredSize(new Dimension(200,300));
+            JpItems.add(scrollPane);
         }
 
         JpSolution = new JPanel();
@@ -82,18 +93,14 @@ public class BppFrame extends JFrame {
             JPanel buttons = new JPanel();
             buttons.setLayout(layout);
             {
-                JButton startControl = new JButton("Start / Hervatten");
                 startControl.addActionListener(e -> startResume());
 
-                JButton stopControl = new JButton("Stop");
                 stopControl.setEnabled(false);
                 stopControl.addActionListener(e -> stop());
 
-                JButton pauseControl = new JButton("Pauze");
                 pauseControl.setEnabled(false);
                 pauseControl.addActionListener(e -> pause());
 
-                JButton statisticsControl = new JButton("Statistieken");
                 statisticsControl.addActionListener(e -> showStatistics());
 
                 buttons.add(startControl);
@@ -127,7 +134,6 @@ public class BppFrame extends JFrame {
                 JPanel amount = new JPanel();
                 amount.setLayout(flow);
                 JLabel lblAmount = new JLabel("Aantal", JLabel.TRAILING);
-                JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 1, 8, 1));
                 spAmount.setPreferredSize(spinnerSize);
                 amount.add(lblAmount);
                 amount.add(spAmount);
@@ -135,14 +141,12 @@ public class BppFrame extends JFrame {
                 JPanel sizeMin = new JPanel();
                 sizeMin.setLayout(flow);
                 JLabel lblSizeMin = new JLabel("Grootte", JLabel.TRAILING);
-                JSpinner spSizeMin = new JSpinner(new SpinnerNumberModel(1.0, 1.0, 4.0, 0.01));
                 spSizeMin.setPreferredSize(spinnerSize);
                 sizeMin.add(lblSizeMin);
                 sizeMin.add(spSizeMin);
 
                 JPanel sizeMax = new JPanel();
                 sizeMax.setLayout(flow);
-                JSpinner spSizeMax = new JSpinner(new SpinnerNumberModel(4.0, 2, 5.0, 0.01));
                 spSizeMax.setPreferredSize(spinnerSize);
                 sizeMax.add(spSizeMax);
 
@@ -184,16 +188,36 @@ public class BppFrame extends JFrame {
         logger.println("BPP simulator geopend");
     }
 
-    private void startResume() {
 
+    private void startResume() {
+        startControl.setEnabled(false);
+        stopControl.setEnabled(true);
+        pauseControl.setEnabled(true);
+
+        itemData = new Object[(int)spAmount.getValue()][];
+        for (int i = 0; i < (int)spAmount.getValue(); ++i) {
+            itemData[i] = new Object[] { i + 1, Math.round(((double)spSizeMin.getValue() + ((double)spSizeMax.getValue() - (double)spSizeMin.getValue()))
+                    * new Random().nextDouble() * 100.0) / 100.0 };
+        }
+
+        DefaultTableModel model = new DefaultTableModel();
+        model.setDataVector(itemData, columnNames);
+        itemTable.setModel(model);
+
+        logger.println(String.format("Items aangemaakt (c:%d,n:%f,x:%f)", (int)spAmount.getValue(),
+                (double)spSizeMin.getValue(), (double)spSizeMax.getValue()), LoggerFactory.ErrorLevel.WARNING);
     }
 
     private void stop() {
-
+        startControl.setEnabled(true);
+        stopControl.setEnabled(false);
+        pauseControl.setEnabled(false);
     }
 
     private void pause() {
-
+        startControl.setEnabled(true);
+        stopControl.setEnabled(true);
+        pauseControl.setEnabled(false);
     }
 
     private void showStatistics() {
