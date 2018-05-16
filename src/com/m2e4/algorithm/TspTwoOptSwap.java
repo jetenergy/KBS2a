@@ -4,6 +4,7 @@ import com.m2e4.DataBase.Product;
 
 import java.util.ArrayList;
 
+
 public class TspTwoOptSwap {
 
     private static final int iteraties = 50;
