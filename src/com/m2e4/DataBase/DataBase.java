@@ -1,11 +1,8 @@
 package com.m2e4.DataBase;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
 //JavaUsr //javakbs2a
 
@@ -16,17 +13,33 @@ public class DataBase {
     private PreparedStatement preparedStatement = null;
     private ResultSet resultSet = null;
 
+    public ArrayList<Product> products = new ArrayList<>();
+
 
     public void connectDataBase() throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         connect = DriverManager.getConnection("jdbc:mysql://rene-home.myddns.me/KBS2A?user=JavaUsr&password=javakbs2a");
     }
 
-    public void readDataBase(String db) throws Exception {
+    public ArrayList<Product> getProducts() throws Exception {
         try {
             statement = connect.createStatement();
-            resultSet = statement.executeQuery("select * from KBS2A." + db);
-            writeResults(resultSet);
+            String querry = "select Naam, Hoogte, Breedte, X, Y from ProductOpslag JOIN Product ON ProductOpslag.ProductId = Product.ProductId;";
+            resultSet = statement.executeQuery(querry);
+            //writeResults(resultSet);
+            //saveProducts(resultSet);
+            while (resultSet.next()) {
+                String naam = resultSet.getString("Naam");
+                double hoogte = resultSet.getDouble("Hoogte");
+                double breedte = resultSet.getDouble("Breedte");
+                int x = resultSet.getInt("X");
+                int y = resultSet.getInt("Y");
+                products.add(new Product(naam, hoogte, breedte, x, y));
+            }
+            System.out.println(products);
+            Collections.shuffle(products);
+            System.out.println(products);
+            return products;
             /*preparedStatement = connect.prepareStatement("insert into  feedback.comments values (default, ?, ?, ?, ? , ?, ?)");
             // "myuser, webpage, datum, summary, COMMENTS from feedback.comments");
             // Parameters start with 1

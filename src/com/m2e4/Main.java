@@ -6,20 +6,20 @@ import com.m2e4.gui.MainFrame;
 public class Main {
 
     public static void main(String[] args) {
-        //DataBase dbc = new DataBase();
+        DataBase dbc = new DataBase();
         MainFrame frame = new MainFrame();
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                //dbc.closeConn();
+                dbc.closeConn();
                 System.exit(0);
             }
         });
-        /*try {
+        try {
             dbc.connectDataBase();
-            dbc.readDataBase("Product");
+            dbc.getProducts();
         }
         catch (Exception e) {
             System.out.println(e);
-        }*/
+        }
     }
 }
