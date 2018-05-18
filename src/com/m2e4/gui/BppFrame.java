@@ -1,13 +1,18 @@
 package com.m2e4.gui;
 
 import com.m2e4.LoggerFactory;
+import com.m2e4.Main;
+import com.m2e4.algorithm.Algorithm;
+import com.m2e4.algorithm.BppBruteForce;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
 
 public class BppFrame extends JFrame {
 
@@ -21,9 +26,8 @@ public class BppFrame extends JFrame {
     private JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), columnNames);
     private JPanel solutionPanel = new JPanel();
     private JPanel bestPanel = new JPanel();
-    private JButton startControl = new JButton("Start / Hervatten");
+    private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
-    private JButton pauseControl = new JButton("Pauze");
     private JButton statisticsControl = new JButton("Statistieken");
     private JRadioButton algoBranchandbound = new JRadioButton("Branch-and-Bound");
     private JRadioButton algoTwoFase = new JRadioButton("Two Fase");
@@ -60,9 +64,14 @@ public class BppFrame extends JFrame {
         }
 
         JpSolution = new JPanel();
+        JpSolution.setLayout(new BoxLayout(JpSolution, BoxLayout.Y_AXIS));
         JpSolution.setBorder(border);
         {
             JLabel title = new JLabel("Huidige oplossing");
+            title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            solutionPanel.setLayout(new BoxLayout(solutionPanel, BoxLayout.Y_AXIS));
+            solutionPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JpSolution.add(title);
             JpSolution.add(solutionPanel);
@@ -98,14 +107,10 @@ public class BppFrame extends JFrame {
                 stopControl.setEnabled(false);
                 stopControl.addActionListener(e -> stop());
 
-                pauseControl.setEnabled(false);
-                pauseControl.addActionListener(e -> pause());
-
                 statisticsControl.addActionListener(e -> showStatistics());
 
                 buttons.add(startControl);
                 buttons.add(stopControl);
-                buttons.add(pauseControl);
                 buttons.add(statisticsControl);
             }
 
@@ -190,13 +195,15 @@ public class BppFrame extends JFrame {
 
 
     private void startResume() {
+
         startControl.setEnabled(false);
         stopControl.setEnabled(true);
-        pauseControl.setEnabled(true);
+
+        solutionPanel.removeAll();
 
         itemData = new Object[(int)spAmount.getValue()][];
         for (int i = 0; i < (int)spAmount.getValue(); ++i) {
-            itemData[i] = new Object[] { i + 1, Math.round(((double)spSizeMin.getValue() + ((double)spSizeMax.getValue() - (double)spSizeMin.getValue()))
+            itemData[i] = new Object[] { i + 1, (double)spSizeMin.getValue() + Math.round(( ((double)spSizeMax.getValue() - (double)spSizeMin.getValue()))
                     * new Random().nextDouble() * 100.0) / 100.0 };
         }
 
@@ -205,19 +212,52 @@ public class BppFrame extends JFrame {
         itemTable.setModel(model);
 
         logger.println(String.format("Items aangemaakt (c:%d,n:%f,x:%f)", (int)spAmount.getValue(),
-                (double)spSizeMin.getValue(), (double)spSizeMax.getValue()), LoggerFactory.ErrorLevel.WARNING);
+                (double)spSizeMin.getValue(), (double)spSizeMax.getValue()), LoggerFactory.ErrorLevel.DEBUG);
+
+        Main.getThreadPool().execute(() -> {
+            BppBruteForce algo = new BppBruteForce(2, 10);
+            BppBruteForce.Item[] items = new BppBruteForce.Item[itemData.length];
+            for (int i = 0; i < itemData.length; ++i)
+                items[i] = new BppBruteForce.Item((double)itemData[i][1]);
+            algo.setItems(items);
+            long startTime = System.nanoTime();
+            algo.run();
+            long endTime = System.nanoTime();
+
+            Object solution = algo.getSolution();
+            if (solution == null) {
+                logger.println("Items passen niet!", LoggerFactory.ErrorLevel.ERROR);
+            }
+            else {
+                ArrayList<BppBruteForce.Box> solutionList = (ArrayList<BppBruteForce.Box>) solution;
+                logger.println(String.format("Oplossing gevonden in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)));
+
+                for (int i = 0; i < solutionList.size(); ++i) {
+                    solutionPanel.add(new JLabel(String.format("Box %d:", i)));
+
+                    for (BppBruteForce.Item item : solutionList.get(i).getItems()) {
+                        solutionPanel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHeight()))));
+                    }
+                    solutionPanel.add(new JLabel(" "));
+                }
+
+                solutionPanel.updateUI();
+            }
+
+            startControl.setEnabled(true);
+            stopControl.setEnabled(false);
+
+        });
     }
 
     private void stop() {
         startControl.setEnabled(true);
         stopControl.setEnabled(false);
-        pauseControl.setEnabled(false);
     }
 
     private void pause() {
         startControl.setEnabled(true);
         stopControl.setEnabled(true);
-        pauseControl.setEnabled(false);
     }
 
     private void showStatistics() {
