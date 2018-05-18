@@ -3,10 +3,9 @@ package com.m2e4.algorithm;
 import com.m2e4.DataBase.Product;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
-public class TspSimulatedAnnealing {
+public class TspEigenOplossing {
 
     static Product beginPunt = new Product("", 0, 0, -1, 0);
 
@@ -22,7 +21,7 @@ public class TspSimulatedAnnealing {
     static int oudeAfstand = 999999;
     static int temperatuur = 100;
     static int afkoeling = 1;
-
+    static int iteraties = 50;
 
     static private void nieuwTour(ArrayList<Product> huidigeTour) {
         int afstand = 0;
@@ -67,26 +66,56 @@ public class TspSimulatedAnnealing {
             oudeAfstand = afstand;
             nieuweTour.remove(0);
             besteTour = new ArrayList<>(nieuweTour);
-            // TODO: functie visualiseren beste oplossing
+            // TODO: visualiseren beste oplossing
         } else {
             nieuweTour.remove(0);
-
         }
-        // TODO: functie visualiseren huidige try
+
     }
 
-        public static ArrayList<Product> SimulatedAnnealing (ArrayList<Product> producten) {
-            huidigeTour = producten;
+    public static ArrayList<Product> EigenOplossing(ArrayList<Product> producten){
+        huidigeTour = producten;
 
-            while (temperatuur != 0) {
-                    nieuwTour(huidigeTour);
-                    temperatuur -= afkoeling;
-                    //System.out.println(temperatuur + "--" + huidigeTour);
+        while (temperatuur > 0) {
+            nieuwTour(huidigeTour);
+            temperatuur -= afkoeling;
+            //TODO: visualiseren huidige try
+            //System.out.println(temperatuur + "--" + huidigeTour);
+        }
+        int bestDistance = 999999;
+        ArrayList<Product> huidigeBest = new ArrayList<>();
+        for (int x = 0; x < iteraties; x++) {
+            for (int i = 0; i < besteTour.size(); i++) {
+                for (int k = i+1; k < besteTour.size(); k++) {
+                    //wissel function
+                    ArrayList<Product> dezeIteratie = new ArrayList<>();
+                    for(int c = 0; c <= i-1; c++){
+                        dezeIteratie.add(besteTour.get(c));
+                    }
+
+                    for(int c = k; c >= i; c--){
+                        dezeIteratie.add(besteTour.get(c));
+                    }
+
+                    for(int c = k+1; c < besteTour.size(); c++){
+                        dezeIteratie.add(besteTour.get(c));
+                    }
+                    // bereken de totaal afstand
+                    int totalDistance = 0;
+                    for(int z = 1; z < dezeIteratie.size(); z++){
+                        totalDistance += dezeIteratie.get(z-1).abs(dezeIteratie.get(z));
+                    }
+                    if (totalDistance < bestDistance) {
+                        bestDistance = totalDistance;
+                        huidigeBest = dezeIteratie;
+                        // TODO: visualiseren beste oplossing
+                    }
                 }
-            System.out.println("DONE -- SIMULATED ANNEALING");
-            return besteTour;
+            }
+            //TODO: visualiseren huidige try
         }
 
-
+        System.out.println("DONE - EIGEN OPLOSSING");
+        return besteTour;
     }
-
+}
