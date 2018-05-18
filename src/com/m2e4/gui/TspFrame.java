@@ -1,6 +1,5 @@
 package com.m2e4.gui;
 
-import com.m2e4.gui.tsp.SettingsPanel;
 import com.m2e4.gui.tsp.ViewPanel;
 
 import javax.swing.*;
@@ -18,8 +17,8 @@ public class TspFrame extends JFrame implements ActionListener {
         ViewPanel viewPanel = new ViewPanel();
         add(viewPanel);
 
-        SettingsPanel settings = new SettingsPanel(getSize());
-        add(settings);
+        //CSettingsPanel settings = new CSettingsPanel(getSize());
+        //add(settings);
 
         setVisible(false);
     }
