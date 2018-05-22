@@ -10,8 +10,14 @@ import com.m2e4.algorithm.Item;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -21,12 +27,11 @@ public class BppFrame extends JFrame {
     private Object[] columnNames = new Object[]{ "Item", "Hoogte" };
 
     private JPanel JpTop, JpBottom;
-    private JPanel JpItems, JpSolution, JpBest, JpOptions, JpLog;
+    private JPanel JpItems, JpSolution, JpOptions, JpLog;
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
 
     private JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), columnNames);
     private JPanel solutionPanel = new JPanel();
-    private JPanel bestPanel = new JPanel();
     private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
     private JButton statisticsControl = new JButton("Statistieken");
@@ -68,7 +73,7 @@ public class BppFrame extends JFrame {
         JpSolution.setLayout(new BoxLayout(JpSolution, BoxLayout.Y_AXIS));
         JpSolution.setBorder(border);
         {
-            JLabel title = new JLabel("Huidige oplossing");
+            JLabel title = new JLabel("Oplossing");
             title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             solutionPanel.setLayout(new BoxLayout(solutionPanel, BoxLayout.Y_AXIS));
@@ -78,20 +83,10 @@ public class BppFrame extends JFrame {
             JpSolution.add(solutionPanel);
         }
 
-        JpBest = new JPanel();
-        JpBest.setBorder(border);
-        {
-            JLabel title = new JLabel("Beste oplossing");
-
-            JpBest.add(title);
-            JpBest.add(bestPanel);
-        }
-
         JpTop = new JPanel();
-        JpTop.setLayout(new GridLayout(1, 3));
+        JpTop.setLayout(new GridLayout(1, 2));
         JpTop.add(JpItems);
         JpTop.add(JpSolution);
-        JpTop.add(JpBest);
         add(JpTop, BorderLayout.CENTER);
 
         JpOptions = new JPanel();
@@ -339,7 +334,23 @@ public class BppFrame extends JFrame {
 
 
     private void saveLog() {
+        File dir = new File("BppSimulator");
+        if (!dir.exists()) dir.mkdir();
 
+        System.out.print(dir.toString());
+
+        File[] files = dir.listFiles();
+
+        try {
+            PrintWriter writer = new PrintWriter(
+                    String.format("BppSimulator/log_%s_%d.txt", LocalDateTime.now().toString(), files.length),
+                    "UTF-8");
+            String text = TaLog.getDocument().getText(0, TaLog.getDocument().getLength());
+            writer.println(text);
+            writer.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException | BadLocationException e) {
+            e.printStackTrace();
+        }
     }
 
 }
