@@ -36,7 +36,6 @@ public class BppFrame extends JFrame {
     private JButton stopControl = new JButton("Stop");
     private JButton statisticsControl = new JButton("Statistieken");
     private JRadioButton algoNextfit = new JRadioButton("Next Fit");
-    private JRadioButton algoTwoFase = new JRadioButton("Two Fase");
     private JRadioButton algoBruteForce = new JRadioButton("Brute Force");
     private JRadioButton algoCustom = new JRadioButton("Eigen Oplossing", true);
     private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 1, 50, 1));
@@ -115,12 +114,10 @@ public class BppFrame extends JFrame {
             {
                 ButtonGroup group = new ButtonGroup();
                 group.add(algoNextfit);
-                group.add(algoTwoFase);
                 group.add(algoBruteForce);
                 group.add(algoCustom);
 
                 algos.add(algoNextfit);
-                algos.add(algoTwoFase);
                 algos.add(algoBruteForce);
                 algos.add(algoCustom);
             }
@@ -241,9 +238,6 @@ public class BppFrame extends JFrame {
                 startControl.setEnabled(true);
                 stopControl.setEnabled(false);
             });
-        }
-        else if (algoTwoFase.isSelected()) {
-
         }
         else if (algoBruteForce.isSelected()) {
             Main.getThreadPool().execute(() -> {
