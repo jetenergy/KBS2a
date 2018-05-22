@@ -3,51 +3,70 @@ package com.m2e4.algorithm;
 import com.m2e4.DataBase.Product;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class TspTwoOptSwap {
 
-    private static final int iteraties = 50;
+    public static ArrayList<Product> TwoOptSwap(ArrayList<Product> products, boolean laatzien) {
 
-    public static ArrayList<Product> TwoOptSwap(ArrayList<Product> products) {
+        //Iteraties worden gebruikt om het accurater te maken. Meer producten hebben meer iteraties nodig voor een goed resultaat.
+        final int iteraties = 50;
         int bestDistance = 999999;
+
         ArrayList<Product> huidigeBest = new ArrayList<>();
+        ArrayList<Product> tijdelijkProducten = new ArrayList<>(products);
+
         for (int x = 0; x < iteraties; x++) {
-            for (int i = 0; i < products.size(); i++) {
-                for (int k = i+1; k < products.size(); k++) {
-                    //wissel function
+
+            Collections.shuffle(tijdelijkProducten);
+
+            // Wisselfunctie
+            for (int i = 0; i < tijdelijkProducten.size(); i++) {
+                for (int k = i+1; k < tijdelijkProducten.size(); k++) {
+                    // Een nieuwe array wordt gebruikt om de gehutselde producten in op te slaan.
                     ArrayList<Product> dezeIteratie = new ArrayList<>();
+
                     for(int c = 0; c <= i-1; c++){
-                        dezeIteratie.add(products.get(c));
+                        dezeIteratie.add(tijdelijkProducten.get(c));
                     }
 
                     for(int c = k; c >= i; c--){
-                        dezeIteratie.add(products.get(c));
+                        dezeIteratie.add(tijdelijkProducten.get(c));
                     }
 
-                    for(int c = k+1; c < products.size(); c++){
-                        dezeIteratie.add(products.get(c));
+                    for(int c = k+1; c < tijdelijkProducten.size(); c++){
+                        dezeIteratie.add(tijdelijkProducten.get(c));
                     }
-                    // bereken de totaal afstand
+                    // Bereken de totale afstand.
                     int totalDistance = 0;
+
                     for(int z = 1; z < dezeIteratie.size(); z++){
                         totalDistance += dezeIteratie.get(z-1).abs(dezeIteratie.get(z));
                     }
+
+                    // Vervang de oude afstand als een kleinere afstand is gevonden. De array met de kortere afstand wordt de huidige array.
                     if (totalDistance < bestDistance) {
                         bestDistance = totalDistance;
                         huidigeBest = dezeIteratie;
+                        // TODO: visualiseren beste oplossing
+                        if(laatzien){
+
+                        }
                     }
                 }
             }
+        // TODO: visualiseren huidige try
+            if(laatzien){
+
+            }
         }
+        System.out.println("DONE -- TWO OPT");
         return huidigeBest;
     }
 
-    public int distance(int[] array){
-        int totalDistance = 0;
-        for(int x = 1; x < array.length; x++){
-                totalDistance = Math.abs(array[x-1] - array[x]);
-        }
-        return totalDistance;
+    public static ArrayList<Product> TwoOptSwap(ArrayList<Product> products){
+        return TwoOptSwap(products, false);
     }
+
 }

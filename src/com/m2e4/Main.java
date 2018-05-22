@@ -1,7 +1,9 @@
 package com.m2e4;
 
 import com.m2e4.DataBase.DataBase;
+import com.m2e4.algorithm.TspEigenOplossing;
 import com.m2e4.algorithm.TspGreedy;
+import com.m2e4.algorithm.TspSimulatedAnnealing;
 import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.gui.MainFrame;
 
@@ -37,8 +39,10 @@ public class Main {
             System.out.println(e);
         }
 
-        //System.out.println(TspTwoOptSwap.TwoOptSwap(DataBase.getProducts()));
-        //System.out.println(TspGreedy.Greedy(DataBase.getProducts()));
+        System.out.println(TspTwoOptSwap.TwoOptSwap(dbc.products));
+        System.out.println(TspGreedy.Greedy(dbc.products, true));
+        System.out.println(TspSimulatedAnnealing.SimulatedAnnealing(dbc.products));
+        System.out.println(TspEigenOplossing.EigenOplossing(dbc.products));
     }
 
     public static ExecutorService getThreadPool() {
