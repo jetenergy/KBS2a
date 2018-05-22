@@ -1,5 +1,7 @@
 package com.m2e4.gui.tsp;
 
+import com.m2e4.gui.TspCFrame;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
@@ -7,29 +9,25 @@ import java.awt.*;
 import java.util.Random;
 
 public class CSettingsPanel extends JPanel{
-    //private JButton Start, Stop, Pauze, Statistieken;
-    //private JRadioButton algo1, algo2, algo3, algo4;
-    //private ButtonGroup algoGroup;
-
-    private Object[][] itemData;
-    private Object[] columnNames = new Object[]{"Item", "X" , "Y"};
 
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
 
-    private JButton startControl = new JButton("Start / Hervatten");
+    private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
-    private JButton pauseControl = new JButton("Pauze");
     private JButton statisticsControl = new JButton("Statistieken");
-    private JRadioButton algoGreedy = new JRadioButton("Greedy");
+    private JRadioButton algoGreedy = new JRadioButton("Greedy", true);
     private JRadioButton algoTwoOptSwap = new JRadioButton("Two Opt Swap");
     private JRadioButton algoSimulatedAnnealing = new JRadioButton("Simulated Annealing");
     private JRadioButton algoCustom = new JRadioButton("Eigen Oplossing");
+    private ButtonGroup group;
 
     private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 1, 50, 1));
     private JSpinner spSizeMin = new JSpinner(new SpinnerNumberModel(1.0, 1.0, 4.0, 0.01));
     private JSpinner spSizeMax = new JSpinner(new SpinnerNumberModel(4.0, 2, 5.0, 0.01));
 
-    public CSettingsPanel() {
+    private TspCFrame parent;
+
+    public CSettingsPanel(TspCFrame parent) {
         setLayout(new FlowLayout());
         setBorder(border);
         GridLayout layout = new GridLayout(0, 1);
@@ -42,20 +40,16 @@ public class CSettingsPanel extends JPanel{
         stopControl.setEnabled(false);
         stopControl.addActionListener(e -> stop());
 
-        pauseControl.setEnabled(false);
-        pauseControl.addActionListener(e -> pause());
-
         statisticsControl.addActionListener(e -> showStatistics());
 
         buttons.add(startControl);
         buttons.add(stopControl);
-        buttons.add(pauseControl);
         buttons.add(statisticsControl);
 
         JPanel algos = new JPanel();
         algos.setLayout(layout);
         {
-            ButtonGroup group = new ButtonGroup();
+            group = new ButtonGroup();
             group.add(algoGreedy);
             group.add(algoTwoOptSwap);
             group.add(algoSimulatedAnnealing);
@@ -98,44 +92,39 @@ public class CSettingsPanel extends JPanel{
             newItems.add(sizeMax);
         }
 
-
         add(buttons);
         add(algos);
         add(newItems);
 
-
+        this.parent = parent;
     }
 
-
     private void startResume() {
-        /*startControl.setEnabled(false);
+        startControl.setEnabled(false);
         stopControl.setEnabled(true);
-        pauseControl.setEnabled(true);
 
-        itemData = new Object[(int)spAmount.getValue()][];
-        for (int i = 0; i < (int)spAmount.getValue(); ++i) {
-            itemData[i] = new Object[] { i + 1, Math.round(((double)spSizeMin.getValue() + ((double)spSizeMax.getValue() - (double)spSizeMin.getValue()))
-                    * new Random().nextDouble() * 100.0) / 100.0 };
+        parent.startAlgo(getSelection());
+    }
+
+    private int getSelection() {
+        if (group.getSelection().equals(algoGreedy.getModel())) {
+            return 0;
         }
-
-        DefaultTableModel model = new DefaultTableModel();
-        model.setDataVector(itemData, columnNames);*/
-        //.getItemTable().setModel(model);
-
-        //logger.println(String.format("Items aangemaakt (c:%d,n:%f,x:%f)", (int)spAmount.getValue(),
-        //        (double)spSizeMin.getValue(), (double)spSizeMax.getValue()), LoggerFactory.ErrorLevel.WARNING);
+        if (group.getSelection().equals(algoTwoOptSwap.getModel())) {
+            return 1;
+        }
+        if (group.getSelection().equals(algoSimulatedAnnealing.getModel())) {
+            return 2;
+        }
+        if (group.getSelection().equals(algoCustom.getModel())) {
+            return 3;
+        }
+        return -1;
     }
 
     private void stop() {
         startControl.setEnabled(true);
         stopControl.setEnabled(false);
-        pauseControl.setEnabled(false);
-    }
-
-    private void pause() {
-        startControl.setEnabled(true);
-        stopControl.setEnabled(true);
-        pauseControl.setEnabled(false);
     }
 
     private void showStatistics() {

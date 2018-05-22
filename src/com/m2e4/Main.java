@@ -21,25 +21,24 @@ public class Main {
     });
 
     public static void main(String[] args) {
-        DataBase dbc = new DataBase();
         MainFrame frame = new MainFrame();
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 threadPool.shutdownNow();
-                dbc.closeConn();
+                DataBase.closeConn();
                 System.exit(0);
             }
         });
         try {
-            dbc.connectDataBase();
-            dbc.getProducts();
+            DataBase.connectDataBase();
+            DataBase.ConnGetProducts();
         }
         catch (Exception e) {
             System.out.println(e);
         }
 
-        System.out.println(TspTwoOptSwap.TwoOptSwap(dbc.products));
-        System.out.println(TspGreedy.Greedy(dbc.products));
+        //System.out.println(TspTwoOptSwap.TwoOptSwap(DataBase.getProducts()));
+        //System.out.println(TspGreedy.Greedy(DataBase.getProducts()));
     }
 
     public static ExecutorService getThreadPool() {
