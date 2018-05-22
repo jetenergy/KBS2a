@@ -100,8 +100,8 @@ public class CSettingsPanel extends JPanel{
     }
 
     private void startResume() {
-        startControl.setEnabled(false);
-        stopControl.setEnabled(true);
+        //startControl.setEnabled(false);
+        //stopControl.setEnabled(true);
 
         parent.startAlgo(getSelection());
     }

@@ -3,7 +3,10 @@ package com.m2e4.gui;
 import com.m2e4.DataBase.DataBase;
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
+import com.m2e4.algorithm.TspEigenOplossing;
 import com.m2e4.algorithm.TspGreedy;
+import com.m2e4.algorithm.TspSimulatedAnnealing;
+import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.arduino.ArduinoClass;
 import com.m2e4.gui.tsp.CItemPanel;
 import com.m2e4.gui.tsp.CPositionPanel;
@@ -78,16 +81,16 @@ public class TspCFrame extends JFrame {
         logger.println("starting: " + algoritme);
         switch (algoritme) {
             case 0:
-                System.out.println();
+                CPosition.setProducten(TspGreedy.Greedy(producten));
                 break;
             case 1:
-                System.out.println();
+                CPosition.setProducten(TspTwoOptSwap.TwoOptSwap(producten));
                 break;
             case 2:
-                System.out.println();
+                CPosition.setProducten(TspSimulatedAnnealing.SimulatedAnnealing(producten));
                 break;
             case 3:
-                System.out.println();
+                CPosition.setProducten(TspEigenOplossing.EigenOplossing(producten));
                 break;
             case -1:
                 break;
@@ -97,8 +100,9 @@ public class TspCFrame extends JFrame {
 
     public void getItems() {
         producten = DataBase.getProducts();
-        CPosition.setProducten(producten);
+        CPosition.setProducten(TspGreedy.Greedy(producten));
         Citems.setTable(producten);
+        logger.println("Items Got", LoggerFactory.ErrorLevel.INFO);
     }
 
     public static void setArduino(String port) {

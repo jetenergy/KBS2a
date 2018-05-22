@@ -7,6 +7,8 @@ import com.m2e4.algorithm.TspSimulatedAnnealing;
 import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.gui.MainFrame;
 
+import javax.xml.crypto.Data;
+import java.sql.DatabaseMetaData;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -39,10 +41,10 @@ public class Main {
             System.out.println(e);
         }
 
-        System.out.println(TspTwoOptSwap.TwoOptSwap(dbc.products));
+        /*System.out.println(TspTwoOptSwap.TwoOptSwap(DataBase.products));
         System.out.println(TspGreedy.Greedy(dbc.products, true));
         System.out.println(TspSimulatedAnnealing.SimulatedAnnealing(dbc.products));
-        System.out.println(TspEigenOplossing.EigenOplossing(dbc.products));
+        System.out.println(TspEigenOplossing.EigenOplossing(dbc.products));*/
     }
 
     public static ExecutorService getThreadPool() {

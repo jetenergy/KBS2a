@@ -33,7 +33,6 @@ public class CItemPanel extends JPanel{
     }
 
     public void setTable(ArrayList<Product> producten) {
-        System.out.println(producten);
         itemData = new Object[producten.size()][];
         for (int i = 0; i < producten.size(); ++i) {
             itemData[i] = new Object[] { i + 1, producten.get(i).getX() , producten.get(i).getY()};
