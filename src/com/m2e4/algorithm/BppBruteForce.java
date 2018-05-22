@@ -11,11 +11,11 @@ public class BppBruteForce implements Algorithm {
     private short bestBoxesUsed = 32767;
 
     private int boxCount;
-    private int boxSize;
+    private double boxSize;
 
     private boolean ran = false;
 
-    public BppBruteForce(int boxCount, int boxSize) {
+    public BppBruteForce(int boxCount, double boxSize) {
         this.boxCount = boxCount;
         this.boxSize = boxSize;
     }
