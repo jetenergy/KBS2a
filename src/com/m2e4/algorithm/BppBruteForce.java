@@ -92,26 +92,15 @@ public class BppBruteForce implements Algorithm {
             return height;
         }
         public void add(Item i) {
-            size += i.height;
+            size += i.getHeight();
             items.add(i);
         }
         public void remove(Item i) {
-            size -= i.height;
+            size -= i.getHeight();
             items.remove(i);
         }
         public ArrayList<Item> getItems() {
             return items;
-        }
-    }
-
-    public static class Item {
-        private final double height;
-
-        public Item(double height) {
-            this.height = height;
-        }
-        public double getHeight() {
-            return height;
         }
     }
 }

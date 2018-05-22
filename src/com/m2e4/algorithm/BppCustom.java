@@ -1,6 +1,5 @@
 package com.m2e4.algorithm;
 
-import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,23 +59,23 @@ public class BppCustom implements Algorithm {
 
     private void tryItems(ArrayList<Item> current, ArrayList<Item> itemList) {
         double spaceAvailable = 0.0;
-        for (Item i : current) spaceAvailable += i.height;
+        for (Item i : current) spaceAvailable += i.getHeight();
         spaceAvailable = boxSize - spaceAvailable;
         System.out.println(String.format("Space available: %f", spaceAvailable));
         Item bestItem = null;
         double bestSpace = spaceAvailable;
 
         for (Item i : itemList) {
-            if (spaceAvailable - i.height < 0) continue;
-            if (spaceAvailable - i.height == 0) {
+            if (spaceAvailable - i.getHeight() < 0) continue;
+            if (spaceAvailable - i.getHeight() == 0) {
                 current.add(i);
                 itemList.remove(i);
                 return;
             }
 
-            if (bestSpace > spaceAvailable - i.height) {
+            if (bestSpace > spaceAvailable - i.getHeight()) {
                 bestItem = i;
-                bestSpace = spaceAvailable - i.height;
+                bestSpace = spaceAvailable - i.getHeight();
             }
         }
 
@@ -89,23 +88,5 @@ public class BppCustom implements Algorithm {
     @Override
     public Object getSolution() {
         return solution;
-    }
-
-
-
-    public static class Item implements Comparable<Item> {
-        private final double height;
-
-        public Item(double height) {
-            this.height = height;
-        }
-        public double getHeight() {
-            return height;
-        }
-
-        @Override
-        public int compareTo(Item o) {
-            return Double.compare(this.height, o.height);
-        }
     }
 }
