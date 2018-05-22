@@ -27,7 +27,7 @@ public class Main {
         }
 
         System.out.println(TspTwoOptSwap.TwoOptSwap(dbc.products));
-        System.out.println(TspGreedy.Greedy(dbc.products));
+        System.out.println(TspGreedy.Greedy(dbc.products, true));
         System.out.println(TspSimulatedAnnealing.SimulatedAnnealing(dbc.products));
         System.out.println(TspEigenOplossing.EigenOplossing(dbc.products));
     }
