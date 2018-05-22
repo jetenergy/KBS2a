@@ -1,5 +1,6 @@
 package com.m2e4.algorithm;
 
+import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,6 +11,8 @@ public class BppCustom implements Algorithm {
 
     private int boxCount;
     private double boxSize;
+
+    private boolean ran = false;
 
     public BppCustom(int boxCount, double boxSize) {
         this.boxCount = boxCount;
@@ -23,28 +26,69 @@ public class BppCustom implements Algorithm {
 
     @Override
     public void run() {
-        ArrayList<ArrayList<Item>> branch = new ArrayList<>();
-        ArrayList<Object> possibilities = new ArrayList<>();
+        if (ran)
+            throw new RuntimeException("Cannot run algorithm again");
 
-        for (int i = 0; i < boxCount; ++i)
-            branch.add(new ArrayList<>());
+        if (items.size() == 0)
+            throw new RuntimeException("Must have at least one item");
 
-        tryItem(0, 0, branch, possibilities);
+        // Create and fill solution list
+        solution = new ArrayList<>();
+        for (int i = 0; i < boxCount; ++i) {
+            solution.add(new ArrayList<>());
+        }
+
+
+        for (int i = 0; i < boxCount; ++i) {
+            if (items.size() != 0) {
+                ArrayList<Item> result = tryFill(i);
+                solution.remove(i);
+                solution.add(i, result);
+            }
+        }
+
+        if (items.size() > 0) solution = null;
     }
 
-    /**
-     * Tries to add an item to the first possible box, starting with box startId
-     * Recursively calls itself for each item
-     * @param startId
-     * @param branch
-     */
-    private void tryItem(int startId, int itemId, ArrayList<ArrayList<Item>> branch, ArrayList<Object> arraySet) {
+    private ArrayList<Item> tryFill(int boxId) {
+        solution.get(boxId).add(items.get(0));
+        items.remove(0);
+        ArrayList<Item> newBox = (ArrayList<Item>) solution.get(boxId).clone();
+        tryItems(newBox, items);
+        return newBox;
+    }
 
+    private void tryItems(ArrayList<Item> current, ArrayList<Item> itemList) {
+        double spaceAvailable = 0.0;
+        for (Item i : current) spaceAvailable += i.height;
+        spaceAvailable = boxSize - spaceAvailable;
+        System.out.println(String.format("Space available: %f", spaceAvailable));
+        Item bestItem = null;
+        double bestSpace = spaceAvailable;
+
+        for (Item i : itemList) {
+            if (spaceAvailable - i.height < 0) continue;
+            if (spaceAvailable - i.height == 0) {
+                current.add(i);
+                itemList.remove(i);
+                return;
+            }
+
+            if (bestSpace > spaceAvailable - i.height) {
+                bestItem = i;
+                bestSpace = spaceAvailable - i.height;
+            }
+        }
+
+        if (bestItem == null) return;
+        current.add(bestItem);
+        itemList.remove(bestItem);
+        tryItems(current, itemList);
     }
 
     @Override
     public Object getSolution() {
-        return null;
+        return solution;
     }
 
 
