@@ -1,10 +1,7 @@
 package com.m2e4;
 
 import javax.swing.*;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
+import javax.swing.text.*;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,6 +34,7 @@ public class LoggerFactory {
 
         protected Logger(JTextPane pane) {
             this.pane = pane;
+            ((DefaultCaret)pane.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         }
 
         /**
@@ -58,7 +56,7 @@ public class LoggerFactory {
 
             if (!editable) pane.setEditable(true);
             pane.replaceSelection(String.format("[%s][%s] %s\r\n",
-                    LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME), level, text));
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text));
             if (!editable) pane.setEditable(false);
         }
         public void println(String text) {

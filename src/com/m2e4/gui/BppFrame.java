@@ -1,12 +1,24 @@
 package com.m2e4.gui;
 
 import com.m2e4.LoggerFactory;
+import com.m2e4.Main;
+import com.m2e4.algorithm.BppBruteForce;
+import com.m2e4.algorithm.BppCustom;
+import com.m2e4.algorithm.BppNextFit;
+import com.m2e4.algorithm.Item;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class BppFrame extends JFrame {
@@ -15,20 +27,17 @@ public class BppFrame extends JFrame {
     private Object[] columnNames = new Object[]{ "Item", "Hoogte" };
 
     private JPanel JpTop, JpBottom;
-    private JPanel JpItems, JpSolution, JpBest, JpOptions, JpLog;
+    private JPanel JpItems, JpSolution, JpOptions, JpLog;
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
 
     private JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), columnNames);
     private JPanel solutionPanel = new JPanel();
-    private JPanel bestPanel = new JPanel();
-    private JButton startControl = new JButton("Start / Hervatten");
+    private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
-    private JButton pauseControl = new JButton("Pauze");
     private JButton statisticsControl = new JButton("Statistieken");
-    private JRadioButton algoBranchandbound = new JRadioButton("Branch-and-Bound");
-    private JRadioButton algoTwoFase = new JRadioButton("Two Fase");
+    private JRadioButton algoNextfit = new JRadioButton("Next Fit");
     private JRadioButton algoBruteForce = new JRadioButton("Brute Force");
-    private JRadioButton algoCustom = new JRadioButton("Eigen Oplossing");
+    private JRadioButton algoCustom = new JRadioButton("Eigen Oplossing", true);
     private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 1, 50, 1));
     private JSpinner spSizeMin = new JSpinner(new SpinnerNumberModel(1.0, 1.0, 4.0, 0.01));
     private JSpinner spSizeMax = new JSpinner(new SpinnerNumberModel(4.0, 2, 5.0, 0.01));
@@ -60,28 +69,23 @@ public class BppFrame extends JFrame {
         }
 
         JpSolution = new JPanel();
+        JpSolution.setLayout(new BoxLayout(JpSolution, BoxLayout.Y_AXIS));
         JpSolution.setBorder(border);
         {
-            JLabel title = new JLabel("Huidige oplossing");
+            JLabel title = new JLabel("Oplossing");
+            title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            solutionPanel.setLayout(new BoxLayout(solutionPanel, BoxLayout.Y_AXIS));
+            solutionPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JpSolution.add(title);
             JpSolution.add(solutionPanel);
         }
 
-        JpBest = new JPanel();
-        JpBest.setBorder(border);
-        {
-            JLabel title = new JLabel("Beste oplossing");
-
-            JpBest.add(title);
-            JpBest.add(bestPanel);
-        }
-
         JpTop = new JPanel();
-        JpTop.setLayout(new GridLayout(1, 3));
+        JpTop.setLayout(new GridLayout(1, 2));
         JpTop.add(JpItems);
         JpTop.add(JpSolution);
-        JpTop.add(JpBest);
         add(JpTop, BorderLayout.CENTER);
 
         JpOptions = new JPanel();
@@ -98,14 +102,10 @@ public class BppFrame extends JFrame {
                 stopControl.setEnabled(false);
                 stopControl.addActionListener(e -> stop());
 
-                pauseControl.setEnabled(false);
-                pauseControl.addActionListener(e -> pause());
-
                 statisticsControl.addActionListener(e -> showStatistics());
 
                 buttons.add(startControl);
                 buttons.add(stopControl);
-                buttons.add(pauseControl);
                 buttons.add(statisticsControl);
             }
 
@@ -113,13 +113,11 @@ public class BppFrame extends JFrame {
             algos.setLayout(layout);
             {
                 ButtonGroup group = new ButtonGroup();
-                group.add(algoBranchandbound);
-                group.add(algoTwoFase);
+                group.add(algoNextfit);
                 group.add(algoBruteForce);
                 group.add(algoCustom);
 
-                algos.add(algoBranchandbound);
-                algos.add(algoTwoFase);
+                algos.add(algoNextfit);
                 algos.add(algoBruteForce);
                 algos.add(algoCustom);
             }
@@ -190,13 +188,15 @@ public class BppFrame extends JFrame {
 
 
     private void startResume() {
+
         startControl.setEnabled(false);
         stopControl.setEnabled(true);
-        pauseControl.setEnabled(true);
+
+        solutionPanel.removeAll();
 
         itemData = new Object[(int)spAmount.getValue()][];
         for (int i = 0; i < (int)spAmount.getValue(); ++i) {
-            itemData[i] = new Object[] { i + 1, Math.round(((double)spSizeMin.getValue() + ((double)spSizeMax.getValue() - (double)spSizeMin.getValue()))
+            itemData[i] = new Object[] { i + 1, (double)spSizeMin.getValue() + Math.round(( ((double)spSizeMax.getValue() - (double)spSizeMin.getValue()))
                     * new Random().nextDouble() * 100.0) / 100.0 };
         }
 
@@ -204,20 +204,122 @@ public class BppFrame extends JFrame {
         model.setDataVector(itemData, columnNames);
         itemTable.setModel(model);
 
-        logger.println(String.format("Items aangemaakt (c:%d,n:%f,x:%f)", (int)spAmount.getValue(),
-                (double)spSizeMin.getValue(), (double)spSizeMax.getValue()), LoggerFactory.ErrorLevel.WARNING);
+        if (algoNextfit.isSelected()) {
+            Main.getThreadPool().execute(() -> {
+                BppNextFit algo = new BppNextFit(2, 10);
+                Item[] items = new Item[itemData.length];
+                for (int i = 0; i < itemData.length; ++i)
+                    items[i] = new Item((double)itemData[i][1]);
+                algo.setItems(items);
+                long startTime = System.nanoTime();
+                algo.run();
+                long endTime = System.nanoTime();
+
+                Object solution = algo.getSolution();
+                if (solution == null) {
+                    logger.println("Items passen niet!", LoggerFactory.ErrorLevel.ERROR);
+                }
+                else {
+                    ArrayList<ArrayList<Item>> solutionList = (ArrayList<ArrayList<Item>>) solution;
+                    logger.println(String.format("Oplossing gevonden in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)));
+
+                    for (int i = 0; i < solutionList.size(); ++i) {
+                        solutionPanel.add(new JLabel(String.format("Box %d:", i)));
+
+                        for (Item item : solutionList.get(i)) {
+                            solutionPanel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHeight()))));
+                        }
+                        solutionPanel.add(new JLabel(" "));
+                    }
+
+                    solutionPanel.updateUI();
+                }
+
+                startControl.setEnabled(true);
+                stopControl.setEnabled(false);
+            });
+        }
+        else if (algoBruteForce.isSelected()) {
+            Main.getThreadPool().execute(() -> {
+                BppBruteForce algo = new BppBruteForce(2, 10);
+                Item[] items = new Item[itemData.length];
+                for (int i = 0; i < itemData.length; ++i)
+                    items[i] = new Item((double)itemData[i][1]);
+                algo.setItems(items);
+                long startTime = System.nanoTime();
+                algo.run();
+                long endTime = System.nanoTime();
+
+                Object solution = algo.getSolution();
+                if (solution == null) {
+                    logger.println("Items passen niet!", LoggerFactory.ErrorLevel.ERROR);
+                }
+                else {
+                    ArrayList<BppBruteForce.Box> solutionList = (ArrayList<BppBruteForce.Box>) solution;
+                    logger.println(String.format("Oplossing gevonden in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)));
+
+                    for (int i = 0; i < solutionList.size(); ++i) {
+                        solutionPanel.add(new JLabel(String.format("Box %d:", i)));
+
+                        for (Item item : solutionList.get(i).getItems()) {
+                            solutionPanel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHeight()))));
+                        }
+                        solutionPanel.add(new JLabel(" "));
+                    }
+
+                    solutionPanel.updateUI();
+                }
+
+                startControl.setEnabled(true);
+                stopControl.setEnabled(false);
+
+            });
+        }
+        else {
+            Main.getThreadPool().execute(() -> {
+                BppCustom algo = new BppCustom(2, 10);
+                Item[] items = new Item[itemData.length];
+                for (int i = 0; i < itemData.length; ++i)
+                    items[i] = new Item((double)itemData[i][1]);
+                algo.setItems(items);
+                long startTime = System.nanoTime();
+                algo.run();
+                long endTime = System.nanoTime();
+
+                Object solution = algo.getSolution();
+                if (solution == null) {
+                    logger.println("Items passen niet!", LoggerFactory.ErrorLevel.ERROR);
+                }
+                else {
+                    ArrayList<ArrayList<Item>> solutionList = (ArrayList<ArrayList<Item>>) solution;
+                    logger.println(String.format("Oplossing gevonden in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)));
+
+                    for (int i = 0; i < solutionList.size(); ++i) {
+                        solutionPanel.add(new JLabel(String.format("Box %d:", i)));
+
+                        for (Item item : solutionList.get(i)) {
+                            solutionPanel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHeight()))));
+                        }
+                        solutionPanel.add(new JLabel(" "));
+                    }
+
+                    solutionPanel.updateUI();
+                }
+
+                startControl.setEnabled(true);
+                stopControl.setEnabled(false);
+            });
+        }
     }
 
     private void stop() {
         startControl.setEnabled(true);
         stopControl.setEnabled(false);
-        pauseControl.setEnabled(false);
     }
 
     private void pause() {
         startControl.setEnabled(true);
         stopControl.setEnabled(true);
-        pauseControl.setEnabled(false);
     }
 
     private void showStatistics() {
@@ -226,7 +328,23 @@ public class BppFrame extends JFrame {
 
 
     private void saveLog() {
+        File dir = new File("BppSimulator");
+        if (!dir.exists()) dir.mkdir();
 
+        System.out.print(dir.toString());
+
+        File[] files = dir.listFiles();
+
+        try {
+            PrintWriter writer = new PrintWriter(
+                    String.format("BppSimulator/log_%s_%d.txt", LocalDateTime.now().toString(), files.length),
+                    "UTF-8");
+            String text = TaLog.getDocument().getText(0, TaLog.getDocument().getLength());
+            writer.println(text);
+            writer.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException | BadLocationException e) {
+            e.printStackTrace();
+        }
     }
 
 }
