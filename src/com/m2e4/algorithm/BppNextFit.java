@@ -1,33 +1,28 @@
 package com.m2e4.algorithm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
-public class BppNextFit implements Algorithm {
-
-    private ArrayList<Item> items = new ArrayList<>();
-    private ArrayList<Box> solution;
-
-    private int boxCount;
-    private double boxSize;
+public class BppNextFit extends Algorithm {
 
     private boolean ran;
 
     public BppNextFit(int boxCount, double boxSize) {
-        this.boxCount = boxCount;
-        this.boxSize = boxSize;
+        super(boxCount, boxSize);
     }
 
     @Override
     public void setItems(Item[] i) {
         // Sets the items and sorts the item list in ascending order
-        this.items = new ArrayList<>(Arrays.asList(i));
+        super.setItems(i);
         Collections.sort(this.items);
     }
 
     @Override
     public void run() {
+        if (ran)
+            throw new RuntimeException("Cannot run algorithm again");
+
         // Filling solution list with boxes
         solution = new ArrayList<>();
         for (int i = 0; i < boxCount; ++i)
@@ -53,11 +48,6 @@ public class BppNextFit implements Algorithm {
         // If there are still items left, there was not enough space
         if (items.size() > 0) solution = null;
         ran = true;
-    }
-
-    @Override
-    public Object getSolution() {
-        return solution;
     }
 
 }
