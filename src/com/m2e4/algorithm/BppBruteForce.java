@@ -29,6 +29,7 @@ public class BppBruteForce implements Algorithm {
         if (ran)
             throw new RuntimeException("Cannot run algorithm again");
 
+        // Filling boxes list with boxes
         for (int i = 0; i < boxCount; ++i)
             boxes.add(new Box(boxSize));
 
@@ -37,30 +38,38 @@ public class BppBruteForce implements Algorithm {
     }
 
     private void tryItem(int i) {
+        // True when the index points to the last Item in the items list
         boolean last = (i == items.size() - 1);
 
+        // For each box...
         for (Box b : boxes) {
 
+            // Adding the first item to the box
             b.add(items.get(i));
-            if (!(b.size > b.height)) {
+            // If the used space in the box does not exceed the box's height...
+            if (!(b.getUsedHeight() > b.getHeight())) {
 
+                // Recursively calling this function if this item is not the last
                 if (!last) tryItem(i + 1);
                 else {
                     short boxesUsed = 0;
 
+                    // Getting the amount of used boxes
                     for (Box b1 : boxes)
-                        if (b1.size != 0)
+                        if (b1.getUsedHeight() != 0)
                             boxesUsed += 1;
 
+                    // If the amount of used boxes is smaller than the current best...
                     if (boxesUsed < bestBoxesUsed) {
+                        // Set the best solution to be this solution
                         bestSolution = new ArrayList<>();
                         for (int i0 = 0; i0 < boxCount; ++i0)
                             bestSolution.add(new Box(boxSize));
 
                         for (int i1 = 0; i1 < boxes.size(); ++i1) {
-                            for (int i2 = 0; i2 < boxes.get(i1).items.size(); ++i2) {
-                                bestSolution.get(i1).items.add(
-                                        boxes.get(i1).items.get(i2)
+                            for (int i2 = 0; i2 < boxes.get(i1).getItems().size(); ++i2) {
+                                bestSolution.get(i1).add(
+                                        boxes.get(i1).getItems().get(i2)
                                 );
                             }
                         }
@@ -70,6 +79,7 @@ public class BppBruteForce implements Algorithm {
                 }
 
             }
+            // Removes the item from the box
             b.remove(items.get(i));
         }
 
@@ -80,27 +90,4 @@ public class BppBruteForce implements Algorithm {
         return bestSolution;
     }
 
-    public static class Box {
-        private final double height;
-        private final ArrayList<Item> items = new ArrayList<>();
-        private double size = 0.0;
-
-        public Box(double height) {
-            this.height = height;
-        }
-        public double getHeight() {
-            return height;
-        }
-        public void add(Item i) {
-            size += i.getHeight();
-            items.add(i);
-        }
-        public void remove(Item i) {
-            size -= i.getHeight();
-            items.remove(i);
-        }
-        public ArrayList<Item> getItems() {
-            return items;
-        }
-    }
 }
