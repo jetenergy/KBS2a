@@ -6,7 +6,7 @@ import java.util.Collections;
 
 public class BppCustom implements Algorithm {
     private ArrayList<Item> items = new ArrayList<>();
-    private ArrayList<ArrayList<Item>> solution;
+    private ArrayList<Box> solution;
 
     private int boxCount;
     private double boxSize;
@@ -21,6 +21,7 @@ public class BppCustom implements Algorithm {
     public void setItems(Item[] i) {
         this.items = new ArrayList<>(Arrays.asList(i));
         Collections.sort(this.items);
+        Collections.reverse(this.items);
     }
 
     @Override
@@ -34,25 +35,28 @@ public class BppCustom implements Algorithm {
         // Create and fill solution list
         solution = new ArrayList<>();
         for (int i = 0; i < boxCount; ++i) {
-            solution.add(new ArrayList<>());
+            solution.add(new Box(boxSize));
         }
 
 
         for (int i = 0; i < boxCount; ++i) {
             if (items.size() != 0) {
                 ArrayList<Item> result = tryFill(i);
-                solution.remove(i);
-                solution.add(i, result);
+
+                for (Item item : result) {
+                    solution.get(i).add(item);
+                }
             }
         }
 
         if (items.size() > 0) solution = null;
+        ran = true;
     }
 
     private ArrayList<Item> tryFill(int boxId) {
-        solution.get(boxId).add(items.get(0));
+        ArrayList<Item> newBox = new ArrayList<>();
+        newBox.add(items.get(0));
         items.remove(0);
-        ArrayList<Item> newBox = (ArrayList<Item>) solution.get(boxId).clone();
         tryItems(newBox, items);
         return newBox;
     }

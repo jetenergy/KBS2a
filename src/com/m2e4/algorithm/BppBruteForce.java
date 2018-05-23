@@ -42,14 +42,14 @@ public class BppBruteForce implements Algorithm {
         for (Box b : boxes) {
 
             b.add(items.get(i));
-            if (!(b.size > b.height)) {
+            if (!(b.getUsedHeight() > b.getHeight())) {
 
                 if (!last) tryItem(i + 1);
                 else {
                     short boxesUsed = 0;
 
                     for (Box b1 : boxes)
-                        if (b1.size != 0)
+                        if (b1.getUsedHeight() != 0)
                             boxesUsed += 1;
 
                     if (boxesUsed < bestBoxesUsed) {
@@ -58,9 +58,9 @@ public class BppBruteForce implements Algorithm {
                             bestSolution.add(new Box(boxSize));
 
                         for (int i1 = 0; i1 < boxes.size(); ++i1) {
-                            for (int i2 = 0; i2 < boxes.get(i1).items.size(); ++i2) {
-                                bestSolution.get(i1).items.add(
-                                        boxes.get(i1).items.get(i2)
+                            for (int i2 = 0; i2 < boxes.get(i1).getItems().size(); ++i2) {
+                                bestSolution.get(i1).add(
+                                        boxes.get(i1).getItems().get(i2)
                                 );
                             }
                         }
@@ -80,27 +80,4 @@ public class BppBruteForce implements Algorithm {
         return bestSolution;
     }
 
-    public static class Box {
-        private final double height;
-        private final ArrayList<Item> items = new ArrayList<>();
-        private double size = 0.0;
-
-        public Box(double height) {
-            this.height = height;
-        }
-        public double getHeight() {
-            return height;
-        }
-        public void add(Item i) {
-            size += i.getHeight();
-            items.add(i);
-        }
-        public void remove(Item i) {
-            size -= i.getHeight();
-            items.remove(i);
-        }
-        public ArrayList<Item> getItems() {
-            return items;
-        }
-    }
 }

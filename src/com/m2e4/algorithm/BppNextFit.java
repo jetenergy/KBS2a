@@ -7,10 +7,12 @@ import java.util.Collections;
 public class BppNextFit implements Algorithm {
 
     private ArrayList<Item> items = new ArrayList<>();
-    private ArrayList<ArrayList<Item>> solution;
+    private ArrayList<Box> solution;
 
     private int boxCount;
     private double boxSize;
+
+    private boolean ran;
 
     public BppNextFit(int boxCount, double boxSize) {
         this.boxCount = boxCount;
@@ -28,16 +30,14 @@ public class BppNextFit implements Algorithm {
         solution = new ArrayList<>();
 
         for (int i = 0; i < boxCount; ++i)
-            solution.add(new ArrayList<>());
+            solution.add(new Box(boxSize));
 
-        for (ArrayList<Item> box : solution) {
+        for (Box box : solution) {
             if (items.size() == 0) break;
-            double spaceAvailable = boxSize;
 
             while (true) {
-                if (items.get(0).getHeight() <= spaceAvailable) {
+                if (items.get(0).getHeight() <= box.getHeight() - box.getUsedHeight()) {
                     box.add(items.get(0));
-                    spaceAvailable -= items.get(0).getHeight();
                     items.remove(0);
                 } else break;
                 if (items.size() == 0) break;
@@ -45,6 +45,7 @@ public class BppNextFit implements Algorithm {
         }
 
         if (items.size() > 0) solution = null;
+        ran = true;
     }
 
     @Override
