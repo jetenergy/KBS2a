@@ -5,8 +5,8 @@ import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
 import com.m2e4.algorithm.TspGreedy;
 import com.m2e4.arduino.ArduinoClass;
-import com.m2e4.gui.tsp.CItemPanel;
-import com.m2e4.gui.tsp.CPositionPanel;
+import com.m2e4.gui.tsp.ItemPanel;
+import com.m2e4.gui.tsp.PositionPanel;
 import com.m2e4.gui.tsp.CSettingsPanel;
 
 import javax.swing.*;
@@ -15,8 +15,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class TspCFrame extends JFrame {
-    private CPositionPanel CPosition;
-    private CItemPanel Citems;
+    private PositionPanel CPosition;
+    private ItemPanel Citems;
     private CSettingsPanel CSettings;
     private JPanel JpTop, JpBottom, JpLog;
 
@@ -36,8 +36,8 @@ public class TspCFrame extends JFrame {
         setSize(960, 500);
         setMinimumSize(new Dimension(940, 420));
 
-        Citems = new CItemPanel();
-        CPosition = new CPositionPanel("Beste oplossing");
+        Citems = new ItemPanel();
+        CPosition = new PositionPanel("Beste oplossing");
 
         JpTop = new JPanel();
         JpTop.setLayout(new GridLayout(1, 2));

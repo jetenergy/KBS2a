@@ -19,9 +19,9 @@ public class SSettingsPanel extends JPanel{
     private JRadioButton algoCustom = new JRadioButton("Eigen Oplossing");
     private ButtonGroup group;
 
-    private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 1, 50, 1));
-    private JSpinner spMaxHeight = new JSpinner(new SpinnerNumberModel(5, 5, 100, 1));
-    private JSpinner spMaxWidth = new JSpinner(new SpinnerNumberModel(5, 5, 100, 1));
+    private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 2, 50, 1));
+    private JSpinner spMaxHeight = new JSpinner(new SpinnerNumberModel(5, 5, 20, 1));
+    private JSpinner spMaxWidth = new JSpinner(new SpinnerNumberModel(5, 5, 20, 1));
 
     private TspFrame parent;
 

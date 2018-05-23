@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class TspFrame extends JFrame {
-    private CPositionPanel SolutionPanel;
-    private CPositionPanel SolutionPrevious;
-    private CItemPanel Sitems;
+    private PositionPanel SolutionPanel;
+    private PositionPanel SolutionPrevious;
+    private ItemPanel Sitems;
     private SSettingsPanel SSettings;
     private JPanel JpTop, JpBottom, JpLog;
 
@@ -36,9 +36,9 @@ public class TspFrame extends JFrame {
         setSize(960, 500);
         setMinimumSize(new Dimension(940, 420));
 
-        Sitems = new CItemPanel();
-        SolutionPanel = new CPositionPanel("Beste oplossing");
-        SolutionPrevious = new CPositionPanel("Vorrige Oplossing");
+        Sitems = new ItemPanel();
+        SolutionPanel = new PositionPanel("Beste oplossing");
+        SolutionPrevious = new PositionPanel("Vorrige Oplossing");
 
         JpTop = new JPanel();
         JpTop.setLayout(new GridLayout(1, 3));
@@ -76,7 +76,6 @@ public class TspFrame extends JFrame {
     }
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
-
         producten = new ArrayList<>();
         Random r = new Random();
         for (int i = 0; i < amount; i++) {
@@ -85,6 +84,7 @@ public class TspFrame extends JFrame {
             Product product = new Product("", 0, 0, x, y);
             producten.add(product);
         }
+
         for (int i = 0; i < producten.size(); i++) {
             for (int y = 0; y < producten.size(); y++) {
                 if (!producten.get(i).equals(producten.get(y))) {
@@ -93,20 +93,18 @@ public class TspFrame extends JFrame {
                         producten.get(i).setX(r.nextInt(maxX));
                         producten.get(i).setY(r.nextInt(maxY));
                         y = 0;
+                        i = 0;
                     }
                 }
             }
         }
 
-
         logger.println("starting: " + algoritme);
         SolutionPrevious.setProducten(SolutionPanel.getProducten());
         SolutionPrevious.setGridWidth(SolutionPanel.getGridWidth());
         SolutionPrevious.setGridHeight(SolutionPanel.getGridHeight());
-        //SolutionPrevious.setSquareWidth(SolutionPanel.getSquareWidth());
         SolutionPanel.setGridHeight(maxY);
         SolutionPanel.setGridWidth(maxX);
-        //SolutionPanel.setSquareWidth();
         switch (algoritme) {
             case 0:
                 SolutionPanel.setProducten(TspGreedy.Greedy(producten));
