@@ -256,6 +256,8 @@ public class BppFrame extends JFrame {
             return;
         }
 
+        logger.println(String.format("Algoritme %s", type.getSimpleName()));
+
         // Creates an array of Items from the random item array
         Item[] items = new Item[itemData.length];
         for (int i = 0; i < itemData.length; ++i)
@@ -286,6 +288,18 @@ public class BppFrame extends JFrame {
             logger.println("Items passen niet!", LoggerFactory.ErrorLevel.ERROR);
         }
         else {
+            StringBuilder logOut = new StringBuilder("\r\n");
+            for (int i = 0; i < solution.size(); i++) {
+                logOut.append(String.format("Doos %d:\r\n", i));
+
+                for (Item item : solution.get(i).getItems()) {
+                    logOut.append(String.format("\tItem (grootte: %s)\r\n", new DecimalFormat("#.##").format(item.getHeight())));
+                }
+
+                logOut.append("\r\n");
+            }
+            logger.println(logOut.toString(), LoggerFactory.ErrorLevel.RESULT);
+
             logger.println(String.format("Oplossing gevonden in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)));
 
             // Displaying all boxes
