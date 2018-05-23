@@ -3,10 +3,7 @@ package com.m2e4.gui;
 import com.m2e4.DataBase.DataBase;
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
-import com.m2e4.algorithm.TspEigenOplossing;
 import com.m2e4.algorithm.TspGreedy;
-import com.m2e4.algorithm.TspSimulatedAnnealing;
-import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.arduino.ArduinoClass;
 import com.m2e4.gui.tsp.CItemPanel;
 import com.m2e4.gui.tsp.CPositionPanel;
@@ -40,7 +37,7 @@ public class TspCFrame extends JFrame {
         setMinimumSize(new Dimension(940, 420));
 
         Citems = new CItemPanel();
-        CPosition = new CPositionPanel();
+        CPosition = new CPositionPanel("Beste oplossing");
 
         JpTop = new JPanel();
         JpTop.setLayout(new GridLayout(1, 2));
@@ -76,25 +73,9 @@ public class TspCFrame extends JFrame {
         logger.println("TSP Controll geopend");
     }
 
-    public void startAlgo(int algoritme) {
-
-        logger.println("starting: " + algoritme);
-        switch (algoritme) {
-            case 0:
-                CPosition.setProducten(TspGreedy.Greedy(producten));
-                break;
-            case 1:
-                CPosition.setProducten(TspTwoOptSwap.TwoOptSwap(producten));
-                break;
-            case 2:
-                CPosition.setProducten(TspSimulatedAnnealing.SimulatedAnnealing(producten));
-                break;
-            case 3:
-                CPosition.setProducten(TspEigenOplossing.EigenOplossing(producten));
-                break;
-            case -1:
-                break;
-        }
+    public void startAlgo() {
+        logger.println("starting: Greedy");
+        CPosition.setProducten(TspGreedy.Greedy(producten));
         repaint();
     }
 

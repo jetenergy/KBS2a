@@ -14,12 +14,12 @@ public class TspEigenOplossing {
         Product beginPunt = new Product("", 0, 0, -1, 0);
         Random r = new Random();
 
-        int oudeAfstand = 999999;
+        double oudeAfstand = 999999;
 
         ArrayList<Product> nieuweTour = new ArrayList<>(huidigeTour);
 
-        int afstand = 0;
-        int lengte;
+        double afstand = 0;
+        double lengte;
 
         //Kiest twee willekeurige producten.
         int p1 = r.nextInt(nieuweTour.size()-1);

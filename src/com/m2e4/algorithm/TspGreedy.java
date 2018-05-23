@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class TspGreedy {
 
     public static ArrayList<Product> Greedy(ArrayList<Product> producten, boolean laatzien){
-        int nieuweAfstand;
+        double nieuweAfstand;
 
         ArrayList<Product> workingProducts = new ArrayList<>(producten);
         ArrayList<Product> huidigBest = new ArrayList<>();
@@ -23,7 +23,7 @@ public class TspGreedy {
             // Gaat array langs om kortste route van huidige product naar product+1 te vinden.
             for (Product workingProduct : workingProducts) {
                 next = workingProduct;
-                int afstand = laatste.abs(next);
+                double afstand = laatste.abs(next);
 
                 //Als er nieuwe betere route is gevonden, wordt de oude vervangen met de nieuwe.
                 if (nieuweAfstand > afstand) {

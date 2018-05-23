@@ -10,9 +10,9 @@ public class TspSimulatedAnnealing {
     static ArrayList<Product> besteTour;
 
     static private void nieuwTour(ArrayList<Product> huidigeTour, boolean laatzien) {
-        int oudeAfstand = 999999;
-        int afstand = 0;
-        int lengte;
+        double oudeAfstand = 999999;
+        double afstand = 0;
+        double lengte;
 
         //Maakt leeg product aan voor startpositie 0, 0.
         Product beginPunt = new Product("", 0, 0, -1, 0);

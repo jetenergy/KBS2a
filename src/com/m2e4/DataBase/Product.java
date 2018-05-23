@@ -35,14 +35,22 @@ public class Product {
         return x;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
     public int getY() {
         return y;
     }
 
-    public int abs(Product compare){
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public double abs(Product compare){
         int x = Math.abs(this.getX() - compare.getX());
         int y = Math.abs(this.getY() - compare.getY());
-        return x+y;
+        return Math.sqrt(Math.exp(x)+Math.exp(y));
     }
 
     @Override
