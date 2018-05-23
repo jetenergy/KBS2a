@@ -29,6 +29,7 @@ public class BppBruteForce implements Algorithm {
         if (ran)
             throw new RuntimeException("Cannot run algorithm again");
 
+        // Filling boxes list with boxes
         for (int i = 0; i < boxCount; ++i)
             boxes.add(new Box(boxSize));
 
@@ -37,22 +38,30 @@ public class BppBruteForce implements Algorithm {
     }
 
     private void tryItem(int i) {
+        // True when the index points to the last Item in the items list
         boolean last = (i == items.size() - 1);
 
+        // For each box...
         for (Box b : boxes) {
 
+            // Adding the first item to the box
             b.add(items.get(i));
+            // If the used space in the box does not exceed the box's height...
             if (!(b.getUsedHeight() > b.getHeight())) {
 
+                // Recursively calling this function if this item is not the last
                 if (!last) tryItem(i + 1);
                 else {
                     short boxesUsed = 0;
 
+                    // Getting the amount of used boxes
                     for (Box b1 : boxes)
                         if (b1.getUsedHeight() != 0)
                             boxesUsed += 1;
 
+                    // If the amount of used boxes is smaller than the current best...
                     if (boxesUsed < bestBoxesUsed) {
+                        // Set the best solution to be this solution
                         bestSolution = new ArrayList<>();
                         for (int i0 = 0; i0 < boxCount; ++i0)
                             bestSolution.add(new Box(boxSize));
@@ -70,6 +79,7 @@ public class BppBruteForce implements Algorithm {
                 }
 
             }
+            // Removes the item from the box
             b.remove(items.get(i));
         }
 

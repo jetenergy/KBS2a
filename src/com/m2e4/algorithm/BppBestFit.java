@@ -27,18 +27,18 @@ public class BppBestFit implements Algorithm {
         if (ran)
             throw new RuntimeException("Cannot run algorithm again");
 
-        // Fill solution list with boxes
+        // Filling solution list with boxes
         solution = new ArrayList<>();
         for (int i = 0; i < boxCount; ++i)
             solution.add(new Box(boxSize));
 
         // For each item...
         for (Item item : items) {
-            // Check each box to find the tightest fit
+            // Checking each box to find the tightest fit
             Box bestBox = null;
 
             for (Box box : solution) {
-                // Picks boxes with enough space to hold the item, then checks if the used space is
+                // Picking boxes with enough space to hold the item, then checking if the used space is
                 // less than the best box found
                 if ( box.getHeight() - box.getUsedHeight() - item.getHeight() >= 0 ) {
                     if (bestBox == null || bestBox.getUsedHeight() < box.getUsedHeight())
@@ -52,7 +52,7 @@ public class BppBestFit implements Algorithm {
                 return;
             }
 
-            // Adds the item to the box
+            // Adding the item to the box
             bestBox.add(item);
         }
 
