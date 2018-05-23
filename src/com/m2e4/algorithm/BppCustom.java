@@ -1,26 +1,19 @@
 package com.m2e4.algorithm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
-public class BppCustom implements Algorithm {
-    private ArrayList<Item> items = new ArrayList<>();
-    private ArrayList<Box> solution;
-
-    private int boxCount;
-    private double boxSize;
+public class BppCustom extends Algorithm {
 
     private boolean ran = false;
 
     public BppCustom(int boxCount, double boxSize) {
-        this.boxCount = boxCount;
-        this.boxSize = boxSize;
+        super(boxCount, boxSize);
     }
 
     public void setItems(Item[] i) {
         // Sets the items and sorts the item list in descending order
-        this.items = new ArrayList<>(Arrays.asList(i));
+        super.setItems(i);
         Collections.sort(this.items);
         Collections.reverse(this.items);
     }
@@ -110,8 +103,4 @@ public class BppCustom implements Algorithm {
         tryItems(current, itemList);
     }
 
-    @Override
-    public Object getSolution() {
-        return solution;
-    }
 }

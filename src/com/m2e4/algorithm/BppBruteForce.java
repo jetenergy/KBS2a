@@ -1,27 +1,16 @@
 package com.m2e4.algorithm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class BppBruteForce implements Algorithm {
+public class BppBruteForce extends Algorithm {
 
     private final ArrayList<Box> boxes = new ArrayList<>();
-    private ArrayList<Item> items = new ArrayList<>();
-    private ArrayList<Box> bestSolution;
     private short bestBoxesUsed = 32767;
-
-    private int boxCount;
-    private double boxSize;
 
     private boolean ran = false;
 
     public BppBruteForce(int boxCount, double boxSize) {
-        this.boxCount = boxCount;
-        this.boxSize = boxSize;
-    }
-
-    public void setItems(Item[] i) {
-        this.items = new ArrayList<>(Arrays.asList(i));
+        super(boxCount, boxSize);
     }
 
     @Override
@@ -62,13 +51,13 @@ public class BppBruteForce implements Algorithm {
                     // If the amount of used boxes is smaller than the current best...
                     if (boxesUsed < bestBoxesUsed) {
                         // Set the best solution to be this solution
-                        bestSolution = new ArrayList<>();
+                        solution = new ArrayList<>();
                         for (int i0 = 0; i0 < boxCount; ++i0)
-                            bestSolution.add(new Box(boxSize));
+                            solution.add(new Box(boxSize));
 
                         for (int i1 = 0; i1 < boxes.size(); ++i1) {
                             for (int i2 = 0; i2 < boxes.get(i1).getItems().size(); ++i2) {
-                                bestSolution.get(i1).add(
+                                solution.get(i1).add(
                                         boxes.get(i1).getItems().get(i2)
                                 );
                             }
@@ -83,11 +72,6 @@ public class BppBruteForce implements Algorithm {
             b.remove(items.get(i));
         }
 
-    }
-
-    @Override
-    public Object getSolution() {
-        return bestSolution;
     }
 
 }

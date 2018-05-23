@@ -1,25 +1,13 @@
 package com.m2e4.algorithm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class BppBestFit implements Algorithm {
-    private ArrayList<Item> items = new ArrayList<>();
-    private ArrayList<Box> solution;
-
-    private int boxCount;
-    private double boxSize;
+public class BppBestFit extends Algorithm {
 
     private boolean ran = false;
 
     public BppBestFit(int boxCount, double boxSize) {
-        this.boxCount = boxCount;
-        this.boxSize = boxSize;
-    }
-
-    @Override
-    public void setItems(Item[] i) {
-        this.items = new ArrayList<>(Arrays.asList(i));
+        super(boxCount, boxSize);
     }
 
     @Override
@@ -59,8 +47,4 @@ public class BppBestFit implements Algorithm {
         ran = true;
     }
 
-    @Override
-    public Object getSolution() {
-        return solution;
-    }
 }

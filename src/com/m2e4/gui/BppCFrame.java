@@ -109,6 +109,7 @@ public class BppCFrame extends JFrame {
         JpTop.setLayout(new GridLayout(1, 3));
         JpTop.add(JpOrder);
         JpTop.add(JpCurrentBoxes);
+        JpTop.add(JpFilledBoxes);
         add(JpTop, BorderLayout.CENTER);
 
         // Displays the options for running the algorithms and generating the items
