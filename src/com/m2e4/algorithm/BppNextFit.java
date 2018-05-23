@@ -3,7 +3,7 @@ package com.m2e4.algorithm;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class BppNextFit extends Algorithm {
+public class BppNextFit extends BppAlgorithm {
 
     private boolean ran;
 

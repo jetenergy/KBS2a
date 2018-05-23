@@ -33,14 +33,7 @@ public class BppCFrame extends JFrame {
     private JPanel filledPanel = new JPanel();
     private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
-    private JButton statisticsControl = new JButton("Statistieken");
-    private JRadioButton algoNextfit = new JRadioButton("Next Fit");
-    private JRadioButton algoBestFit = new JRadioButton("Best Fit");
-    private JRadioButton algoBruteForce = new JRadioButton("Brute Force");
-    private JRadioButton algoCustom = new JRadioButton("Eigen Oplossing", true);
-    private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 1, 50, 1));
-    private JSpinner spSizeMin = new JSpinner(new SpinnerNumberModel(1.0, 1.0, 4.0, 0.01));
-    private JSpinner spSizeMax = new JSpinner(new SpinnerNumberModel(4.0, 2, 5.0, 0.01));
+    private JButton continueControl = new JButton("Verder");
     private JTextPane TaLog = new JTextPane();
 
     private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
@@ -79,11 +72,11 @@ public class BppCFrame extends JFrame {
         JpCurrentBoxes.setLayout(new BoxLayout(JpCurrentBoxes, BoxLayout.Y_AXIS));
         JpCurrentBoxes.setBorder(border);
         {
-            JLabel title = new JLabel("Oplossing");
+            JLabel title = new JLabel("Huidige dozen");
             title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            filledPanel.setLayout(new BoxLayout(filledPanel, BoxLayout.Y_AXIS));
-            filledPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            currentPanel.setLayout(new BoxLayout(currentPanel, BoxLayout.Y_AXIS));
+            currentPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JpCurrentBoxes.add(title);
             JpCurrentBoxes.add(filledPanel);
@@ -94,11 +87,11 @@ public class BppCFrame extends JFrame {
         JpFilledBoxes.setLayout(new BoxLayout(JpFilledBoxes, BoxLayout.Y_AXIS));
         JpFilledBoxes.setBorder(border);
         {
-            JLabel title = new JLabel("Oplossing");
+            JLabel title = new JLabel("Gevulde dozen");
             title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            currentPanel.setLayout(new BoxLayout(currentPanel, BoxLayout.Y_AXIS));
-            currentPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            filledPanel.setLayout(new BoxLayout(filledPanel, BoxLayout.Y_AXIS));
+            filledPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JpFilledBoxes.add(title);
             JpFilledBoxes.add(currentPanel);
@@ -127,11 +120,12 @@ public class BppCFrame extends JFrame {
                 stopControl.setEnabled(false);
                 stopControl.addActionListener(e -> stop());
 
-                statisticsControl.addActionListener(e -> showStatistics());
+                continueControl.setEnabled(false);
+                continueControl.addActionListener(e -> showStatistics());
 
                 buttons.add(startControl);
                 buttons.add(stopControl);
-                buttons.add(statisticsControl);
+                buttons.add(continueControl);
             }
 
             JpOptions.add(buttons);

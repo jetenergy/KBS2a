@@ -3,7 +3,7 @@ package com.m2e4.algorithm;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class BppCustom extends Algorithm {
+public class BppCustom extends BppAlgorithm {
 
     private boolean ran = false;
 

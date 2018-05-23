@@ -2,7 +2,7 @@ package com.m2e4.algorithm;
 
 import java.util.ArrayList;
 
-public class BppBruteForce extends Algorithm {
+public class BppBruteForce extends BppAlgorithm {
 
     private final ArrayList<Box> boxes = new ArrayList<>();
     private short bestBoxesUsed = 32767;

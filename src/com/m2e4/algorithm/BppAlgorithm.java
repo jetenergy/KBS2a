@@ -3,7 +3,7 @@ package com.m2e4.algorithm;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public abstract class Algorithm {
+public abstract class BppAlgorithm {
 
     ArrayList<Item> items = new ArrayList<>();
     ArrayList<Box> solution = new ArrayList<>();
@@ -11,7 +11,7 @@ public abstract class Algorithm {
     int boxCount;
     double boxSize;
 
-    public Algorithm(int boxCount, double boxSize) {
+    public BppAlgorithm(int boxCount, double boxSize) {
         this.boxCount = boxCount;
         this.boxSize = boxSize;
     }
