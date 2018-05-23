@@ -243,14 +243,14 @@ public class BppFrame extends JFrame {
 
     /**
      * Runs an algorithm and causes the solution display to update
-     * @param type Any class that implements Algorithm
+     * @param type Any class that implements BppAlgorithm
      * @param <T> Any algorithm
      */
-    private <T extends Algorithm> void runAlgorithm(Class<T> type) {
+    private <T extends BppAlgorithm> void runAlgorithm(Class<T> type) {
         // Constructing an algorithm of type T
-        Algorithm algo;
+        BppAlgorithm algo;
         try {
-            algo = (Algorithm) type.getConstructors()[0].newInstance(boxCount, boxSize);
+            algo = (BppAlgorithm) type.getConstructors()[0].newInstance(boxCount, boxSize);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return;

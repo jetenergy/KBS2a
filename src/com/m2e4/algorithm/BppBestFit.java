@@ -2,7 +2,7 @@ package com.m2e4.algorithm;
 
 import java.util.ArrayList;
 
-public class BppBestFit extends Algorithm {
+public class BppBestFit extends BppAlgorithm {
 
     private boolean ran = false;
 
