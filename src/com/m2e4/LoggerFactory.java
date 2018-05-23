@@ -56,7 +56,7 @@ public class LoggerFactory {
 
             if (!editable) pane.setEditable(true);
             pane.replaceSelection(String.format("[%s][%s] %s\r\n",
-                    LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME), level, text));
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text));
             if (!editable) pane.setEditable(false);
         }
         public void println(String text) {
