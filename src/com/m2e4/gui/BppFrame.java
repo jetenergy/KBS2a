@@ -37,7 +37,6 @@ public class BppFrame extends JFrame {
     private JPanel solutionPanel = new JPanel();
     private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
-    private JButton statisticsControl = new JButton("Statistieken");
     private JRadioButton algoNextfit = new JRadioButton("Next Fit");
     private JRadioButton algoBestFit = new JRadioButton("Best Fit");
     private JRadioButton algoBruteForce = new JRadioButton("Brute Force");
@@ -115,11 +114,8 @@ public class BppFrame extends JFrame {
                 stopControl.setEnabled(false);
                 stopControl.addActionListener(e -> stop());
 
-                statisticsControl.addActionListener(e -> showStatistics());
-
                 buttons.add(startControl);
                 buttons.add(stopControl);
-                buttons.add(statisticsControl);
             }
 
             JPanel algos = new JPanel();
@@ -290,7 +286,7 @@ public class BppFrame extends JFrame {
         else {
             StringBuilder logOut = new StringBuilder("\r\n");
             for (int i = 0; i < solution.size(); i++) {
-                logOut.append(String.format("Doos %d:\r\n", i));
+                logOut.append(String.format("Doos %d:\r\n", i + 1));
 
                 for (Item item : solution.get(i).getItems()) {
                     logOut.append(String.format("\tItem (grootte: %s)\r\n", new DecimalFormat("#.##").format(item.getHeight())));
@@ -304,7 +300,7 @@ public class BppFrame extends JFrame {
 
             // Displaying all boxes
             for (int i = 0; i < solution.size(); ++i) {
-                solutionPanel.add(new JLabel(String.format("Box %d:", i)));
+                solutionPanel.add(new JLabel(String.format("Doos %d:", i + 1)));
 
                 // Displaying all items
                 for (Item item : solution.get(i).getItems()) {
@@ -324,10 +320,6 @@ public class BppFrame extends JFrame {
     private void stop() {
         startControl.setEnabled(true);
         stopControl.setEnabled(false);
-    }
-
-    private void showStatistics() {
-
     }
 
 

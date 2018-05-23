@@ -11,6 +11,7 @@ public class BppCustom extends BppAlgorithm {
         super(boxCount, boxSize);
     }
 
+    @Override
     public void setItems(Item[] i) {
         // Sets the items and sorts the item list in descending order
         super.setItems(i);
