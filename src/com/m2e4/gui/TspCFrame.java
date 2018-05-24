@@ -3,7 +3,7 @@ package com.m2e4.gui;
 import com.m2e4.DataBase.DataBase;
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
-import com.m2e4.algorithm.TspGreedy;
+import com.m2e4.algorithm.TspEigenOplossing;
 import com.m2e4.arduino.ArduinoClass;
 import com.m2e4.gui.tsp.ItemPanel;
 import com.m2e4.gui.tsp.PositionPanel;
@@ -68,22 +68,19 @@ public class TspCFrame extends JFrame {
         JpBottom.add(CSettings);
         JpBottom.add(JpLog);
         add(JpBottom, BorderLayout.SOUTH);
-
-
-        logger.println("TSP Controll geopend");
     }
 
     public void startAlgo() {
-        logger.println("starting: Greedy");
-        CPosition.setProducten(TspGreedy.Greedy(producten));
+        logger.println("Starten: ");
+        CPosition.setProducten(TspEigenOplossing.EigenOplossing(producten));
         repaint();
     }
 
     public void getItems() {
         producten = DataBase.getProducts();
-        CPosition.setProducten(TspGreedy.Greedy(producten));
+        CPosition.setProducten(TspEigenOplossing.EigenOplossing(producten));
         Citems.setTable(producten);
-        logger.println("Items Got", LoggerFactory.ErrorLevel.INFO);
+        logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
     }
 
     public static void setArduino(String port) {
@@ -100,7 +97,7 @@ public class TspCFrame extends JFrame {
     }
 
     private void saveLog() {
-
+        logger.saveLog("TspControll");
     }
 
     @Override

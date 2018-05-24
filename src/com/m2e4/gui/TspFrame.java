@@ -38,7 +38,7 @@ public class TspFrame extends JFrame {
 
         Sitems = new ItemPanel();
         SolutionPanel = new PositionPanel("Beste oplossing");
-        SolutionPrevious = new PositionPanel("Vorrige Oplossing");
+        SolutionPrevious = new PositionPanel("Vorige Oplossing");
 
         JpTop = new JPanel();
         JpTop.setLayout(new GridLayout(1, 3));
@@ -70,36 +70,38 @@ public class TspFrame extends JFrame {
         JpBottom.add(SSettings);
         JpBottom.add(JpLog);
         add(JpBottom, BorderLayout.SOUTH);
-
-
-        logger.println("TSP Controll geopend");
     }
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
-        producten = new ArrayList<>();
-        Random r = new Random();
-        for (int i = 0; i < amount; i++) {
-            int x = r.nextInt(maxX);
-            int y = r.nextInt(maxY);
-            Product product = new Product("", 0, 0, x, y);
-            producten.add(product);
-        }
+        if (producten.size() != amount ||
+                SolutionPanel.getGridHeight() != maxY ||
+                SolutionPanel.getGridWidth() != maxX) {
+            producten = new ArrayList<>();
+            Random r = new Random();
+            for (int i = 0; i < amount; i++) {
+                int x = r.nextInt(maxX);
+                int y = r.nextInt(maxY);
+                Product product = new Product("", 0, 0, x, y);
+                producten.add(product);
+            }
 
-        for (int i = 0; i < producten.size(); i++) {
-            for (int y = 0; y < producten.size(); y++) {
-                if (!producten.get(i).equals(producten.get(y))) {
-                    if (producten.get(i).getY() == producten.get(y).getY() &&
-                            producten.get(i).getX() == producten.get(y).getX()) {
-                        producten.get(i).setX(r.nextInt(maxX));
-                        producten.get(i).setY(r.nextInt(maxY));
-                        y = 0;
-                        i = 0;
+            for (int i = 0; i < producten.size(); i++) {
+                for (int y = 0; y < producten.size(); y++) {
+                    if (!producten.get(i).equals(producten.get(y))) {
+                        if (producten.get(i).getY() == producten.get(y).getY() &&
+                                producten.get(i).getX() == producten.get(y).getX()) {
+                            producten.get(i).setX(r.nextInt(maxX));
+                            producten.get(i).setY(r.nextInt(maxY));
+                            y = 0;
+                            i = 0;
+                        }
                     }
                 }
             }
+            Sitems.setTable(producten);
         }
 
-        logger.println("starting: " + algoritme);
+        logger.println("starten: " + algoName(algoritme));
         SolutionPrevious.setProducten(SolutionPanel.getProducten());
         SolutionPrevious.setGridWidth(SolutionPanel.getGridWidth());
         SolutionPrevious.setGridHeight(SolutionPanel.getGridHeight());
@@ -122,17 +124,36 @@ public class TspFrame extends JFrame {
                 break;
         }
         repaint();
+        logger.println("Voltooid");
+    }
+
+    private String algoName(int a) {
+        switch (a) {
+            case 0:
+                return "Greedy";
+            case 1:
+                return "2-Opt Swap";
+            case 2:
+                return "Simulated Annealing";
+            case 3:
+                return "Eigen Oplossing";
+        }
+        return "error";
     }
 
     public void getItems() {
         producten = DataBase.getProducts();
         SolutionPanel.setProducten(TspGreedy.Greedy(producten));
         Sitems.setTable(producten);
-        logger.println("Items Got", LoggerFactory.ErrorLevel.INFO);
+        logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
+    }
+
+    public void log(String text, LoggerFactory.ErrorLevel errlvl) {
+        logger.println(text, errlvl);
     }
 
     private void saveLog() {
-
+        logger.saveLog("TspSimulator");
     }
 
     @Override

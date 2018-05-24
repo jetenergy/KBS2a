@@ -9,7 +9,7 @@ public class TspTwoOptSwap {
 
     private static Product beginPunt = new Product("", 0, 0, -1, 0);
 
-    public static ArrayList<Product> TwoOptSwap(ArrayList<Product> products, boolean laatzien) {
+    public static ArrayList<Product> TwoOptSwap(ArrayList<Product> products) {
         ArrayList<Product> workingProducts = new ArrayList<>(products);
         boolean check = true;
         hank: while (check) {
@@ -56,10 +56,6 @@ public class TspTwoOptSwap {
             product.add(route.get(c));
         }
         return product;
-    }
-
-    public static ArrayList<Product> TwoOptSwap(ArrayList<Product> products){
-        return TwoOptSwap(products, false);
     }
 
 }

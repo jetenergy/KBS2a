@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class TspGreedy {
 
-    public static ArrayList<Product> Greedy(ArrayList<Product> producten, boolean laatzien){
+    public static ArrayList<Product> Greedy(ArrayList<Product> producten){
         double nieuweAfstand;
 
         ArrayList<Product> workingProducts = new ArrayList<>(producten);
@@ -37,17 +37,9 @@ public class TspGreedy {
             laatste = bestNext;
             workingProducts.remove(bestNext);
 
-            if(laatzien){
-                //System.out.println(huidigBest);
-            }
         }
 
-        System.out.println("DONE -- GREEDY");
         return huidigBest;
-    }
-
-    public static ArrayList<Product> Greedy(ArrayList<Product> producten){
-        return Greedy(producten, false);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.m2e4.gui.tsp;
 
+import com.m2e4.LoggerFactory;
+import com.m2e4.Main;
 import com.m2e4.gui.TspFrame;
 
 import javax.swing.*;
@@ -25,6 +27,8 @@ public class SSettingsPanel extends JPanel{
 
     private TspFrame parent;
 
+    private Runnable runnable;
+
     public SSettingsPanel(TspFrame parent) {
         setLayout(new FlowLayout());
         setBorder(border);
@@ -36,7 +40,7 @@ public class SSettingsPanel extends JPanel{
         startControl.addActionListener(e -> startResume());
 
         stopControl.setEnabled(false);
-        stopControl.addActionListener(e -> stop());
+        stopControl.addActionListener(e -> forceStop());
 
         statisticsControl.addActionListener(e -> showStatistics());
 
@@ -98,10 +102,15 @@ public class SSettingsPanel extends JPanel{
     }
 
     private void startResume() {
-        //startControl.setEnabled(false);
-        //stopControl.setEnabled(true);
+        startControl.setEnabled(false);
+        stopControl.setEnabled(true);
 
-        parent.startAlgo(getSelection(), (int)spAmount.getValue(), (int)spMaxWidth.getValue(), (int)spMaxHeight.getValue());
+        runnable = () -> {
+            parent.startAlgo(getSelection(), (int)spAmount.getValue(), (int)spMaxWidth.getValue(), (int)spMaxHeight.getValue());
+            stop();
+        };
+
+        Main.getThreadPool().execute(runnable);
     }
 
     private int getSelection() {
@@ -118,6 +127,12 @@ public class SSettingsPanel extends JPanel{
             return 3;
         }
         return -1;
+    }
+
+    private void forceStop() {
+        Main.getThreadPool().remove(runnable);
+        parent.log("Algoritme geforceerd te stoppen", LoggerFactory.ErrorLevel.WARNING);
+        stop();
     }
 
     private void stop() {
