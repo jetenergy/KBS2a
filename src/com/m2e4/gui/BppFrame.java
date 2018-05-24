@@ -49,7 +49,7 @@ public class BppFrame extends JFrame {
 
     private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
 
-    private Runnable runnable;
+    private BppAlgorithm algorithm = null;
 
     public BppFrame() {
         setLayout(new BorderLayout());
@@ -212,6 +212,8 @@ public class BppFrame extends JFrame {
      * Runs the selected algorithm
      */
     private void start() {
+        if (algorithm != null) return;
+
         startControl.setEnabled(false);
         stopControl.setEnabled(true);
 
@@ -229,6 +231,7 @@ public class BppFrame extends JFrame {
         model.setDataVector(itemData, columnNames);
         itemTable.setModel(model);
 
+        Runnable runnable;
         if (algoNextfit.isSelected())
             runnable = () -> runAlgorithm(BppNextFit.class);
         else if (algoBestFit.isSelected())
@@ -252,9 +255,8 @@ public class BppFrame extends JFrame {
      */
     private <T extends BppAlgorithm> void runAlgorithm(Class<T> type) {
         // Constructing an algorithm of type T
-        BppAlgorithm algo;
         try {
-            algo = (BppAlgorithm) type.getConstructors()[0].newInstance(boxCount, boxSize);
+            algorithm = (BppAlgorithm) type.getConstructors()[0].newInstance(boxCount, boxSize);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return;
@@ -268,14 +270,22 @@ public class BppFrame extends JFrame {
             items[i] = new Product((double)itemData[i][1]);
 
         // Preparing and running algorithm
-        algo.setItems(items);
+        algorithm.setItems(items);
         long startTime = System.nanoTime();
-        algo.run();
+        try {
+            algorithm.run();
+        } catch (InterruptedException e) {
+            logger.println("Algoritme gestopt", LoggerFactory.ErrorLevel.WARNING);
+            algorithm = null;
+            return;
+        }
         long endTime = System.nanoTime();
 
         // Updating the solution display
-        Object solution = algo.getSolution();
+        Object solution = algorithm.getSolution();
         displaySolutionInfo(startTime, endTime, (ArrayList<Box>) solution);
+
+        algorithm = null;
 
         startControl.setEnabled(true);
         stopControl.setEnabled(false);
@@ -326,8 +336,7 @@ public class BppFrame extends JFrame {
      * Stops the currently running algorithm
      */
     private void stop() {
-        Main.getThreadPool().remove(runnable);
-        logger.println("Algoritme gestopt", LoggerFactory.ErrorLevel.WARNING);
+        algorithm.interrupt();
 
         startControl.setEnabled(true);
         stopControl.setEnabled(false);

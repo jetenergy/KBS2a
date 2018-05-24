@@ -14,7 +14,7 @@ public class BppBruteForce extends BppAlgorithm {
     }
 
     @Override
-    public void run() {
+    public void run() throws InterruptedException {
         if (ran)
             throw new RuntimeException("Cannot run algorithm again");
 
@@ -27,12 +27,14 @@ public class BppBruteForce extends BppAlgorithm {
         ran = true;
     }
 
-    private void tryItem(int i) {
+    private void tryItem(int i) throws InterruptedException {
         // True when the index points to the last Item in the items list
         boolean last = (i == items.size() - 1);
 
         // For each box...
         for (Box b : boxes) {
+            if (isInterrupted)
+                throw new InterruptedException();
 
             // Adding the first item to the box
             b.add(items.get(i));

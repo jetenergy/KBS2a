@@ -22,7 +22,7 @@ public class BppCustom extends BppAlgorithm {
     }
 
     @Override
-    public void run() {
+    public void run() throws InterruptedException {
         if (ran)
             throw new RuntimeException("Cannot run algorithm again");
 
@@ -57,7 +57,7 @@ public class BppCustom extends BppAlgorithm {
      * @param boxId The index for box to fill
      * @return A list of items that should be placed in the box
      */
-    private ArrayList<Product> tryFill(int boxId) {
+    private ArrayList<Product> tryFill(int boxId) throws InterruptedException {
         ArrayList<Product> newBox = new ArrayList<>();
         // Always places one item in at first
         newBox.add(items.get(0));
@@ -71,7 +71,7 @@ public class BppCustom extends BppAlgorithm {
      * @param current The current box's contents
      * @param itemList The items that are allowed to be fit
      */
-    private void tryItems(ArrayList<Product> current, ArrayList<Product> itemList) {
+    private void tryItems(ArrayList<Product> current, ArrayList<Product> itemList) throws InterruptedException {
         double spaceAvailable = 0.0;
         // Calculating the amount of space available in a box
         for (Product i : current) spaceAvailable += i.getHoogte();
@@ -81,6 +81,9 @@ public class BppCustom extends BppAlgorithm {
 
         // For each possible item...
         for (Product i : itemList) {
+            if (isInterrupted)
+                throw new InterruptedException();
+
             // Checking if the item will not fit
             if (spaceAvailable - i.getHoogte() < 0) continue;
             // Checking if the item will fit perfectly

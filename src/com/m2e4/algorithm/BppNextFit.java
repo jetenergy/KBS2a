@@ -21,7 +21,7 @@ public class BppNextFit extends BppAlgorithm {
     }
 
     @Override
-    public void run() {
+    public void run() throws InterruptedException {
         if (ran)
             throw new RuntimeException("Cannot run algorithm again");
 
@@ -37,6 +37,9 @@ public class BppNextFit extends BppAlgorithm {
 
             // Continually attempts to fit items into the box
             while (true) {
+                if (isInterrupted)
+                    throw new InterruptedException();
+
                 // Adds the item if it fits, stops checking if the item does not fit
                 if (items.get(0).getHoogte() <= box.getHeight() - box.getUsedHeight()) {
                     box.add(items.get(0));
