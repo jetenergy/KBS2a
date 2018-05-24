@@ -1,5 +1,7 @@
 package com.m2e4.algorithm;
 
+import com.m2e4.DataBase.Product;
+
 import java.util.ArrayList;
 
 public class BppBestFit extends BppAlgorithm {
@@ -21,14 +23,14 @@ public class BppBestFit extends BppAlgorithm {
             solution.add(new Box(boxSize));
 
         // For each item...
-        for (Item item : items) {
+        for (Product item : items) {
             // Checking each box to find the tightest fit
             Box bestBox = null;
 
             for (Box box : solution) {
                 // Picking boxes with enough space to hold the item, then checking if the used space is
                 // less than the best box found
-                if ( box.getHeight() - box.getUsedHeight() - item.getHeight() >= 0 ) {
+                if ( box.getHeight() - box.getUsedHeight() - item.getHoogte() >= 0 ) {
                     if (bestBox == null || bestBox.getUsedHeight() < box.getUsedHeight())
                         bestBox = box;
                 }

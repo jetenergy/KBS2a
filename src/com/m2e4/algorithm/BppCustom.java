@@ -1,5 +1,7 @@
 package com.m2e4.algorithm;
 
+import com.m2e4.DataBase.Product;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -12,7 +14,7 @@ public class BppCustom extends BppAlgorithm {
     }
 
     @Override
-    public void setItems(Item[] i) {
+    public void setItems(Product[] i) {
         // Sets the items and sorts the item list in descending order
         super.setItems(i);
         Collections.sort(this.items);
@@ -36,10 +38,10 @@ public class BppCustom extends BppAlgorithm {
         // Trying to fill each box if there are still items left
         for (int i = 0; i < boxCount; ++i) {
             if (items.size() != 0) {
-                ArrayList<Item> result = tryFill(i);
+                ArrayList<Product> result = tryFill(i);
 
                 // Places the items in the box
-                for (Item item : result) {
+                for (Product item : result) {
                     solution.get(i).add(item);
                 }
             }
@@ -55,8 +57,8 @@ public class BppCustom extends BppAlgorithm {
      * @param boxId The index for box to fill
      * @return A list of items that should be placed in the box
      */
-    private ArrayList<Item> tryFill(int boxId) {
-        ArrayList<Item> newBox = new ArrayList<>();
+    private ArrayList<Product> tryFill(int boxId) {
+        ArrayList<Product> newBox = new ArrayList<>();
         // Always places one item in at first
         newBox.add(items.get(0));
         items.remove(0);
@@ -69,29 +71,29 @@ public class BppCustom extends BppAlgorithm {
      * @param current The current box's contents
      * @param itemList The items that are allowed to be fit
      */
-    private void tryItems(ArrayList<Item> current, ArrayList<Item> itemList) {
+    private void tryItems(ArrayList<Product> current, ArrayList<Product> itemList) {
         double spaceAvailable = 0.0;
         // Calculating the amount of space available in a box
-        for (Item i : current) spaceAvailable += i.getHeight();
+        for (Product i : current) spaceAvailable += i.getHoogte();
         spaceAvailable = boxSize - spaceAvailable;
-        Item bestItem = null;
+        Product bestItem = null;
         double bestSpace = spaceAvailable;
 
         // For each possible item...
-        for (Item i : itemList) {
+        for (Product i : itemList) {
             // Checking if the item will not fit
-            if (spaceAvailable - i.getHeight() < 0) continue;
+            if (spaceAvailable - i.getHoogte() < 0) continue;
             // Checking if the item will fit perfectly
-            if (spaceAvailable - i.getHeight() == 0) {
+            if (spaceAvailable - i.getHoogte() == 0) {
                 current.add(i);
                 itemList.remove(i);
                 return;
             }
 
             // Checking if the space available would be less than with the best Item
-            if (bestSpace > spaceAvailable - i.getHeight()) {
+            if (bestSpace > spaceAvailable - i.getHoogte()) {
                 bestItem = i;
-                bestSpace = spaceAvailable - i.getHeight();
+                bestSpace = spaceAvailable - i.getHoogte();
             }
         }
 
