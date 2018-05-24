@@ -1,15 +1,9 @@
 package com.m2e4;
 
 import com.m2e4.DataBase.DataBase;
-import com.m2e4.algorithm.TspEigenOplossing;
-import com.m2e4.algorithm.TspGreedy;
-import com.m2e4.algorithm.TspSimulatedAnnealing;
-import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.gui.MainFrame;
 
 import java.util.concurrent.*;
-import javax.xml.crypto.Data;
-import java.sql.DatabaseMetaData;
 
 public class Main {
 
