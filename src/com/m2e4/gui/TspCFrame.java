@@ -3,8 +3,7 @@ package com.m2e4.gui;
 import com.m2e4.DataBase.DataBase;
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
-import com.m2e4.algorithm.TspGreedy;
-import com.m2e4.algorithm.TspTwoOptSwap;
+import com.m2e4.algorithm.TspEigenOplossing;
 import com.m2e4.arduino.ArduinoClass;
 import com.m2e4.gui.tsp.ItemPanel;
 import com.m2e4.gui.tsp.PositionPanel;
@@ -72,14 +71,14 @@ public class TspCFrame extends JFrame {
     }
 
     public void startAlgo() {
-        logger.println("starting: ");
-        CPosition.setProducten(TspTwoOptSwap.TwoOptSwap(producten));
+        logger.println("Starten: ");
+        CPosition.setProducten(TspEigenOplossing.EigenOplossing(producten));
         repaint();
     }
 
     public void getItems() {
         producten = DataBase.getProducts();
-        CPosition.setProducten(TspTwoOptSwap.TwoOptSwap(producten));
+        CPosition.setProducten(TspEigenOplossing.EigenOplossing(producten));
         Citems.setTable(producten);
         logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
     }

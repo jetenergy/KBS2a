@@ -4,7 +4,6 @@ import com.m2e4.DataBase.Product;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 public class TspSimulatedAnnealing {
     public static ArrayList<Product> SimulatedAnnealing(ArrayList<Product> products) {
@@ -43,8 +42,6 @@ public class TspSimulatedAnnealing {
             }
             temp *= 1-coolingRate;
         }
-        System.out.println("Final solution distance: " + getDistance(best));
-        System.out.println("Tour: " + best);
         return best;
     }
 

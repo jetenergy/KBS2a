@@ -101,7 +101,7 @@ public class TspFrame extends JFrame {
             Sitems.setTable(producten);
         }
 
-        logger.println("starten: " + algoritme);
+        logger.println("starten: " + algoName(algoritme));
         SolutionPrevious.setProducten(SolutionPanel.getProducten());
         SolutionPrevious.setGridWidth(SolutionPanel.getGridWidth());
         SolutionPrevious.setGridHeight(SolutionPanel.getGridHeight());
@@ -125,6 +125,20 @@ public class TspFrame extends JFrame {
         }
         repaint();
         logger.println("Voltooid");
+    }
+
+    private String algoName(int a) {
+        switch (a) {
+            case 0:
+                return "Greedy";
+            case 1:
+                return "2-Opt Swap";
+            case 2:
+                return "Simulated Annealing";
+            case 3:
+                return "Eigen Oplossing";
+        }
+        return "error";
     }
 
     public void getItems() {
