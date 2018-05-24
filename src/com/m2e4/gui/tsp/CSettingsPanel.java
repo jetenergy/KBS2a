@@ -4,9 +4,7 @@ import com.m2e4.gui.TspCFrame;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.Random;
 
 public class CSettingsPanel extends JPanel{
 

@@ -1,10 +1,7 @@
 package com.m2e4;
 
 import javax.swing.*;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
+import javax.swing.text.*;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,6 +25,9 @@ public class LoggerFactory {
         private JTextPane pane;
         private static AttributeSet setInfo = StyleContext.getDefaultStyleContext()
                 .addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.BLACK);
+        static float[] colorGreen = Color.RGBtoHSB(0, 150, 0, null);
+        private static AttributeSet setResult = StyleContext.getDefaultStyleContext()
+                .addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.getHSBColor(colorGreen[0], colorGreen[1], colorGreen[2]));
         private static AttributeSet setDebug = StyleContext.getDefaultStyleContext()
                 .addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.BLUE);
         private static AttributeSet setWarning = StyleContext.getDefaultStyleContext()
@@ -37,6 +37,7 @@ public class LoggerFactory {
 
         protected Logger(JTextPane pane) {
             this.pane = pane;
+            ((DefaultCaret)pane.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         }
 
         /**
@@ -48,6 +49,7 @@ public class LoggerFactory {
             pane.setCaretPosition(pane.getDocument().getLength());
             switch (level) {
                 case INFO: pane.setCharacterAttributes(setInfo, false); break;
+                case RESULT: pane.setCharacterAttributes(setResult, false); break;
                 case DEBUG: pane.setCharacterAttributes(setDebug, false); break;
                 case WARNING: pane.setCharacterAttributes(setWarning, false); break;
                 case ERROR: pane.setCharacterAttributes(setError, false); break;
@@ -58,7 +60,7 @@ public class LoggerFactory {
 
             if (!editable) pane.setEditable(true);
             pane.replaceSelection(String.format("[%s][%s] %s\r\n",
-                    LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_TIME), level, text));
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text));
             if (!editable) pane.setEditable(false);
         }
         public void println(String text) {
@@ -68,10 +70,11 @@ public class LoggerFactory {
 
     /**
      * Used to indicate an error level for Logger instances
-     * INFO = Black, DEBUG = Blue, WARNING = Orange, ERROR = Red
+     * INFO = Black, RESULT = Green, DEBUG = Blue, WARNING = Orange, ERROR = Red
      */
     public enum ErrorLevel {
         INFO,
+        RESULT,
         DEBUG,
         WARNING,
         ERROR

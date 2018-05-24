@@ -71,7 +71,7 @@ public class PositionPanel extends JPanel{
                 int y = (startY + gridHeight * squareHeight) - (squareHeight * this.producten.get(i).getY());
 
                 g2.setColor(Color.black);
-                g2.fillRect(x + 6, y - 4, squareWidth - 10, -squareHeight + 10);
+                g2.fillRect(x + 6, y - 4 - squareHeight + 10, squareWidth - 10,  squareHeight - 10);
             }
             for (int i = 1; i < this.producten.size(); i++) {
                 int x1 = this.producten.get(i - 1).getX() * squareWidth + startX + squareWidth /2;

@@ -1,15 +1,11 @@
 package com.m2e4.DataBase;
 
-public class Product {
-    private String naam;
-    private double hoogte;
-    private double breedte;
+public class Product implements Comparable<Product> {
+    private final String naam;
+    private final double hoogte;
+    private final double breedte;
     private int x;
     private int y;
-
-    public Product() {
-
-    }
 
     public Product(String naam, double hoogte, double breedte, int x, int y) {
         this.naam = naam;
@@ -17,6 +13,9 @@ public class Product {
         this.breedte = breedte;
         this.x = x;
         this.y = y;
+    }
+    public Product(double hoogte) {
+        this("", hoogte, 0.0, 0, 0);
     }
 
     public String getNaam() {
@@ -56,5 +55,10 @@ public class Product {
     @Override
     public String toString() {
         return getNaam() + ", " + getHoogte() + ", " + getBreedte() + ", " + getX() + ", " + getY() + ";";
+    }
+
+    @Override
+    public int compareTo(Product product) {
+        return Double.compare(this.hoogte, product.hoogte);
     }
 }

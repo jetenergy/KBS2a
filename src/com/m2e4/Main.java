@@ -1,28 +1,21 @@
 package com.m2e4;
 
 import com.m2e4.DataBase.DataBase;
-import com.m2e4.algorithm.TspEigenOplossing;
-import com.m2e4.algorithm.TspGreedy;
-import com.m2e4.algorithm.TspSimulatedAnnealing;
-import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.gui.MainFrame;
 
-import javax.xml.crypto.Data;
-import java.sql.DatabaseMetaData;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 
 public class Main {
 
-    private static ExecutorService threadPool = Executors.newCachedThreadPool(new ThreadFactory() {
-        private int counter = 0;
+    private static ThreadPoolExecutor threadPool = new ThreadPoolExecutor(2, 6, 10, TimeUnit.SECONDS,
+            new ArrayBlockingQueue<Runnable>(6), new ThreadFactory() {
+                private int counter = 0;
 
-        @Override
-        public Thread newThread(Runnable runnable) {
-            return new Thread(runnable, String.format("KBSPool-Thread-%d", counter++));
-        }
-    });
+                @Override
+                public Thread newThread(Runnable runnable) {
+                    return new Thread(runnable, String.format("KBSPool-Thread-%d", counter++));
+                }
+            });
 
     public static void main(String[] args) {
         MainFrame frame = new MainFrame();
@@ -47,7 +40,8 @@ public class Main {
         System.out.println(TspEigenOplossing.EigenOplossing(dbc.products));*/
     }
 
-    public static ExecutorService getThreadPool() {
+    public static ThreadPoolExecutor getThreadPool() {
         return threadPool;
     }
+
 }
