@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -338,23 +338,7 @@ public class BppFrame extends JFrame {
      * Saves the text log to a TXT file
      */
     private void saveLog() {
-        // Opens, and if necessary creates, a directory
-        File dir = new File("BppSimulator");
-        if (!dir.exists()) dir.mkdir();
-
-        File[] files = dir.listFiles();
-
-        try {
-            // Opens and writes to a new file
-            PrintWriter writer = new PrintWriter(
-                    String.format("BppSimulator/log_%s_%d.txt", LocalDateTime.now().toString(), files.length),
-                    "UTF-8");
-            String text = TaLog.getDocument().getText(0, TaLog.getDocument().getLength());
-            writer.println(text);
-            writer.close();
-        } catch (FileNotFoundException | UnsupportedEncodingException | BadLocationException e) {
-            e.printStackTrace();
-        }
+        logger.saveLog("BppSimulator");
     }
 
 }
