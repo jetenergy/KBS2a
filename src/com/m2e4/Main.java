@@ -1,9 +1,15 @@
 package com.m2e4;
 
 import com.m2e4.DataBase.DataBase;
+import com.m2e4.algorithm.TspEigenOplossing;
+import com.m2e4.algorithm.TspGreedy;
+import com.m2e4.algorithm.TspSimulatedAnnealing;
+import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.gui.MainFrame;
 
 import java.util.concurrent.*;
+import javax.xml.crypto.Data;
+import java.sql.DatabaseMetaData;
 
 public class Main {
 
@@ -18,22 +24,26 @@ public class Main {
             });
 
     public static void main(String[] args) {
-        DataBase dbc = new DataBase();
         MainFrame frame = new MainFrame();
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 threadPool.shutdownNow();
-                dbc.closeConn();
+                DataBase.closeConn();
                 System.exit(0);
             }
         });
         try {
-            dbc.connectDataBase();
-            dbc.readDataBase("Product");
+            DataBase.connectDataBase();
+            DataBase.ConnGetProducts();
         }
         catch (Exception e) {
             System.out.println(e);
         }
+
+        /*System.out.println(TspTwoOptSwap.TwoOptSwap(DataBase.products));
+        System.out.println(TspGreedy.Greedy(dbc.products, true));
+        System.out.println(TspSimulatedAnnealing.SimulatedAnnealing(dbc.products));
+        System.out.println(TspEigenOplossing.EigenOplossing(dbc.products));*/
     }
 
     public static ThreadPoolExecutor getThreadPool() {
