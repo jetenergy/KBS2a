@@ -21,6 +21,7 @@ public class BppBruteForce extends BppAlgorithm {
         // Filling boxes list with boxes
         for (int i = 0; i < boxCount; ++i)
             boxes.add(new Box(boxSize));
+        solution = null;
 
         tryItem(0);
         ran = true;
