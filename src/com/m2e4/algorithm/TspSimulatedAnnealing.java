@@ -3,11 +3,82 @@ package com.m2e4.algorithm;
 import com.m2e4.DataBase.Product;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class TspSimulatedAnnealing {
 
-    static ArrayList<Product> besteTour;
+    static private Random r = new Random();
+
+    static public ArrayList<Product> SimulatedAnnealing(ArrayList<Product> producten){
+
+        int iteraties = 100000;
+        int temperatuur = 200000;
+
+        ArrayList<Product> huidigeOplossing = new ArrayList<>(producten);
+        ArrayList<Product> besteOplossing = new ArrayList<>(huidigeOplossing);
+
+        while(temperatuur > 0){
+            for(int i = 1;i < iteraties; i++){
+                ArrayList<Product> iteratie = new ArrayList<>(huidigeOplossing);
+
+                Collections.shuffle(iteratie);
+
+                iteratie = permutatie(iteratie);
+                temperatuur--;
+
+                if(berekenAfstand(iteratie) <= berekenAfstand(huidigeOplossing)){
+                    huidigeOplossing = iteratie;
+
+                    //System.out.println(berekenAfstand(huidigeOplossing) + " huidigeOplossing");
+
+                    if(berekenAfstand(huidigeOplossing) <= berekenAfstand(besteOplossing)){
+                        besteOplossing = huidigeOplossing;
+
+                        //System.out.println(berekenAfstand(besteOplossing) + " besteOplossing");
+
+                    }
+
+                } else if((Math.exp(berekenAfstand(huidigeOplossing)- berekenAfstand(iteratie)/100) < r.nextInt(1000))){
+                    besteOplossing = huidigeOplossing;
+                }
+            }
+        }
+        System.out.println(besteOplossing);
+        System.out.println(berekenAfstand(besteOplossing));
+        return besteOplossing;
+    }
+
+
+    static private double berekenAfstand(ArrayList<Product> producten){
+        double lengte = 0;
+        double afstand = 0;
+
+        Product beginPunt = new Product("", 0, 0, -1, 0);
+        producten.add(0, beginPunt);
+
+        for(int i = 1; i < producten.size(); i++) {
+            lengte += producten.get(i - 1).abs(producten.get(i));
+            afstand += lengte;
+        }
+
+        producten.remove(beginPunt);
+        return afstand;
+    }
+
+    static private ArrayList<Product> permutatie(ArrayList<Product> producten){
+        int random = r.nextInt(producten.size());
+        int random2 = r.nextInt(producten.size());
+        //for (int i = 0; random < i;i++){
+            Collections.swap(producten, random, random2);
+            //permutatie(producten, k+1);
+            //Collections.swap(producten, k, i);
+        //}
+        //System.out.println(producten);
+        return producten;
+    }
+
+    /*static ArrayList<Product> besteTour;
 
     static private void nieuwTour(ArrayList<Product> huidigeTour, boolean laatzien) {
         double oudeAfstand = 999999;
@@ -93,9 +164,8 @@ public class TspSimulatedAnnealing {
         System.out.println("DONE -- SIMULATED ANNEALING");
         return besteTour;
 }
-
     public static ArrayList<Product> SimulatedAnnealing (ArrayList<Product> producten){
         return SimulatedAnnealing(producten,false);
-    }
+    }*/
 }
 
