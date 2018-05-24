@@ -48,6 +48,8 @@ public class BppFrame extends JFrame {
 
     private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
 
+    private Runnable runnable;
+
     public BppFrame() {
         setLayout(new BorderLayout());
         setTitle("BPP simulatie");
@@ -226,15 +228,20 @@ public class BppFrame extends JFrame {
         model.setDataVector(itemData, columnNames);
         itemTable.setModel(model);
 
-        // Running algorithm
         if (algoNextfit.isSelected())
-            Main.getThreadPool().execute(() -> runAlgorithm(BppNextFit.class));
+            runnable = () -> runAlgorithm(BppNextFit.class);
         else if (algoBestFit.isSelected())
-            Main.getThreadPool().execute(() -> runAlgorithm(BppBestFit.class));
+            runnable = () -> runAlgorithm(BppBestFit.class);
         else if (algoBruteForce.isSelected())
-            Main.getThreadPool().execute(() -> runAlgorithm(BppBruteForce.class));
+            runnable = () -> runAlgorithm(BppBruteForce.class);
         else if (algoCustom.isSelected())
-            Main.getThreadPool().execute(() -> runAlgorithm(BppCustom.class));
+            runnable = () -> runAlgorithm(BppCustom.class);
+        else {
+            runnable = () -> logger.println("Geen algoritme geselecteerd!", LoggerFactory.ErrorLevel.ERROR);
+        }
+
+        // Running algorithm
+        Main.getThreadPool().execute(runnable);
     }
 
     /**
@@ -318,6 +325,9 @@ public class BppFrame extends JFrame {
      * Stops the currently running algorithm
      */
     private void stop() {
+        Main.getThreadPool().remove(runnable);
+        logger.println("Algoritme gestopt", LoggerFactory.ErrorLevel.WARNING);
+
         startControl.setEnabled(true);
         stopControl.setEnabled(false);
     }
