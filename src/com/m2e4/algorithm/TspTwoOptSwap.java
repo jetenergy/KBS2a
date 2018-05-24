@@ -1,10 +1,8 @@
 package com.m2e4.algorithm;
 
 import com.m2e4.DataBase.Product;
-import com.sun.xml.internal.ws.api.pipe.FiberContextSwitchInterceptor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 
 public class TspTwoOptSwap {
