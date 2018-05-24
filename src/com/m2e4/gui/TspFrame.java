@@ -73,27 +73,32 @@ public class TspFrame extends JFrame {
     }
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
-        producten = new ArrayList<>();
-        Random r = new Random();
-        for (int i = 0; i < amount; i++) {
-            int x = r.nextInt(maxX);
-            int y = r.nextInt(maxY);
-            Product product = new Product("", 0, 0, x, y);
-            producten.add(product);
-        }
+        if (producten.size() != amount ||
+                SolutionPanel.getGridHeight() != maxY ||
+                SolutionPanel.getGridWidth() != maxX) {
+            producten = new ArrayList<>();
+            Random r = new Random();
+            for (int i = 0; i < amount; i++) {
+                int x = r.nextInt(maxX);
+                int y = r.nextInt(maxY);
+                Product product = new Product("", 0, 0, x, y);
+                producten.add(product);
+            }
 
-        for (int i = 0; i < producten.size(); i++) {
-            for (int y = 0; y < producten.size(); y++) {
-                if (!producten.get(i).equals(producten.get(y))) {
-                    if (producten.get(i).getY() == producten.get(y).getY() &&
-                            producten.get(i).getX() == producten.get(y).getX()) {
-                        producten.get(i).setX(r.nextInt(maxX));
-                        producten.get(i).setY(r.nextInt(maxY));
-                        y = 0;
-                        i = 0;
+            for (int i = 0; i < producten.size(); i++) {
+                for (int y = 0; y < producten.size(); y++) {
+                    if (!producten.get(i).equals(producten.get(y))) {
+                        if (producten.get(i).getY() == producten.get(y).getY() &&
+                                producten.get(i).getX() == producten.get(y).getX()) {
+                            producten.get(i).setX(r.nextInt(maxX));
+                            producten.get(i).setY(r.nextInt(maxY));
+                            y = 0;
+                            i = 0;
+                        }
                     }
                 }
             }
+            Sitems.setTable(producten);
         }
 
         logger.println("starten: " + algoritme);
@@ -127,6 +132,10 @@ public class TspFrame extends JFrame {
         SolutionPanel.setProducten(TspGreedy.Greedy(producten));
         Sitems.setTable(producten);
         logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
+    }
+
+    public void log(String text, LoggerFactory.ErrorLevel errlvl) {
+        logger.println(text, errlvl);
     }
 
     private void saveLog() {
