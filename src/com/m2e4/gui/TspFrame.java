@@ -11,13 +11,7 @@ import com.m2e4.gui.tsp.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -76,9 +70,6 @@ public class TspFrame extends JFrame {
         JpBottom.add(SSettings);
         JpBottom.add(JpLog);
         add(JpBottom, BorderLayout.SOUTH);
-
-
-        logger.println("TSP Simulator geopend");
     }
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
@@ -105,7 +96,7 @@ public class TspFrame extends JFrame {
             }
         }
 
-        logger.println("starting: " + algoritme);
+        logger.println("starten: " + algoritme);
         SolutionPrevious.setProducten(SolutionPanel.getProducten());
         SolutionPrevious.setGridWidth(SolutionPanel.getGridWidth());
         SolutionPrevious.setGridHeight(SolutionPanel.getGridHeight());
@@ -128,14 +119,14 @@ public class TspFrame extends JFrame {
                 break;
         }
         repaint();
-        logger.println("Finished");
+        logger.println("Voltooid");
     }
 
     public void getItems() {
         producten = DataBase.getProducts();
         SolutionPanel.setProducten(TspGreedy.Greedy(producten));
         Sitems.setTable(producten);
-        logger.println("Items Got", LoggerFactory.ErrorLevel.INFO);
+        logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
     }
 
     private void saveLog() {

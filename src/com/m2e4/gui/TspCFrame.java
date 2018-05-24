@@ -69,9 +69,6 @@ public class TspCFrame extends JFrame {
         JpBottom.add(CSettings);
         JpBottom.add(JpLog);
         add(JpBottom, BorderLayout.SOUTH);
-
-
-        logger.println("TSP Controll geopend");
     }
 
     public void startAlgo() {
@@ -84,7 +81,7 @@ public class TspCFrame extends JFrame {
         producten = DataBase.getProducts();
         CPosition.setProducten(TspTwoOptSwap.TwoOptSwap(producten));
         Citems.setTable(producten);
-        logger.println("Items Got", LoggerFactory.ErrorLevel.INFO);
+        logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
     }
 
     public static void setArduino(String port) {
