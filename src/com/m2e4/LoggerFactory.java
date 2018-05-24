@@ -3,6 +3,11 @@ package com.m2e4;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -65,6 +70,30 @@ public class LoggerFactory {
         }
         public void println(String text) {
             println(text, ErrorLevel.INFO);
+        }
+
+        /**
+         * Saves a text log to the specified folder
+         * @param folder The folder to save to
+         */
+        public void saveLog(String folder) {
+            // Opens, and if necessary creates, a directory
+            File dir = new File(folder);
+            if (!dir.exists()) dir.mkdir();
+
+            File[] files = dir.listFiles();
+
+            try {
+                // Opens and writes to a new file
+                PrintWriter writer = new PrintWriter(
+                        String.format("%s/log_%s_%d.txt", folder, LocalDate.now().toString(), files.length),
+                        "UTF-8");
+                String text = pane.getDocument().getText(0, pane.getDocument().getLength());
+                writer.println(text);
+                writer.close();
+            } catch (FileNotFoundException | UnsupportedEncodingException | BadLocationException e) {
+                e.printStackTrace();
+            }
         }
     }
 
