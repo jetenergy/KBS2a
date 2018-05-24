@@ -1,5 +1,6 @@
 package com.m2e4.gui;
 
+import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
 import com.m2e4.Main;
 import com.m2e4.algorithm.*;
@@ -262,9 +263,9 @@ public class BppFrame extends JFrame {
         logger.println(String.format("Algoritme %s", type.getSimpleName()));
 
         // Creates an array of Items from the random item array
-        Item[] items = new Item[itemData.length];
+        Product[] items = new Product[itemData.length];
         for (int i = 0; i < itemData.length; ++i)
-            items[i] = new Item((double)itemData[i][1]);
+            items[i] = new Product((double)itemData[i][1]);
 
         // Preparing and running algorithm
         algo.setItems(items);
@@ -295,8 +296,8 @@ public class BppFrame extends JFrame {
             for (int i = 0; i < solution.size(); i++) {
                 logOut.append(String.format("Doos %d:\r\n", i + 1));
 
-                for (Item item : solution.get(i).getItems()) {
-                    logOut.append(String.format("\tItem (grootte: %s)\r\n", new DecimalFormat("#.##").format(item.getHeight())));
+                for (Product item : solution.get(i).getItems()) {
+                    logOut.append(String.format("\tItem (grootte: %s)\r\n", new DecimalFormat("#.##").format(item.getHoogte())));
                 }
 
                 logOut.append("\r\n");
@@ -310,8 +311,8 @@ public class BppFrame extends JFrame {
                 solutionPanel.add(new JLabel(String.format("Doos %d:", i + 1)));
 
                 // Displaying all items
-                for (Item item : solution.get(i).getItems()) {
-                    solutionPanel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHeight()))));
+                for (Product item : solution.get(i).getItems()) {
+                    solutionPanel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHoogte()))));
                 }
                 solutionPanel.add(new JLabel(" "));
             }

@@ -1,12 +1,14 @@
 package com.m2e4.algorithm;
 
+import com.m2e4.DataBase.Product;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Box {
     private final double height;
-    private final ArrayList<Item> items = new ArrayList<>();
+    private final ArrayList<Product> items = new ArrayList<>();
     private double usedHeight = 0.0; // Amount of space already used by Items
 
     public Box(double height) {
@@ -18,8 +20,8 @@ public class Box {
      * Does not consider the box's maximum size
      * @param i An Item
      */
-    public void add(Item i) {
-        usedHeight += i.getHeight();
+    public void add(Product i) {
+        usedHeight += i.getHoogte();
         items.add(i);
     }
 
@@ -27,9 +29,9 @@ public class Box {
      * Removes an Item from the box
      * @param i An Item
      */
-    public void remove(Item i) {
+    public void remove(Product i) {
         if (!items.contains(i)) return;
-        usedHeight -= i.getHeight();
+        usedHeight -= i.getHoogte();
         items.remove(i);
     }
 
@@ -45,7 +47,7 @@ public class Box {
      * Gets the items in the box
      * @return An immutable List of Items
      */
-    public List<Item> getItems() {
+    public List<Product> getItems() {
         return Collections.unmodifiableList(items);
     }
 }

@@ -1,5 +1,7 @@
 package com.m2e4.algorithm;
 
+import com.m2e4.DataBase.Product;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -12,7 +14,7 @@ public class BppNextFit extends BppAlgorithm {
     }
 
     @Override
-    public void setItems(Item[] i) {
+    public void setItems(Product[] i) {
         // Sets the items and sorts the item list in ascending order
         super.setItems(i);
         Collections.sort(this.items);
@@ -36,7 +38,7 @@ public class BppNextFit extends BppAlgorithm {
             // Continually attempts to fit items into the box
             while (true) {
                 // Adds the item if it fits, stops checking if the item does not fit
-                if (items.get(0).getHeight() <= box.getHeight() - box.getUsedHeight()) {
+                if (items.get(0).getHoogte() <= box.getHeight() - box.getUsedHeight()) {
                     box.add(items.get(0));
                     items.remove(0);
                 } else break;
