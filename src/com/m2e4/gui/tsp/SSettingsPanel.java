@@ -1,5 +1,6 @@
 package com.m2e4.gui.tsp;
 
+import com.m2e4.Main;
 import com.m2e4.gui.TspFrame;
 
 import javax.swing.*;
@@ -24,6 +25,8 @@ public class SSettingsPanel extends JPanel{
     private JSpinner spMaxWidth = new JSpinner(new SpinnerNumberModel(5, 5, 20, 1));
 
     private TspFrame parent;
+
+    private Runnable runnable;
 
     public SSettingsPanel(TspFrame parent) {
         setLayout(new FlowLayout());
@@ -98,10 +101,12 @@ public class SSettingsPanel extends JPanel{
     }
 
     private void startResume() {
-        //startControl.setEnabled(false);
-        //stopControl.setEnabled(true);
+        startControl.setEnabled(false);
+        stopControl.setEnabled(true);
 
-        parent.startAlgo(getSelection(), (int)spAmount.getValue(), (int)spMaxWidth.getValue(), (int)spMaxHeight.getValue());
+        runnable = () -> parent.startAlgo(getSelection(), (int)spAmount.getValue(), (int)spMaxWidth.getValue(), (int)spMaxHeight.getValue());
+
+        Main.getThreadPool().execute(runnable);
     }
 
     private int getSelection() {

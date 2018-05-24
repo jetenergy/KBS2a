@@ -11,7 +11,13 @@ import com.m2e4.gui.tsp.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -38,7 +44,7 @@ public class TspFrame extends JFrame {
 
         Sitems = new ItemPanel();
         SolutionPanel = new PositionPanel("Beste oplossing");
-        SolutionPrevious = new PositionPanel("Vorrige Oplossing");
+        SolutionPrevious = new PositionPanel("Vorige Oplossing");
 
         JpTop = new JPanel();
         JpTop.setLayout(new GridLayout(1, 3));
@@ -72,7 +78,7 @@ public class TspFrame extends JFrame {
         add(JpBottom, BorderLayout.SOUTH);
 
 
-        logger.println("TSP Controll geopend");
+        logger.println("TSP Simulator geopend");
     }
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
@@ -122,6 +128,7 @@ public class TspFrame extends JFrame {
                 break;
         }
         repaint();
+        logger.println("Finished");
     }
 
     public void getItems() {
@@ -132,7 +139,7 @@ public class TspFrame extends JFrame {
     }
 
     private void saveLog() {
-
+        logger.saveLog("TspSimulator");
     }
 
     @Override

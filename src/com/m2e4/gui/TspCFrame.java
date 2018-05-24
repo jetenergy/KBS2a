@@ -4,6 +4,7 @@ import com.m2e4.DataBase.DataBase;
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
 import com.m2e4.algorithm.TspGreedy;
+import com.m2e4.algorithm.TspTwoOptSwap;
 import com.m2e4.arduino.ArduinoClass;
 import com.m2e4.gui.tsp.ItemPanel;
 import com.m2e4.gui.tsp.PositionPanel;
@@ -74,14 +75,14 @@ public class TspCFrame extends JFrame {
     }
 
     public void startAlgo() {
-        logger.println("starting: Greedy");
-        CPosition.setProducten(TspGreedy.Greedy(producten));
+        logger.println("starting: ");
+        CPosition.setProducten(TspTwoOptSwap.TwoOptSwap(producten));
         repaint();
     }
 
     public void getItems() {
         producten = DataBase.getProducts();
-        CPosition.setProducten(TspGreedy.Greedy(producten));
+        CPosition.setProducten(TspTwoOptSwap.TwoOptSwap(producten));
         Citems.setTable(producten);
         logger.println("Items Got", LoggerFactory.ErrorLevel.INFO);
     }
@@ -100,7 +101,7 @@ public class TspCFrame extends JFrame {
     }
 
     private void saveLog() {
-
+        logger.saveLog("TspControll");
     }
 
     @Override
