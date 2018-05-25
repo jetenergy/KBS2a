@@ -82,7 +82,7 @@ class ArduinoPanel extends JPanel {
             counter--;
         }
         if (islive) {
-            arduino.write("WhoDis-null;null");
+            arduino.write("WhoDis;");
             String ItMe = arduino.read();
             arduino.close();
             return ItMe;
