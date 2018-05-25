@@ -2,6 +2,7 @@ package com.m2e4.DataBase;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 //JavaUsr //javakbs2a
 
@@ -52,28 +53,35 @@ public class DataBase {
         preparedStatement.executeUpdate();*/
     }
 
-    static public void ConnAddOrder(int userId, ArrayList<int[]> products) throws SQLException {
+    static public ArrayList<Product> ConnGetProducts(int[] products, int[] count) throws SQLException {
 
-        PreparedStatement bestellingStmt = connect.prepareStatement(
-                "insert into Bestelling (GebruikerId) values (?);"
-        );
-        bestellingStmt.setInt(1, userId);
-        bestellingStmt.executeUpdate();
-
-        Statement lastIdStmt = connect.createStatement();
-        ResultSet lastIdRs = lastIdStmt.executeQuery("select last_insert_id() as last_id from Bestelling");
-        lastIdRs.next();
-        int orderId = lastIdRs.getInt("last_id");
+        String arr = Arrays.toString(products);
+        arr = arr.substring(1, arr.length() - 1);
 
         PreparedStatement productStmt = connect.prepareStatement(
-                "insert into BestelRegel (BestellingId, ProductId, Aantal) values (?, ?, ?);"
+                String.format("select P.ProductId, Naam, Hoogte, Breedte, X, Y from ProductOpslag PO join Product P on PO.ProductId = P.ProductId where P.ProductId in (%s) order by P.ProductId;",
+                        arr)
         );
-        for (int[] item : products) {
-            productStmt.setInt(1, orderId);
-            productStmt.setInt(2, item[0]);
-            productStmt.setInt(3, item[1]);
-            productStmt.executeUpdate();
+        ResultSet productRs = productStmt.executeQuery();
+
+        ArrayList<Product> prodOutput = new ArrayList<>();
+
+        int i = 0;
+        while (productRs.next()) {
+            for (int c = 0; c < count[i]; ++c) {
+                prodOutput.add(new Product(
+                        productRs.getString("Naam"),
+                        productRs.getDouble("Hoogte"),
+                        productRs.getDouble("Breedte"),
+                        productRs.getInt("X"),
+                        productRs.getInt("Y")
+                ));
+            }
+            ++i;
         }
+
+        return prodOutput;
+
     }
 
     static private void writeResults(ResultSet resultSet) throws SQLException {

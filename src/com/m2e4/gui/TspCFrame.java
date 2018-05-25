@@ -76,10 +76,9 @@ public class TspCFrame extends JFrame {
         repaint();
     }
 
-    public void getItems() {
-        producten = DataBase.getProducts();
-        CPosition.setProducten(TspEigenOplossing.EigenOplossing(producten));
-        Citems.setTable(producten);
+    public void getItems(ArrayList<Product> products) {
+        producten = products;
+        Citems.setTable(products);
         logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
     }
 
@@ -100,9 +99,4 @@ public class TspCFrame extends JFrame {
         logger.saveLog("TspControll");
     }
 
-    @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
-        if(b) getItems();
-    }
 }

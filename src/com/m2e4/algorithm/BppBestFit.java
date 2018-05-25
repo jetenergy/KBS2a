@@ -13,7 +13,7 @@ public class BppBestFit extends BppAlgorithm {
     }
 
     @Override
-    public void run() {
+    public void run() throws InterruptedException {
         if (ran)
             throw new RuntimeException("Cannot run algorithm again");
 
@@ -28,6 +28,9 @@ public class BppBestFit extends BppAlgorithm {
             Box bestBox = null;
 
             for (Box box : solution) {
+                if (isInterrupted)
+                    throw new InterruptedException();
+
                 // Picking boxes with enough space to hold the item, then checking if the used space is
                 // less than the best box found
                 if ( box.getHeight() - box.getUsedHeight() - item.getHoogte() >= 0 ) {
