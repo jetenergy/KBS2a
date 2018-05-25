@@ -52,28 +52,32 @@ public class DataBase {
         preparedStatement.executeUpdate();*/
     }
 
-    static public void ConnAddOrder(int userId, ArrayList<int[]> products) throws SQLException {
-
-        PreparedStatement bestellingStmt = connect.prepareStatement(
-                "insert into Bestelling (GebruikerId) values (?);"
-        );
-        bestellingStmt.setInt(1, userId);
-        bestellingStmt.executeUpdate();
-
-        Statement lastIdStmt = connect.createStatement();
-        ResultSet lastIdRs = lastIdStmt.executeQuery("select last_insert_id() as last_id from Bestelling");
-        lastIdRs.next();
-        int orderId = lastIdRs.getInt("last_id");
+    static public ArrayList<Product> ConnGetProducts(Object[] products, int[] count) throws SQLException {
 
         PreparedStatement productStmt = connect.prepareStatement(
-                "insert into BestelRegel (BestellingId, ProductId, Aantal) values (?, ?, ?);"
+                "select P.ProductId, Naam, Hoogte, Breedte, X, Y from ProductOpslag PO join Product P on PO.ProductId = P.ProductId where P.ProductId in ? order by P.ProductId;"
         );
-        for (int[] item : products) {
-            productStmt.setInt(1, orderId);
-            productStmt.setInt(2, item[0]);
-            productStmt.setInt(3, item[1]);
-            productStmt.executeUpdate();
+        productStmt.setArray(1, connect.createArrayOf("INT", products));
+        ResultSet productRs = productStmt.executeQuery();
+
+        ArrayList<Product> prodOutput = new ArrayList<>();
+
+        int i = 0;
+        while (productRs.next()) {
+            Product p = new Product(
+                    productRs.getString("Naam"),
+                    productRs.getDouble("Hoogte"),
+                    productRs.getDouble("Breedte"),
+                    productRs.getInt("X"),
+                    productRs.getInt("Y")
+            );
+            for (int c = 0; c < count[i]; ++i) {
+                prodOutput.add(p);
+            }
         }
+
+        return prodOutput;
+
     }
 
     static private void writeResults(ResultSet resultSet) throws SQLException {

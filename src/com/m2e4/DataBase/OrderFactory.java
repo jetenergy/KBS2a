@@ -8,28 +8,34 @@ import java.util.ArrayList;
 
 public class OrderFactory {
 
-    private static Gson gson = new Gson();
-
     /**
      * Uses a Reader to parse a JSON file and places the data into the database
      * @param reader The reader to read from
      */
-    public static void processJsonOrder(Reader reader) throws SQLException, NumberFormatException {
+    public static ArrayList<Product> processJsonOrder(Reader reader) throws SQLException, NumberFormatException {
         JsonObject element = new JsonParser().parse(reader).getAsJsonObject();
 
         int userId;
-        ArrayList<int[]> products = new ArrayList<>();
+        ArrayList<int[]> productsList = new ArrayList<>();
 
-        userId = element.get("GebruikerId").getAsInt();
         JsonArray order = element.get("Order").getAsJsonArray();
         for (JsonElement x : order) {
             JsonObject item = x.getAsJsonObject();
-            products.add(
+            productsList.add(
                     new int[]{item.get("ProductId").getAsInt(), item.get("Aantal").getAsInt()}
             );
         }
 
-        DataBase.ConnAddOrder(userId, products);
+        Object[] products = new Object[productsList.size()];
+        int[] count = new int[productsList.size()];
+
+        for (int i = 0; i < productsList.size(); i++) {
+            int[] p = productsList.get(i);
+            products[i] = p[0];
+            count[i] = p[1];
+        }
+
+        return DataBase.ConnGetProducts(products, count);
     }
 
 }
