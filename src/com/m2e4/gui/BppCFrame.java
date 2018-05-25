@@ -92,7 +92,7 @@ public class BppCFrame extends JFrame {
             currentPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JpCurrentBoxes.add(title);
-            JpCurrentBoxes.add(filledPanel);
+            JpCurrentBoxes.add(currentPanel);
         }
 
         // Displays the boxes that have already been filled
@@ -107,7 +107,7 @@ public class BppCFrame extends JFrame {
             filledPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             JpFilledBoxes.add(title);
-            JpFilledBoxes.add(currentPanel);
+            JpFilledBoxes.add(filledPanel);
         }
 
         // A collection of panels displayed on the top half of the frame
@@ -173,11 +173,7 @@ public class BppCFrame extends JFrame {
 
 
     private void start() {
-        // TODO: Control Arduino
-
         started = true;
-
-        stopControl.setEnabled(true);
 
         // Placing the items into the item table
         DefaultTableModel model = new DefaultTableModel();
@@ -203,18 +199,39 @@ public class BppCFrame extends JFrame {
         long endTime = System.nanoTime();
 
         logger.println(String.format("Algoritme afgerond in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)), LoggerFactory.ErrorLevel.RESULT);
-
-
         System.out.println(algorithm.getSolution());
+
+        stopControl.setEnabled(true);
+
+        displayBoxes((ArrayList<Box>) algorithm.getSolution(), filledPanel);
+
+        // TODO: Control Arduino
+
+        // TODO: Display current working boxes
+        // TODO: Display finished boxes
 
         stopControl.setEnabled(false);
 
         started = false;
     }
 
-    // TODO: Display current working boxes
+    private void displayBoxes(ArrayList<Box> boxes, JPanel panel) {
+        panel.removeAll();
 
-    // TODO: Display finished boxes
+        // Displaying all boxes
+        for (int i = 0; i < boxes.size(); ++i) {
+            panel.add(new JLabel(String.format("Doos %d:", i + 1)));
+
+            // Displaying all items
+            for (Product item : boxes.get(i).getItems()) {
+                panel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHoogte()))));
+            }
+            panel.add(new JLabel(" "));
+        }
+
+        // Updating UI to display new components
+        panel.updateUI();
+    }
 
     /**
      * Stops the Arduino
