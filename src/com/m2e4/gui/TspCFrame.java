@@ -72,7 +72,9 @@ public class TspCFrame extends JFrame {
 
     public void startAlgo() {
         logger.println("Starten: ");
-        CPosition.setProducten(TspEigenOplossing.EigenOplossing(producten));
+        ArrayList<Product> oplossing = TspEigenOplossing.EigenOplossing(producten);
+        CPosition.setProducten(oplossing);
+        MainFrame.getInstance().getBppContFrame().startBpp(oplossing);
         repaint();
     }
 

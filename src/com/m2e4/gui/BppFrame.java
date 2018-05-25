@@ -72,6 +72,9 @@ public class BppFrame extends JFrame {
         {
             JPanel container = new JPanel();
             container.setLayout(new BorderLayout());
+
+            itemTable.setDefaultEditor(Object.class, null);
+
             container.add(itemTable.getTableHeader(), BorderLayout.NORTH);
             container.add(itemTable);
 

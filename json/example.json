@@ -7,10 +7,18 @@
     },
     {
       "ProductId": 13,
-      "Aantal": 2
+      "Aantal": 1
     },
     {
       "ProductId": 2,
+      "Aantal": 1
+    },
+    {
+      "ProductId": 11,
+      "Aantal": 1
+    },
+    {
+      "ProductId": 7,
       "Aantal": 1
     }
   ]
