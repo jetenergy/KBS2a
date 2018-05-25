@@ -5,6 +5,7 @@ import com.google.gson.*;
 import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class OrderFactory {
 
@@ -26,7 +27,7 @@ public class OrderFactory {
             );
         }
 
-        Object[] products = new Object[productsList.size()];
+        int[] products = new int[productsList.size()];
         int[] count = new int[productsList.size()];
 
         for (int i = 0; i < productsList.size(); i++) {

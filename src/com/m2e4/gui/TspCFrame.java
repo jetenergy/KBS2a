@@ -3,6 +3,7 @@ package com.m2e4.gui;
 import com.m2e4.DataBase.DataBase;
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
+import com.m2e4.algorithm.TspEigenOplossing;
 import com.m2e4.algorithm.TspGreedy;
 import com.m2e4.arduino.ArduinoClass;
 import com.m2e4.gui.tsp.ItemPanel;
@@ -75,15 +76,14 @@ public class TspCFrame extends JFrame {
 
     public void startAlgo() {
         logger.println("starting: Greedy");
-        CPosition.setProducten(TspGreedy.Greedy(producten));
+        CPosition.setProducten(TspEigenOplossing.EigenOplossing(producten));
         repaint();
     }
 
-    public void getItems() {
-        producten = DataBase.getProducts();
-        CPosition.setProducten(TspGreedy.Greedy(producten));
-        Citems.setTable(producten);
-        logger.println("Items Got", LoggerFactory.ErrorLevel.INFO);
+    public void getItems(ArrayList<Product> products) {
+        producten = products;
+        Citems.setTable(products);
+        logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
     }
 
     public static void setArduino(String port) {
@@ -103,9 +103,4 @@ public class TspCFrame extends JFrame {
 
     }
 
-    @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
-        if(b) getItems();
-    }
 }

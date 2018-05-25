@@ -4,6 +4,14 @@
     {
       "ProductId": 14,
       "Aantal": 1
+    },
+    {
+      "ProductId": 13,
+      "Aantal": 2
+    },
+    {
+      "ProductId": 2,
+      "Aantal": 1
     }
   ]
 }

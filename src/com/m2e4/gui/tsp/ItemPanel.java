@@ -35,7 +35,7 @@ public class ItemPanel extends JPanel{
     public void setTable(ArrayList<Product> producten) {
         itemData = new Object[producten.size()][];
         for (int i = 0; i < producten.size(); ++i) {
-            itemData[i] = new Object[] { i + 1, producten.get(i).getX() , producten.get(i).getY()};
+            itemData[i] = new Object[] { producten.get(i).getNaam(), producten.get(i).getX() , producten.get(i).getY()};
         }
         DefaultTableModel model = new DefaultTableModel();
         model.setDataVector(itemData, columnNames);

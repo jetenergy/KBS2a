@@ -1,10 +1,17 @@
 package com.m2e4.gui.tsp;
 
+import com.m2e4.DataBase.OrderFactory;
+import com.m2e4.DataBase.Product;
 import com.m2e4.gui.TspCFrame;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class CSettingsPanel extends JPanel{
 
@@ -12,7 +19,7 @@ public class CSettingsPanel extends JPanel{
 
     private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
-    private JButton statisticsControl = new JButton("Statistieken");
+    private JButton addOrderControl = new JButton("#YOLO 420blazeit");
     private JRadioButton algoGreedy = new JRadioButton("Greedy", true);
     private JRadioButton algoTwoOptSwap = new JRadioButton("Two Opt Swap");
     private JRadioButton algoSimulatedAnnealing = new JRadioButton("Simulated Annealing");
@@ -38,11 +45,11 @@ public class CSettingsPanel extends JPanel{
         stopControl.setEnabled(false);
         stopControl.addActionListener(e -> stop());
 
-        statisticsControl.addActionListener(e -> showStatistics());
+        addOrderControl.addActionListener(e -> addOrder());
 
         buttons.add(startControl);
         buttons.add(stopControl);
-        buttons.add(statisticsControl);
+        buttons.add(addOrderControl);
 
         /*JPanel algos = new JPanel();
         algos.setLayout(layout);
@@ -109,7 +116,21 @@ public class CSettingsPanel extends JPanel{
         stopControl.setEnabled(false);
     }
 
-    private void showStatistics() {
+    private void addOrder() {
+        JFileChooser fileChooser = new JFileChooser();
+        int rval = fileChooser.showOpenDialog(parent);
 
+        if (rval != JFileChooser.APPROVE_OPTION) return;
+        File file = fileChooser.getSelectedFile();
+
+        ArrayList<Product> products;
+        try {
+            products = OrderFactory.processJsonOrder(new FileReader(file));
+        } catch (SQLException | FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        parent.getItems(products);
     }
 }

@@ -2,6 +2,7 @@ package com.m2e4.DataBase;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 //JavaUsr //javakbs2a
 
@@ -52,28 +53,31 @@ public class DataBase {
         preparedStatement.executeUpdate();*/
     }
 
-    static public ArrayList<Product> ConnGetProducts(Object[] products, int[] count) throws SQLException {
+    static public ArrayList<Product> ConnGetProducts(int[] products, int[] count) throws SQLException {
+
+        String arr = Arrays.toString(products);
+        arr = arr.substring(1, arr.length() - 1);
 
         PreparedStatement productStmt = connect.prepareStatement(
-                "select P.ProductId, Naam, Hoogte, Breedte, X, Y from ProductOpslag PO join Product P on PO.ProductId = P.ProductId where P.ProductId in ? order by P.ProductId;"
+                String.format("select P.ProductId, Naam, Hoogte, Breedte, X, Y from ProductOpslag PO join Product P on PO.ProductId = P.ProductId where P.ProductId in (%s) order by P.ProductId;",
+                        arr)
         );
-        productStmt.setArray(1, connect.createArrayOf("INT", products));
         ResultSet productRs = productStmt.executeQuery();
 
         ArrayList<Product> prodOutput = new ArrayList<>();
 
         int i = 0;
         while (productRs.next()) {
-            Product p = new Product(
-                    productRs.getString("Naam"),
-                    productRs.getDouble("Hoogte"),
-                    productRs.getDouble("Breedte"),
-                    productRs.getInt("X"),
-                    productRs.getInt("Y")
-            );
-            for (int c = 0; c < count[i]; ++i) {
-                prodOutput.add(p);
+            for (int c = 0; c < count[i]; ++c) {
+                prodOutput.add(new Product(
+                        productRs.getString("Naam"),
+                        productRs.getDouble("Hoogte"),
+                        productRs.getDouble("Breedte"),
+                        productRs.getInt("X"),
+                        productRs.getInt("Y")
+                ));
             }
+            ++i;
         }
 
         return prodOutput;
