@@ -13,6 +13,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TspCFrame extends JFrame {
     private PositionPanel CPosition;
@@ -76,6 +78,29 @@ public class TspCFrame extends JFrame {
         CPosition.setProducten(oplossing);
         MainFrame.getInstance().getBppContFrame().startBpp(oplossing);
         repaint();
+        driveDruino(oplossing);
+    }
+
+    private void driveDruino(ArrayList<Product> products) {
+        String pos = "";
+        while (products.size() != 0) {
+            System.out.println(products);
+            arduino.write(String.format("NextStop;%d;%d;", products.get(0).getX(), products.get(0).getY()));
+            while (pos.length() == 0) {
+                pos = arduino.read();
+            }
+            pos = pos.replaceAll("[^0-9]+", " ");
+            List arr = Arrays.asList(pos.trim().split(" "));
+            System.out.println(arr);
+            if (arr.size() > 2) {
+                pos = "";
+                arr.clear();
+            } else {
+                System.out.println(pos);
+                products.remove(0);
+            }
+        }
+        arduino.write("NextStop;-1;0;");
     }
 
     public void getItems(ArrayList<Product> products) {
@@ -85,7 +110,7 @@ public class TspCFrame extends JFrame {
     }
 
     public boolean arduinoHere() {
-        return arduino != null && BppCFrame.arduinoHere();
+        return arduino != null ;//&& BppCFrame.arduinoHere();
     }
 
     public static void setArduino(String port) {
