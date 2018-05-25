@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame implements ActionListener {
+    private static MainFrame instance;
+
     private JButton JbTspSim, JbBppSim, JbTspControl, JbBppControl;
     private TspFrame TspSimFrame;
     private BppFrame BppSimFrame;
@@ -39,7 +41,17 @@ public class MainFrame extends JFrame implements ActionListener {
         ArduinoPanel ArduinoConfigPanel = new ArduinoPanel();
         add(ArduinoConfigPanel);
 
+        instance = this;
+
         setVisible(true);
+    }
+
+    public static MainFrame getInstance() {
+        return instance;
+    }
+
+    public BppCFrame getBppContFrame() {
+        return BppContFrame;
     }
 
     @Override

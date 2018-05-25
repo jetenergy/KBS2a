@@ -1,17 +1,26 @@
 package com.m2e4.gui;
 
+import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
+import com.m2e4.algorithm.Box;
+import com.m2e4.algorithm.BppAlgorithm;
+import com.m2e4.algorithm.BppCustom;
 import com.m2e4.arduino.ArduinoClass;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class BppCFrame extends JFrame {
 
@@ -31,12 +40,13 @@ public class BppCFrame extends JFrame {
     private JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), columnNames);
     private JPanel currentPanel = new JPanel();
     private JPanel filledPanel = new JPanel();
-    private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
     private JButton continueControl = new JButton("Verder");
     private JTextPane TaLog = new JTextPane();
 
     private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
+
+    private boolean started = false;
 
     public BppCFrame() {
         setLayout(new BorderLayout());
@@ -59,6 +69,9 @@ public class BppCFrame extends JFrame {
         {
             JPanel container = new JPanel();
             container.setLayout(new BorderLayout());
+
+            itemTable.setDefaultEditor(Object.class, null);
+
             container.add(itemTable.getTableHeader(), BorderLayout.NORTH);
             container.add(itemTable);
 
@@ -115,15 +128,12 @@ public class BppCFrame extends JFrame {
             JPanel buttons = new JPanel();
             buttons.setLayout(layout);
             {
-                startControl.addActionListener(e -> start());
-
                 stopControl.setEnabled(false);
                 stopControl.addActionListener(e -> stop());
 
                 continueControl.setEnabled(false);
                 continueControl.addActionListener(e -> showStatistics());
 
-                buttons.add(startControl);
                 buttons.add(stopControl);
                 buttons.add(continueControl);
             }
@@ -164,6 +174,42 @@ public class BppCFrame extends JFrame {
 
     private void start() {
         // TODO: Control Arduino
+
+        started = true;
+
+        stopControl.setEnabled(true);
+
+        // Placing the items into the item table
+        DefaultTableModel model = new DefaultTableModel();
+        model.setDataVector(itemData, columnNames);
+        itemTable.setModel(model);
+
+
+        Product[] items = new Product[itemData.length];
+        for (int i = 0; i < itemData.length; ++i)
+            items[i] = new Product((double)itemData[i][1]);
+
+        // Preparing and running algorithm
+        BppAlgorithm algorithm = new BppCustom(5, 12.0);
+        algorithm.setItems(items);
+        long startTime = System.nanoTime();
+        try {
+            logger.println("Start algoritme", LoggerFactory.ErrorLevel.INFO);
+            algorithm.run();
+        } catch (InterruptedException e) {
+            logger.println("Algoritme gestopt", LoggerFactory.ErrorLevel.WARNING);
+            return;
+        }
+        long endTime = System.nanoTime();
+
+        logger.println(String.format("Algoritme afgerond in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)), LoggerFactory.ErrorLevel.RESULT);
+
+
+        System.out.println(algorithm.getSolution());
+
+        stopControl.setEnabled(false);
+
+        started = false;
     }
 
     // TODO: Display current working boxes
@@ -174,7 +220,6 @@ public class BppCFrame extends JFrame {
      * Stops the Arduino
      */
     private void stop() {
-        startControl.setEnabled(true);
         stopControl.setEnabled(false);
     }
 
@@ -204,6 +249,22 @@ public class BppCFrame extends JFrame {
         } catch (FileNotFoundException | UnsupportedEncodingException | BadLocationException e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    public void startBpp(ArrayList<Product> products) {
+        ArrayList<Product> newProducts = new ArrayList<>(products);
+        Collections.reverse(newProducts);
+
+        // itemData
+        itemData = new Object[newProducts.size()][];
+        int i = 0;
+        for (Product p : newProducts) {
+            itemData[i++] = new Object[] { p.getNaam(), p.getHoogte() };
+        }
+
+        start();
     }
 
 
