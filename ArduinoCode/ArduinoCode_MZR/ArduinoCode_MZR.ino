@@ -105,24 +105,24 @@ void loop() {
       motor1.run(RELEASE);
     }
 
-      if(func == "Reverse"){
-        motor1.run(BACKWARD);
-      }
+    if(func == "Reverse"){
+    motor1.run(BACKWARD);
+    }
 
 
-      if(func == "SlowDown"){
-        motor1.setSpeed(10);
-      }
-      if(func == "Faster"){
-        speed1 = speed1+10;
-        motor1.setSpeed(speed1);
-      }
+    if(func == "SlowDown"){
+    motor1.setSpeed(10);
+    }
+    if(func == "Faster"){
+    speed1 = speed1+10;
+    motor1.setSpeed(speed1);
+    }
 
-      //FINAL RESET
-      commando = func = "";
-      for(int i = 0; i < 5; i++){
-        params[i] = 0;
-      }
+    //FINAL RESET
+    commando = func = "";
+    for(int i = 0; i < 5; i++){
+    params[i] = 0;
+    }
   }
 }
 

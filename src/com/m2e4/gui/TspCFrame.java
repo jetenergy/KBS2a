@@ -84,6 +84,10 @@ public class TspCFrame extends JFrame {
         logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
     }
 
+    public boolean arduinoHere() {
+        return arduino != null && BppCFrame.arduinoHere();
+    }
+
     public static void setArduino(String port) {
         if (arduino != null) {
             arduino.close();

@@ -251,8 +251,6 @@ public class BppCFrame extends JFrame {
         }
     }
 
-
-
     public void startBpp(ArrayList<Product> products) {
         ArrayList<Product> newProducts = new ArrayList<>(products);
         Collections.reverse(newProducts);
@@ -280,6 +278,10 @@ public class BppCFrame extends JFrame {
         if (arduino != null) {
             arduino.close();
         }
+    }
+
+    public static boolean arduinoHere() {
+        return arduino != null;
     }
 
 }

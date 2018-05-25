@@ -40,7 +40,7 @@ public class CSettingsPanel extends JPanel{
         JPanel buttons = new JPanel();
         buttons.setLayout(layout);
 
-        startControl.addActionListener(e -> startResume());
+        startControl.addActionListener(e -> {if (parent.arduinoHere())startResume();});
 
         stopControl.setEnabled(false);
         stopControl.addActionListener(e -> stop());
