@@ -141,8 +141,8 @@ public class TspFrame extends JFrame {
             }
             // plaats de producten van de oplossing in de SolutionPanel
             SolutionPanel.setProducten(solution);
-            repaint();
             logger.println("Voltooid");
+            repaint();
         } catch (InterruptedException e) {
             e.getMessage();
             // als je terijl hij bezig was op stop hebt gedrukt stopt hij het algoritme en logt hij dit

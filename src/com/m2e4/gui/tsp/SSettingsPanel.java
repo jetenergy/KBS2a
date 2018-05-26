@@ -137,11 +137,11 @@ public class SSettingsPanel extends JPanel{
     private void forceStop() {
         Main.getThreadPool().remove(runnable);
         stop();
+        parent.stop(getSelection());
     }
 
     private void stop() {
         startControl.setEnabled(true);
         stopControl.setEnabled(false);
-        parent.stop(getSelection());
     }
 }
