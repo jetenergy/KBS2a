@@ -78,21 +78,17 @@ public class TspFrame extends JFrame {
     }
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
+        String dis = "starten: " + algoName(algoritme);
+        System.out.println("dis  " +dis);
+        logger.println(dis);
         // als 1 van de spinners veranderd is dan maakt hij nieuwe random producten aan
-        System.out.println("producten");
         if (producten.size() != amount ||
                 SolutionPanel.getGridHeight() != maxY ||
                 SolutionPanel.getGridWidth() != maxX) {
             producten = randomizeProducten(amount, maxX, maxY);
             Sitems.setTable(producten);
         }
-        System.out.println("prod done");
 
-        // schrijf in het log paneel dat hij start
-        String dis = "starten: " + algoName(algoritme);
-        System.out.println("dis  " +dis);
-        //logger.println(dis);
-        System.out.println("logger hang");
         // zet de SolutionPrevious paneel gelijk aan alles uit het SolutionPanel
         SolutionPrevious.setProducten(SolutionPanel.getProducten());
         SolutionPrevious.setGridWidth(SolutionPanel.getGridWidth());
@@ -102,7 +98,6 @@ public class TspFrame extends JFrame {
         SolutionPanel.setGridWidth(maxX);
         ArrayList<Product> solution = new ArrayList<>();
         try {
-            System.out.println("algo");
             // als het gekozen algoritme gelijk is aan een van deze cijfers doe dat algoritme
             switch (algoritme) {
                 case 0:
@@ -121,10 +116,12 @@ public class TspFrame extends JFrame {
                     break;
             }
             // plaats de producten van de oplossing in de SolutionPanel
-            System.out.println("algo done");
-            SolutionPanel.setProducten(solution);
-            System.out.println("prod set sol pan");
-            //logger.println("Voltooid");
+            if (solution.size() > 0) {
+                SolutionPanel.setProducten(solution);
+                System.out.println("VOLTOOI NOU GODVERDOMME");
+                logger.println("Voltooid");
+                System.out.println("HANG JE MOEDER");
+            }
         } catch (InterruptedException e) {
             e.getMessage();
             // als je terijl hij bezig was op stop hebt gedrukt stopt hij het algoritme en logt hij dit
@@ -141,7 +138,7 @@ public class TspFrame extends JFrame {
         for (int i = 0; i < amount; i++) {
             int x = r.nextInt(maxX);
             int y = r.nextInt(maxY);
-            Product product = new Product("", 0, 0, x, y);
+            Product product = new Product("#" + (i + 1) , 0, 0, x, y);
             randomProducten.add(product);
         }
 
@@ -160,6 +157,8 @@ public class TspFrame extends JFrame {
                 }
             }
         }
+        System.out.println(randomProducten);
+        System.out.println("HONDEN");
         return randomProducten;
     }
 

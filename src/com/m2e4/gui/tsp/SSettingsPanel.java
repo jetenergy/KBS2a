@@ -1,5 +1,6 @@
 package com.m2e4.gui.tsp;
 
+import com.m2e4.LoggerFactory;
 import com.m2e4.Main;
 import com.m2e4.gui.TspFrame;
 
@@ -114,7 +115,8 @@ public class SSettingsPanel extends JPanel{
             parent.startAlgo(getSelection(), (int)spAmount.getValue(), (int)spMaxWidth.getValue(), (int)spMaxHeight.getValue());
             stop();
         };
-
+        // schrijf in het log paneel dat hij start
+        //parent.log("starting", LoggerFactory.ErrorLevel.INFO);
         Main.getThreadPool().execute(runnable);
     }
 

@@ -50,7 +50,7 @@ public class LoggerFactory {
          * @param text Text to be printed
          * @param level Error level that dictates the color of the text
          */
-        public void println(String text, ErrorLevel level) {
+        public synchronized void println(String text, ErrorLevel level) {
             pane.setCaretPosition(pane.getDocument().getLength());
             switch (level) {
                 case INFO: pane.setCharacterAttributes(setInfo, false); break;
@@ -66,7 +66,9 @@ public class LoggerFactory {
             if (!editable) pane.setEditable(true);
             pane.replaceSelection(String.format("[%s][%s] %s\r\n",
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text));
-            if (!editable) pane.setEditable(false);
+            synchronized (new Object()){
+                if (!editable) pane.setEditable(false);
+            }
         }
         public void println(String text) {
             println(text, ErrorLevel.INFO);
