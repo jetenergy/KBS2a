@@ -50,7 +50,7 @@ public class LoggerFactory {
          * @param text Text to be printed
          * @param level Error level that dictates the color of the text
          */
-        public void println(String text, ErrorLevel level) {
+        public synchronized void println(String text, ErrorLevel level) {
             pane.setCaretPosition(pane.getDocument().getLength());
             switch (level) {
                 case INFO: pane.setCharacterAttributes(setInfo, false); break;
