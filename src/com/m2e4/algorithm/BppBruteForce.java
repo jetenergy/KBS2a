@@ -18,6 +18,9 @@ public class BppBruteForce extends BppAlgorithm {
         if (ran)
             throw new RuntimeException("Cannot run algorithm again");
 
+        if (items.size() == 0)
+            throw new RuntimeException("Must have at least one item");
+
         // Filling boxes list with boxes
         for (int i = 0; i < boxCount; ++i)
             boxes.add(new Box(boxSize));

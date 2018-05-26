@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,13 +29,16 @@ public class BppCFrame extends JFrame {
     private static ArduinoClass arduino;
 
 
+    // itemData and columnNames are used for the JTable that displays the current order
     private Object[][] itemData;
     private Object[] columnNames = new Object[]{ "Item", "Hoogte" };
 
+    // Important components
     private JPanel JpTop, JpBottom;
     private JPanel JpOrder, JpCurrentBoxes, JpFilledBoxes, JpOptions, JpLog;
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
 
+    // Components used for several methods
     private JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), columnNames);
     private JPanel currentPanel = new JPanel();
     private JPanel filledPanel = new JPanel();
@@ -46,6 +48,7 @@ public class BppCFrame extends JFrame {
 
     private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
 
+    // Indicates that the class is calculating the algorithm and controlling the arduino
     private boolean started = false;
 
     public BppCFrame() {
@@ -57,7 +60,7 @@ public class BppCFrame extends JFrame {
 
 
         /*
-        This frame contains many elements. Because of this, code can get quite messy.
+        This frame contains many components. Because of this, code can get quite messy.
         That issue was solved by placing child components in code blocks underneath the parent component.
         Some components, however, are defined outside the constructor.
          */
@@ -132,7 +135,7 @@ public class BppCFrame extends JFrame {
                 stopControl.addActionListener(e -> stop());
 
                 continueControl.setEnabled(false);
-                continueControl.addActionListener(e -> showStatistics());
+                continueControl.addActionListener(e -> continuePacking());
 
                 buttons.add(stopControl);
                 buttons.add(continueControl);
@@ -172,6 +175,9 @@ public class BppCFrame extends JFrame {
     }
 
 
+    /**
+     * Runs the algorithm and communicates with the Arduino
+     */
     private void start() {
         started = true;
 
@@ -180,10 +186,11 @@ public class BppCFrame extends JFrame {
         model.setDataVector(itemData, columnNames);
         itemTable.setModel(model);
 
-
+        // Getting items out of the item table
         Product[] items = new Product[itemData.length];
         for (int i = 0; i < itemData.length; ++i)
             items[i] = new Product((double)itemData[i][1]);
+
 
         // Preparing and running algorithm
         BppAlgorithm algorithm = new BppCustom(5, 12.0);
@@ -201,6 +208,7 @@ public class BppCFrame extends JFrame {
         logger.println(String.format("Algoritme afgerond in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)), LoggerFactory.ErrorLevel.RESULT);
         System.out.println(algorithm.getSolution());
 
+        // Communicating with the arduino
         stopControl.setEnabled(true);
 
         displayBoxes((ArrayList<Box>) algorithm.getSolution(), filledPanel);
@@ -215,6 +223,11 @@ public class BppCFrame extends JFrame {
         started = false;
     }
 
+    /**
+     * Places box information onto a given JPanel
+     * @param boxes Information to be shown
+     * @param panel The panel that should hold the information
+     */
     private void displayBoxes(ArrayList<Box> boxes, JPanel panel) {
         panel.removeAll();
 
@@ -240,7 +253,10 @@ public class BppCFrame extends JFrame {
         stopControl.setEnabled(false);
     }
 
-    private void showStatistics() {
+    /**
+     * Continues packing boxes after a box became full
+     */
+    private void continuePacking() {
 
     }
 
@@ -268,6 +284,11 @@ public class BppCFrame extends JFrame {
         }
     }
 
+    /**
+     * Prepares the products and fills the itemData array for later use
+     * Called by BppCFrame
+     * @param products
+     */
     public void startBpp(ArrayList<Product> products) {
         ArrayList<Product> newProducts = new ArrayList<>(products);
         Collections.reverse(newProducts);
@@ -283,7 +304,11 @@ public class BppCFrame extends JFrame {
     }
 
 
-
+    /**
+     * Sets the arduino variable to hold a connection to an Arduino
+     * Closes existing connections if necessary
+     * @param port
+     */
     public static void setArduino(String port) {
         if (arduino != null) {
             arduino.close();
@@ -291,12 +316,19 @@ public class BppCFrame extends JFrame {
         arduino = new ArduinoClass(port);
     }
 
+    /**
+     * Closes the existing connection
+     */
     public static void clearArduino() {
         if (arduino != null) {
             arduino.close();
         }
     }
 
+    /**
+     * Checks if a connection to an Arduino is available
+     * @return If the connection is available
+     */
     public static boolean arduinoHere() {
         return arduino != null;
     }
