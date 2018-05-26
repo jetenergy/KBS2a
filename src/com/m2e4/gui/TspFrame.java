@@ -79,40 +79,20 @@ public class TspFrame extends JFrame {
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
         // als 1 van de spinners veranderd is dan maakt hij nieuwe random producten aan
+        System.out.println("producten");
         if (producten.size() != amount ||
                 SolutionPanel.getGridHeight() != maxY ||
                 SolutionPanel.getGridWidth() != maxX) {
-            // maak een nieuwe lijst
-            producten = new ArrayList<>();
-            Random r = new Random();
-            // maak een nieuw product voor een totaal van amount op random x en y waardes
-            for (int i = 0; i < amount; i++) {
-                int x = r.nextInt(maxX);
-                int y = r.nextInt(maxY);
-                Product product = new Product("", 0, 0, x, y);
-                producten.add(product);
-            }
-
-            // deze check dient voor alle random gegenereerde producten zodat deze niet op elkaar kunnenkomen
-            for (int i = 0; i < producten.size(); i++) {
-                for (int y = 0; y < producten.size(); y++) {
-                    if (!producten.get(i).equals(producten.get(y))) {
-                        if (producten.get(i).getY() == producten.get(y).getY() &&
-                                producten.get(i).getX() == producten.get(y).getX()) {
-
-                            producten.get(i).setX(r.nextInt(maxX));
-                            producten.get(i).setY(r.nextInt(maxY));
-                            y = 0;
-                            i = 0;
-                        }
-                    }
-                }
-            }
+            producten = randomizeProducten(amount, maxX, maxY);
             Sitems.setTable(producten);
         }
+        System.out.println("prod done");
 
         // schrijf in het log paneel dat hij start
-        logger.println("starten: " + algoName(algoritme));
+        String dis = "starten: " + algoName(algoritme);
+        System.out.println("dis  " +dis);
+        //logger.println(dis);
+        System.out.println("logger hang");
         // zet de SolutionPrevious paneel gelijk aan alles uit het SolutionPanel
         SolutionPrevious.setProducten(SolutionPanel.getProducten());
         SolutionPrevious.setGridWidth(SolutionPanel.getGridWidth());
@@ -122,6 +102,7 @@ public class TspFrame extends JFrame {
         SolutionPanel.setGridWidth(maxX);
         ArrayList<Product> solution = new ArrayList<>();
         try {
+            System.out.println("algo");
             // als het gekozen algoritme gelijk is aan een van deze cijfers doe dat algoritme
             switch (algoritme) {
                 case 0:
@@ -140,14 +121,46 @@ public class TspFrame extends JFrame {
                     break;
             }
             // plaats de producten van de oplossing in de SolutionPanel
+            System.out.println("algo done");
             SolutionPanel.setProducten(solution);
-            logger.println("Voltooid");
-            repaint();
+            System.out.println("prod set sol pan");
+            //logger.println("Voltooid");
         } catch (InterruptedException e) {
             e.getMessage();
             // als je terijl hij bezig was op stop hebt gedrukt stopt hij het algoritme en logt hij dit
             logger.println("Algoritme gestopt", LoggerFactory.ErrorLevel.WARNING);
         }
+        repaint();
+    }
+
+    private ArrayList<Product> randomizeProducten(int amount, int maxX, int maxY) {
+        // maak een nieuwe lijst
+        ArrayList<Product> randomProducten = new ArrayList<>();
+        Random r = new Random();
+        // maak een nieuw product voor een totaal van amount op random x en y waardes
+        for (int i = 0; i < amount; i++) {
+            int x = r.nextInt(maxX);
+            int y = r.nextInt(maxY);
+            Product product = new Product("", 0, 0, x, y);
+            randomProducten.add(product);
+        }
+
+        // deze check dient voor alle random gegenereerde randomProducten zodat deze niet op elkaar kunnenkomen
+        for (int i = 0; i < randomProducten.size(); i++) {
+            for (int y = 0; y < randomProducten.size(); y++) {
+                if (!randomProducten.get(i).equals(randomProducten.get(y))) {
+                    if (randomProducten.get(i).getY() == randomProducten.get(y).getY() &&
+                            randomProducten.get(i).getX() == randomProducten.get(y).getX()) {
+
+                        randomProducten.get(i).setX(r.nextInt(maxX));
+                        randomProducten.get(i).setY(r.nextInt(maxY));
+                        y = 0;
+                        i = 0;
+                    }
+                }
+            }
+        }
+        return randomProducten;
     }
 
     public void stop(int algo) {
@@ -172,6 +185,7 @@ public class TspFrame extends JFrame {
 
     private String algoName(int a) {
         // returnt de naam van het algoritme zodat het mooier kan worden gelogd dan een cijfer
+        System.out.println("algo start  " + a);
         switch (a) {
             case 0:
                 return "Greedy";
