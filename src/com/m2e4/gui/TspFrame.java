@@ -78,9 +78,7 @@ public class TspFrame extends JFrame {
     }
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
-        String dis = "starten: " + algoName(algoritme);
-        System.out.println("dis  " +dis);
-        logger.println(dis);
+        logger.println("starten: " + algoName(algoritme));
         // als 1 van de spinners veranderd is dan maakt hij nieuwe random producten aan
         if (producten.size() != amount ||
                 SolutionPanel.getGridHeight() != maxY ||
@@ -118,9 +116,7 @@ public class TspFrame extends JFrame {
             // plaats de producten van de oplossing in de SolutionPanel
             if (solution.size() > 0) {
                 SolutionPanel.setProducten(solution);
-                System.out.println("VOLTOOI NOU GODVERDOMME");
-                logger.println("Voltooid");
-                System.out.println("HANG JE MOEDER");
+                //logger.println("FINISHED! :D");
             }
         } catch (InterruptedException e) {
             e.getMessage();
@@ -157,8 +153,6 @@ public class TspFrame extends JFrame {
                 }
             }
         }
-        System.out.println(randomProducten);
-        System.out.println("HONDEN");
         return randomProducten;
     }
 
@@ -184,7 +178,6 @@ public class TspFrame extends JFrame {
 
     private String algoName(int a) {
         // returnt de naam van het algoritme zodat het mooier kan worden gelogd dan een cijfer
-        System.out.println("algo start  " + a);
         switch (a) {
             case 0:
                 return "Greedy";
