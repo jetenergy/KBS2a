@@ -1,13 +1,14 @@
 package com.m2e4.gui;
 
-import com.m2e4.DataBase.DataBase;
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
 import com.m2e4.algorithm.TspEigenOplossing;
 import com.m2e4.algorithm.TspGreedy;
 import com.m2e4.algorithm.TspSimulatedAnnealing;
 import com.m2e4.algorithm.TspTwoOptSwap;
-import com.m2e4.gui.tsp.*;
+import com.m2e4.gui.tsp.ItemPanel;
+import com.m2e4.gui.tsp.PositionPanel;
+import com.m2e4.gui.tsp.SSettingsPanel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -25,13 +26,14 @@ public class TspFrame extends JFrame {
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
     private JTextPane TaLog = new JTextPane();
 
-    private ArrayList<Product> producten;
+    private ArrayList<Product> producten = new ArrayList<>();
 
     private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
 
     public TspFrame() {
         setLayout(new BorderLayout());
         setTitle("TSP Simulator paneel");
+        // HIDE_ON_CLOSE word gebruikt zodat de gegevens niet verloren gaan
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setSize(960, 500);
         setMinimumSize(new Dimension(940, 420));
@@ -40,6 +42,8 @@ public class TspFrame extends JFrame {
         SolutionPanel = new PositionPanel("Beste oplossing");
         SolutionPrevious = new PositionPanel("Vorige Oplossing");
 
+        // het controle frame is opgedeeld in 2 secties het JpTop en JpBottom
+        // JpTop heeft de items (links boven) en de oplossing en positie van de arduino (rechts boven)
         JpTop = new JPanel();
         JpTop.setLayout(new GridLayout(1, 3));
         JpTop.add(Sitems);
@@ -64,6 +68,7 @@ public class TspFrame extends JFrame {
             JpLog.add(save);
         }
 
+        // JpBottom heeft 2 elementen het settings panel en het log paneel
         JpBottom = new JPanel();
         JpBottom.setLayout(new GridLayout(1, 2));
         SSettings = new SSettingsPanel(this);
@@ -73,11 +78,14 @@ public class TspFrame extends JFrame {
     }
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
+        // als 1 van de spinners veranderd is dan maakt hij nieuwe random producten aan
         if (producten.size() != amount ||
                 SolutionPanel.getGridHeight() != maxY ||
                 SolutionPanel.getGridWidth() != maxX) {
+            // maak een nieuwe lijst
             producten = new ArrayList<>();
             Random r = new Random();
+            // maak een nieuw product voor een totaal van amount op random x en y waardes
             for (int i = 0; i < amount; i++) {
                 int x = r.nextInt(maxX);
                 int y = r.nextInt(maxY);
@@ -85,11 +93,13 @@ public class TspFrame extends JFrame {
                 producten.add(product);
             }
 
+            // deze check dient voor alle random gegenereerde producten zodat deze niet op elkaar kunnenkomen
             for (int i = 0; i < producten.size(); i++) {
                 for (int y = 0; y < producten.size(); y++) {
                     if (!producten.get(i).equals(producten.get(y))) {
                         if (producten.get(i).getY() == producten.get(y).getY() &&
                                 producten.get(i).getX() == producten.get(y).getX()) {
+
                             producten.get(i).setX(r.nextInt(maxX));
                             producten.get(i).setY(r.nextInt(maxY));
                             y = 0;
@@ -101,33 +111,67 @@ public class TspFrame extends JFrame {
             Sitems.setTable(producten);
         }
 
+        // schrijf in het log paneel dat hij start
         logger.println("starten: " + algoName(algoritme));
+        // zet de SolutionPrevious paneel gelijk aan alles uit het SolutionPanel
         SolutionPrevious.setProducten(SolutionPanel.getProducten());
         SolutionPrevious.setGridWidth(SolutionPanel.getGridWidth());
         SolutionPrevious.setGridHeight(SolutionPanel.getGridHeight());
+        // zet de grid breedte en hoogte gelijk aan de spinners
         SolutionPanel.setGridHeight(maxY);
         SolutionPanel.setGridWidth(maxX);
-        switch (algoritme) {
+        ArrayList<Product> solution = new ArrayList<>();
+        try {
+            // als het gekozen algoritme gelijk is aan een van deze cijfers doe dat algoritme
+            switch (algoritme) {
+                case 0:
+                    solution = TspGreedy.Greedy(producten);
+                    break;
+                case 1:
+                    solution = TspTwoOptSwap.TwoOptSwap(producten);
+                    break;
+                case 2:
+                    solution = TspSimulatedAnnealing.SimulatedAnnealing(producten);
+                    break;
+                case 3:
+                    solution = TspEigenOplossing.EigenOplossing(producten);
+                    break;
+                case -1:
+                    break;
+            }
+            // plaats de producten van de oplossing in de SolutionPanel
+            SolutionPanel.setProducten(solution);
+            repaint();
+            logger.println("Voltooid");
+        } catch (InterruptedException e) {
+            e.getMessage();
+            // als je terijl hij bezig was op stop hebt gedrukt stopt hij het algoritme en logt hij dit
+            logger.println("Algoritme gestopt", LoggerFactory.ErrorLevel.WARNING);
+        }
+    }
+
+    public void stop(int algo) {
+        // stuur stop naar de juiste algoritme
+        switch (algo) {
             case 0:
-                SolutionPanel.setProducten(TspGreedy.Greedy(producten));
+                TspGreedy.stop();
                 break;
             case 1:
-                SolutionPanel.setProducten(TspTwoOptSwap.TwoOptSwap(producten));
+                TspTwoOptSwap.stop();
                 break;
             case 2:
-                SolutionPanel.setProducten(TspSimulatedAnnealing.SimulatedAnnealing(producten));
+                TspSimulatedAnnealing.stop();
                 break;
             case 3:
-                SolutionPanel.setProducten(TspEigenOplossing.EigenOplossing(producten));
+                TspEigenOplossing.stop();
                 break;
             case -1:
                 break;
         }
-        repaint();
-        logger.println("Voltooid");
     }
 
     private String algoName(int a) {
+        // returnt de naam van het algoritme zodat het mooier kan worden gelogd dan een cijfer
         switch (a) {
             case 0:
                 return "Greedy";
@@ -141,24 +185,12 @@ public class TspFrame extends JFrame {
         return "error";
     }
 
-    public void getItems() {
-        producten = DataBase.getProducts();
-        SolutionPanel.setProducten(TspGreedy.Greedy(producten));
-        Sitems.setTable(producten);
-        logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
-    }
-
     public void log(String text, LoggerFactory.ErrorLevel errlvl) {
         logger.println(text, errlvl);
     }
 
     private void saveLog() {
+        // slaat de text uit het log paneeltje op in de map TspControll
         logger.saveLog("TspSimulator");
-    }
-
-    @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
-        if(b) getItems();
     }
 }

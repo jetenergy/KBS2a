@@ -2,10 +2,8 @@ package com.m2e4.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class MainFrame extends JFrame implements ActionListener {
+public class MainFrame extends JFrame {
     private static MainFrame instance;
 
     private JButton JbTspSim, JbBppSim, JbTspControl, JbBppControl;
@@ -26,16 +24,16 @@ public class MainFrame extends JFrame implements ActionListener {
         BppContFrame = new BppCFrame();
 
         JbTspSim = new JButton("TSP Simulator");
-        JbTspSim.addActionListener(this);
+        JbTspSim.addActionListener(e -> {if (!TspSimFrame.isVisible()) TspSimFrame.setVisible(true);});
         add(JbTspSim);
         JbBppSim = new JButton("BPP Simulator");
-        JbBppSim.addActionListener(this);
+        JbBppSim.addActionListener(e -> {if (!BppSimFrame.isVisible()) BppSimFrame.setVisible(true);});
         add(JbBppSim);
         JbTspControl = new JButton("TSP Control");
-        JbTspControl.addActionListener(this);
+        JbTspControl.addActionListener(e -> {if (!TspContFrame.isVisible()) TspContFrame.setVisible(true);});
         add(JbTspControl);
         JbBppControl = new JButton("BPP Control");
-        JbBppControl.addActionListener(this);
+        JbBppControl.addActionListener(e -> {if (!BppContFrame.isVisible()) BppContFrame.setVisible(true);});
         add(JbBppControl);
 
         ArduinoPanel ArduinoConfigPanel = new ArduinoPanel();
@@ -52,29 +50,5 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public BppCFrame getBppContFrame() {
         return BppContFrame;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == JbTspSim) {
-            if (!TspSimFrame.isVisible()) {
-                TspSimFrame.setVisible(true);
-            }
-        }
-        if (e.getSource() == JbBppSim) {
-            if (!BppSimFrame.isVisible()) {
-                BppSimFrame.setVisible(true);
-            }
-        }
-        if (e.getSource() == JbTspControl) {
-            if (!TspContFrame.isVisible()) {
-                TspContFrame.setVisible(true);
-            }
-        }
-        if (e.getSource() == JbBppControl) {
-            if (!BppContFrame.isVisible()) {
-                BppContFrame.setVisible(true);
-            }
-        }
     }
 }

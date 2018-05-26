@@ -21,7 +21,6 @@ public class ItemPanel extends JPanel{
         setBorder(border);
         {
             JPanel container = new JPanel();
-//            container.setLayout(new GridLayout(2, 1));
             container.setLayout(new BorderLayout());
             container.add(itemTable.getTableHeader(), BorderLayout.NORTH);
             container.add(itemTable);
@@ -33,6 +32,7 @@ public class ItemPanel extends JPanel{
     }
 
     public void setTable(ArrayList<Product> producten) {
+        // verander de arraylist naar de object array die de table nodig heeft
         itemData = new Object[producten.size()][];
         for (int i = 0; i < producten.size(); ++i) {
             itemData[i] = new Object[] { producten.get(i).getNaam(), producten.get(i).getX() , producten.get(i).getY()};

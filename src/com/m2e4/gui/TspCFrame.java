@@ -1,6 +1,5 @@
 package com.m2e4.gui;
 
-import com.m2e4.DataBase.DataBase;
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
 import com.m2e4.algorithm.TspEigenOplossing;
@@ -34,6 +33,7 @@ public class TspCFrame extends JFrame {
     public TspCFrame() {
         setLayout(new BorderLayout());
         setTitle("TSP Controle paneel");
+        // HIDE_ON_CLOSE word gebruikt zodat de gegevens niet verloren gaan
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setSize(960, 500);
         setMinimumSize(new Dimension(940, 420));
@@ -41,12 +41,15 @@ public class TspCFrame extends JFrame {
         Citems = new ItemPanel();
         CPosition = new PositionPanel("Beste oplossing");
 
+        // het controle frame is opgedeeld in 2 secties het JpTop en JpBottom
+        // JpTop heeft de items (links boven) en de oplossing en positie van de arduino (rechts boven)
         JpTop = new JPanel();
         JpTop.setLayout(new GridLayout(1, 2));
         JpTop.add(Citems);
         JpTop.add(CPosition);
         add(JpTop, BorderLayout.CENTER);
 
+        // JpLog dient voor het log paneel
         JpLog = new JPanel();
         JpLog.setLayout(new FlowLayout());
         JpLog.setBorder(border);
@@ -64,6 +67,7 @@ public class TspCFrame extends JFrame {
             JpLog.add(save);
         }
 
+        // JpBottom heeft 2 elementen het settings panel en het log paneel
         JpBottom = new JPanel();
         JpBottom.setLayout(new GridLayout(1, 2));
         CSettings = new CSettingsPanel(this);
@@ -73,61 +77,85 @@ public class TspCFrame extends JFrame {
     }
 
     public void startAlgo() {
+        // print naar het log paneel dat ge gestart zijn
         logger.println("Starten: ");
+        // bereken de oplossing van de order
         ArrayList<Product> oplossing = TspEigenOplossing.EigenOplossing(producten);
+        // zet de producten in het position paneel
         CPosition.setProducten(oplossing);
+        // stuur de oplossing naar het Bpp paneel
         MainFrame.getInstance().getBppContFrame().startBpp(oplossing);
         repaint();
+        // stuur de arduino aan
         driveDruino(oplossing);
     }
 
-    private void driveDruino(ArrayList<Product> products) {
+    private void driveDruino(ArrayList<Product> workingProducts) {
+        // zolang er nog producten aanwezig zijn in de workingProducts array ga door
         String pos = "";
-        while (products.size() != 0) {
-            System.out.println(products);
-            arduino.write(String.format("NextStop;%d;%d;", products.get(0).getX(), products.get(0).getY()));
-            while (pos.length() == 0) {
-                pos = arduino.read();
-            }
-            pos = pos.replaceAll("[^0-9]+", " ");
-            List arr = Arrays.asList(pos.trim().split(" "));
-            System.out.println(arr);
-            if (arr.size() > 2) {
+        int prod = 4;
+        while (workingProducts.size() > 0) {
+            // stuur de eerstvolgende product naar de arduino
+            if (prod > 0) {
+                // stuur de arduino naar het volgende ophaal punt
+                arduino.write(String.format("NextStop;%d;%d;", workingProducts.get(0).getX(), workingProducts.get(0).getY()));
+                while (pos.length() == 0) {
+                    // wacht tot hij een response krijgt
+                    pos = arduino.read();
+                }
+                if (pos.equals("NextStop")) {
+                    workingProducts.remove(0);
+                    prod--;
+                }
                 pos = "";
-                arr.clear();
             } else {
-                System.out.println(pos);
-                products.remove(0);
+                // stuur de arduino naar het aflever punt
+                arduino.write("NextStop;-1;0;");
+                while (pos.length() == 0) {
+                    // wacht tot hij een response krijgt
+                    pos = arduino.read();
+                }
+                if (pos.equals("NextStop")) {
+                    workingProducts.remove(0);
+                    prod = 4;
+                }
+                pos = "";
             }
         }
+        // als hij alle producten heeft moet de arduino zijn producten afleveren
         arduino.write("NextStop;-1;0;");
     }
 
-    public void getItems(ArrayList<Product> products) {
+    public void setItems(ArrayList<Product> products) {
         producten = products;
+        // zet de tabel gelijk aan alle producten uit de order
         Citems.setTable(products);
         logger.println("Producten opgehaald", LoggerFactory.ErrorLevel.INFO);
     }
 
     public boolean arduinoHere() {
-        return arduino != null ;//&& BppCFrame.arduinoHere();
+        // checkt als hier een arduino en op het bpp frame een arduino aanwezig is
+        return arduino != null && BppCFrame.arduinoHere();
     }
 
     public static void setArduino(String port) {
+        // sluit de verbinding met de arduino als hij al een arduino had
         if (arduino != null) {
             arduino.close();
         }
+        // maak een nieuwe verbinding met de nieuwe arduino
         arduino = new ArduinoClass(port);
     }
 
     public static void clearArduino() {
+        // leegt de arduino
         if (arduino != null) {
             arduino.close();
         }
     }
 
     private void saveLog() {
+        // slaat de text uit het log paneeltje op in de map TspControll
         logger.saveLog("TspControll");
     }
-
 }

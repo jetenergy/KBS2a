@@ -1,6 +1,5 @@
 package com.m2e4.gui.tsp;
 
-import com.m2e4.LoggerFactory;
 import com.m2e4.Main;
 import com.m2e4.gui.TspFrame;
 
@@ -14,14 +13,13 @@ public class SSettingsPanel extends JPanel{
 
     private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
-    private JButton statisticsControl = new JButton("Statistieken");
     private JRadioButton algoGreedy = new JRadioButton("Greedy", true);
     private JRadioButton algoTwoOptSwap = new JRadioButton("Two Opt Swap");
     private JRadioButton algoSimulatedAnnealing = new JRadioButton("Simulated Annealing");
     private JRadioButton algoCustom = new JRadioButton("Eigen Oplossing");
     private ButtonGroup group;
 
-    private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 2, 50, 1));
+    private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 2, 25, 1));
     private JSpinner spMaxHeight = new JSpinner(new SpinnerNumberModel(5, 5, 20, 1));
     private JSpinner spMaxWidth = new JSpinner(new SpinnerNumberModel(5, 5, 20, 1));
 
@@ -42,11 +40,8 @@ public class SSettingsPanel extends JPanel{
         stopControl.setEnabled(false);
         stopControl.addActionListener(e -> forceStop());
 
-        statisticsControl.addActionListener(e -> showStatistics());
-
         buttons.add(startControl);
         buttons.add(stopControl);
-        buttons.add(statisticsControl);
 
         JPanel algos = new JPanel();
         algos.setLayout(layout);
@@ -77,21 +72,25 @@ public class SSettingsPanel extends JPanel{
             amount.add(lblAmount);
             amount.add(spAmount);
 
-            JPanel sizeMin = new JPanel();
-            sizeMin.setLayout(flow);
-            JLabel lblSizeMin = new JLabel("Grootte", JLabel.TRAILING);
+            JPanel sizeY = new JPanel();
+            sizeY.setLayout(flow);
+            JLabel lblSizeY = new JLabel("Hoogte", JLabel.TRAILING);
             spMaxHeight.setPreferredSize(spinnerSize);
-            sizeMin.add(lblSizeMin);
-            sizeMin.add(spMaxHeight);
+            spMaxHeight.addChangeListener(e -> setAmountMax());
+            sizeY.add(lblSizeY);
+            sizeY.add(spMaxHeight);
 
-            JPanel sizeMax = new JPanel();
-            sizeMax.setLayout(flow);
+            JPanel sizeX = new JPanel();
+            sizeX.setLayout(flow);
+            JLabel lblSizeX = new JLabel("Breedte", JLabel.TRAILING);
             spMaxWidth.setPreferredSize(spinnerSize);
-            sizeMax.add(spMaxWidth);
+            spMaxWidth.addChangeListener(e -> setAmountMax());
+            sizeX.add(lblSizeX);
+            sizeX.add(spMaxWidth);
 
             newItems.add(amount);
-            newItems.add(sizeMin);
-            newItems.add(sizeMax);
+            newItems.add(sizeY);
+            newItems.add(sizeX);
         }
 
         add(buttons);
@@ -99,6 +98,12 @@ public class SSettingsPanel extends JPanel{
         add(newItems);
 
         this.parent = parent;
+    }
+
+    private void setAmountMax() {
+        int max = (int)spMaxWidth.getValue() * (int)spMaxHeight.getValue();
+        if ((int)spAmount.getValue() > max) spAmount.setValue(max);
+        spAmount.setModel(new SpinnerNumberModel((int)spAmount.getValue(), 2, max, 1));
     }
 
     private void startResume() {
@@ -131,16 +136,12 @@ public class SSettingsPanel extends JPanel{
 
     private void forceStop() {
         Main.getThreadPool().remove(runnable);
-        parent.log("Algoritme geforceerd te stoppen", LoggerFactory.ErrorLevel.WARNING);
         stop();
     }
 
     private void stop() {
         startControl.setEnabled(true);
         stopControl.setEnabled(false);
-    }
-
-    private void showStatistics() {
-
+        parent.stop(getSelection());
     }
 }

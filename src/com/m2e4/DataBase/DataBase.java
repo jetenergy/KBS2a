@@ -16,17 +16,18 @@ public class DataBase {
     static public ArrayList<Product> products = new ArrayList<>();
 
     static public void connectDataBase() throws Exception {
+        // hiermee starten we de verbinding tussen de applicatie en de database
         Class.forName("com.mysql.jdbc.Driver");
         connect = DriverManager.getConnection("jdbc:mysql://rene-home.myddns.me/KBS2A?user=JavaUsr&password=javakbs2a");
     }
 
     static public ArrayList<Product> ConnGetProducts() throws SQLException {
+        // deze method zorgt ervoor dat alle producten uit de database worden opgehaald die ergens in het rek zijn opgeslagen
         statement = connect.createStatement();
         String querry = "select Naam, Hoogte, Breedte, X, Y from ProductOpslag JOIN Product ON ProductOpslag.ProductId = Product.ProductId;";
         resultSet = statement.executeQuery(querry);
-        //writeResults(resultSet);
-        //saveProducts(resultSet);
         while (resultSet.next()) {
+            // dit pakt iedere regel die word terug gegeen door de statement en converteerd het naar een Product
             String naam = resultSet.getString("Naam");
             double hoogte = resultSet.getDouble("Hoogte");
             double breedte = resultSet.getDouble("Breedte");
@@ -35,26 +36,11 @@ public class DataBase {
             products.add(new Product(naam, hoogte, breedte, x, y));
         }
         return products;
-        /*preparedStatement = connect.prepareStatement("insert into  feedback.comments values (default, ?, ?, ?, ? , ?, ?)");
-        // "myuser, webpage, datum, summary, COMMENTS from feedback.comments");
-        // Parameters start with 1
-        preparedStatement.setString(1, "Test");
-        preparedStatement.setString(2, "TestEmail");
-        preparedStatement.setString(3, "TestWebpage");
-        preparedStatement.setDate(4, new java.sql.Date(2009, 12, 11));
-        preparedStatement.setString(5, "TestSummary");
-        preparedStatement.setString(6, "TestComment");
-        preparedStatement.executeUpdate();*/
-        /*preparedStatement = connect.prepareStatement("SELECT myuser, webpage, datum, summary, COMMENTS from feedback.comments");
-        resultSet = preparedStatement.executeQuery();
-        writeResultSet(resultSet);*/
-        /*preparedStatement = connect.prepareStatement("delete from feedback.comments where myuser= ? ; ");
-        preparedStatement.setString(1, "Test");
-        preparedStatement.executeUpdate();*/
     }
 
     static public ArrayList<Product> ConnGetProducts(int[] products, int[] count) throws SQLException {
-
+        // deze method haalt de producten uit de bestelling op uit de database
+        // wet hebben aleen de nummers nodig die geschijden zijn met commas
         String arr = Arrays.toString(products);
         arr = arr.substring(1, arr.length() - 1);
 
@@ -68,7 +54,9 @@ public class DataBase {
 
         int i = 0;
         while (productRs.next()) {
+            // per regel maakt hij er een count[i] aantal producten van
             for (int c = 0; c < count[i]; ++c) {
+                // for ieder count[i] aan producten plakken we die in het lijstje
                 prodOutput.add(new Product(
                         productRs.getString("Naam"),
                         productRs.getDouble("Hoogte"),
@@ -81,10 +69,10 @@ public class DataBase {
         }
 
         return prodOutput;
-
     }
 
     static private void writeResults(ResultSet resultSet) throws SQLException {
+        // dit is voornamelijk bedoeld als testing maar dit pakt de resultSet van de query en System.out het naar de console
         System.out.println("Table: " + resultSet.getMetaData().getTableName(1));
         while (resultSet.next()) {
             String txt = "";
@@ -100,6 +88,7 @@ public class DataBase {
     }
 
     static public void closeConn() {
+        // dit sluit de connectie
         try {
             if (resultSet != null) {
                 resultSet.close();
@@ -113,7 +102,7 @@ public class DataBase {
                 connect.close();
             }
         } catch (Exception e) {
-
+            System.out.println(e.getMessage());
         }
     }
 }
