@@ -19,7 +19,7 @@ public class CSettingsPanel extends JPanel{
 
     private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
-    private JButton addOrderControl = new JButton("#YOLO 420blazeit");
+    private JButton addOrderControl = new JButton("Kies bestelling");
 
     private TspCFrame parent;
 
@@ -28,20 +28,23 @@ public class CSettingsPanel extends JPanel{
         setBorder(border);
         GridLayout layout = new GridLayout(0, 1);
         layout.setVgap(4);
+
+        // deze jpanel word gebruikt om de knoppen onder elkaar te plaatssen
         JPanel buttons = new JPanel();
         buttons.setLayout(layout);
+        {
+            // parent is het "parent" element en arduinoHere() vraagd aan het tsp paneel of hij een arduino heeft
+            startControl.addActionListener(e -> {
+                if (parent.arduinoHere()) startResume();
+            });
+            stopControl.setEnabled(false);
+            stopControl.addActionListener(e -> stop());
+            addOrderControl.addActionListener(e -> addOrder());
 
-        startControl.addActionListener(e -> {if (parent.arduinoHere())startResume();});
-
-        stopControl.setEnabled(false);
-        stopControl.addActionListener(e -> stop());
-
-        addOrderControl.addActionListener(e -> addOrder());
-
-        buttons.add(startControl);
-        buttons.add(stopControl);
-        buttons.add(addOrderControl);
-
+            buttons.add(startControl);
+            buttons.add(stopControl);
+            buttons.add(addOrderControl);
+        }
         add(buttons);
 
         this.parent = parent;
@@ -50,6 +53,7 @@ public class CSettingsPanel extends JPanel{
     private void startResume() {
         startControl.setEnabled(false);
         stopControl.setEnabled(true);
+        // roept startAlgo() aan op het tspcontrol frame
         parent.startAlgo();
     }
 
@@ -59,6 +63,7 @@ public class CSettingsPanel extends JPanel{
     }
 
     private void addOrder() {
+        // hiermee kunnen we het json bestand kiezen
         JFileChooser fileChooser = new JFileChooser();
         int rval = fileChooser.showOpenDialog(parent);
 
@@ -72,7 +77,7 @@ public class CSettingsPanel extends JPanel{
             e.printStackTrace();
             return;
         }
-
-        parent.getItems(products);
+        // zorgt ervoor dat je niet een lege bestelling kan kiezen
+        if (products.size() != 0) parent.setItems(products);
     }
 }

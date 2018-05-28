@@ -21,23 +21,21 @@ public class Main {
         MainFrame frame = new MainFrame();
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                // sluit de threadpool
                 threadPool.shutdownNow();
+                // sluit de database verbinding
                 DataBase.closeConn();
                 System.exit(0);
             }
         });
         try {
+            // start de database verbinding en haal alle producten op
             DataBase.connectDataBase();
             DataBase.ConnGetProducts();
         }
         catch (Exception e) {
-            System.out.println(e);
+            e.getMessage();
         }
-
-        /*System.out.println(TspTwoOptSwap.TwoOptSwap(DataBase.products));
-        System.out.println(TspGreedy.Greedy(dbc.products, true));
-        System.out.println(TspSimulatedAnnealing.SimulatedAnnealing(dbc.products));
-        System.out.println(TspEigenOplossing.EigenOplossing(dbc.products));*/
     }
 
     public static ThreadPoolExecutor getThreadPool() {

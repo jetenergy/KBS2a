@@ -50,23 +50,27 @@ public class LoggerFactory {
          * @param text Text to be printed
          * @param level Error level that dictates the color of the text
          */
-        public void println(String text, ErrorLevel level) {
-            pane.setCaretPosition(pane.getDocument().getLength());
-            switch (level) {
-                case INFO: pane.setCharacterAttributes(setInfo, false); break;
-                case RESULT: pane.setCharacterAttributes(setResult, false); break;
-                case DEBUG: pane.setCharacterAttributes(setDebug, false); break;
-                case WARNING: pane.setCharacterAttributes(setWarning, false); break;
-                case ERROR: pane.setCharacterAttributes(setError, false); break;
+        public synchronized void println(String text, ErrorLevel level) {
+            synchronized (pane) {
+                pane.setCaretPosition(pane.getDocument().getLength());
+                switch (level) {
+                    case INFO: pane.setCharacterAttributes(setInfo, false); break;
+                    case RESULT: pane.setCharacterAttributes(setResult, false); break;
+                    case DEBUG: pane.setCharacterAttributes(setDebug, false); break;
+                    case WARNING: pane.setCharacterAttributes(setWarning, false); break;
+                    case ERROR: pane.setCharacterAttributes(setError, false); break;
+                }
+
+                boolean editable = true;
+                if (!pane.isEditable()) editable = false;
+
+                if (!editable) pane.setEditable(true);
+                pane.replaceSelection(String.format("[%s][%s] %s\r\n",
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text));
+                synchronized (new Object()){
+                    if (!editable) pane.setEditable(false);
+                }
             }
-
-            boolean editable = true;
-            if (!pane.isEditable()) editable = false;
-
-            if (!editable) pane.setEditable(true);
-            pane.replaceSelection(String.format("[%s][%s] %s\r\n",
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text));
-            if (!editable) pane.setEditable(false);
         }
         public void println(String text) {
             println(text, ErrorLevel.INFO);

@@ -47,6 +47,7 @@ public class Product implements Comparable<Product> {
     }
 
     public double abs(Product compare){
+        // hiermee kunnen we voor TSP precies bepalen hoe ver de afstand is tussen 2 punten
         int x = Math.abs(this.getX() - compare.getX());
         int y = Math.abs(this.getY() - compare.getY());
         return Math.sqrt(Math.exp(x)+Math.exp(y));
@@ -54,6 +55,7 @@ public class Product implements Comparable<Product> {
 
     @Override
     public String toString() {
+        // dit is voornamelijk voor test
         return getNaam() + ", " + getHoogte() + ", " + getBreedte() + ", " + getX() + ", " + getY() + ";";
     }
 
