@@ -8,11 +8,16 @@ import java.util.List;
 
 public class Box {
     private final double height;
-    private final ArrayList<Product> items = new ArrayList<>();
+    private final ArrayList<Product> items;
     private double usedHeight = 0.0; // Amount of space already used by Items
 
     public Box(double height) {
         this.height = height;
+        items = new ArrayList<>();
+    }
+    public Box(Box box) {
+        this.height = box.height;
+        items = new ArrayList<>(box.getItems());
     }
 
     /**

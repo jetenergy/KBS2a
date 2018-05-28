@@ -60,6 +60,13 @@ public class Product implements Comparable<Product> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Product)) return false;
+        return this.naam.equals(((Product) obj).naam) &&
+                this.hoogte == ((Product) obj).hoogte;
+    }
+
+    @Override
     public int compareTo(Product product) {
         return Double.compare(this.hoogte, product.hoogte);
     }

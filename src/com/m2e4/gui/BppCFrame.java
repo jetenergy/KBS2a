@@ -2,6 +2,7 @@ package com.m2e4.gui;
 
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
+import com.m2e4.Main;
 import com.m2e4.algorithm.Box;
 import com.m2e4.algorithm.BppAlgorithm;
 import com.m2e4.algorithm.BppCustom;
@@ -16,10 +17,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class BppCFrame extends JFrame {
@@ -30,13 +31,16 @@ public class BppCFrame extends JFrame {
     private static ArduinoClass arduino;
 
 
+    // itemData and columnNames are used for the JTable that displays the current order
     private Object[][] itemData;
     private Object[] columnNames = new Object[]{ "Item", "Hoogte" };
 
+    // Important components
     private JPanel JpTop, JpBottom;
     private JPanel JpOrder, JpCurrentBoxes, JpFilledBoxes, JpOptions, JpLog;
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
 
+    // Components used for several methods
     private JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), columnNames);
     private JPanel currentPanel = new JPanel();
     private JPanel filledPanel = new JPanel();
@@ -46,7 +50,10 @@ public class BppCFrame extends JFrame {
 
     private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
 
+    // Indicates that the class is calculating the algorithm and controlling the arduino
     private boolean started = false;
+    // Indicates that the continue button has been pressed, allowing execution to continue
+    private boolean continued = false;
 
     public BppCFrame() {
         setLayout(new BorderLayout());
@@ -57,7 +64,7 @@ public class BppCFrame extends JFrame {
 
 
         /*
-        This frame contains many elements. Because of this, code can get quite messy.
+        This frame contains many components. Because of this, code can get quite messy.
         That issue was solved by placing child components in code blocks underneath the parent component.
         Some components, however, are defined outside the constructor.
          */
@@ -132,7 +139,7 @@ public class BppCFrame extends JFrame {
                 stopControl.addActionListener(e -> stop());
 
                 continueControl.setEnabled(false);
-                continueControl.addActionListener(e -> showStatistics());
+                continueControl.addActionListener(e -> continuePacking());
 
                 buttons.add(stopControl);
                 buttons.add(continueControl);
@@ -172,6 +179,9 @@ public class BppCFrame extends JFrame {
     }
 
 
+    /**
+     * Runs the algorithm and communicates with the Arduino
+     */
     private void start() {
         started = true;
 
@@ -180,10 +190,11 @@ public class BppCFrame extends JFrame {
         model.setDataVector(itemData, columnNames);
         itemTable.setModel(model);
 
-
+        // Getting items out of the item table
         Product[] items = new Product[itemData.length];
         for (int i = 0; i < itemData.length; ++i)
-            items[i] = new Product((double)itemData[i][1]);
+            items[i] = new Product((String)itemData[i][0], (double)itemData[i][1], 0, 0, 0);
+
 
         // Preparing and running algorithm
         BppAlgorithm algorithm = new BppCustom(5, 12.0);
@@ -201,20 +212,100 @@ public class BppCFrame extends JFrame {
         logger.println(String.format("Algoritme afgerond in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)), LoggerFactory.ErrorLevel.RESULT);
         System.out.println(algorithm.getSolution());
 
+        // Communicating with the arduino
         stopControl.setEnabled(true);
 
-        displayBoxes((ArrayList<Box>) algorithm.getSolution(), filledPanel);
+        ArrayList<Box> solution = (ArrayList<Box>) algorithm.getSolution();
+        displayBoxes(solution, filledPanel);
 
-        // TODO: Control Arduino
+        // NOTE: From this comment on, the code might send items to the wrong box if there are more than
+        //   two boxes in the solution.
+        Box box1 = solution.get(0);
+        int box1Taken = 0;
+        Box box2 = solution.get(1);
+        int box2Taken = 0;
+        int boxIndex = 2;
 
-        // TODO: Display current working boxes
-        // TODO: Display finished boxes
+        boolean done = false;
+
+        // Keeps track of products that are queued for being packed
+        ArrayList<Product> productsWaiting = (ArrayList<Product>) Arrays.asList(items);
+        int productsUsed = 0;
+        ArrayList<Box> boxesFilled = new ArrayList<>();
+
+        while (!done) {
+            // Replacing full box with the next one
+            if (boxIndex < solution.size()) {
+                if (box1 == null) box1 = solution.get(boxIndex++);
+                else if (box2 == null) box2 = solution.get(boxIndex++);
+            }
+
+            displayBoxes((ArrayList<Box>) Arrays.asList(new Box[]{}), currentPanel);
+
+            // Sending order info to the Arduino
+            StringBuilder command = new StringBuilder("BPPOrder;");
+            StringBuilder startCommand = new StringBuilder("PakIn;");
+            for (Product p : productsWaiting) {
+                // Adding info to the command depending on what box the item is in
+                if (box1.getItems().contains(p)) {
+                    command.append("-1;");
+                    productsWaiting.remove(p);
+                    ++box1Taken;
+                    ++productsUsed;
+                } else if (box2.getItems().contains(p)) {
+                    command.append("1;");
+                    productsWaiting.remove(p);
+                    ++box2Taken;
+                    ++productsUsed;
+                }
+
+                // When a box is full...
+                if (box1Taken >= box1.getItems().size()) {
+                    boxesFilled.add(new Box(box1));
+                    box1 = null;
+                    startCommand.append(productsUsed);
+                    productsUsed = 0;
+                    break;
+                } else if (box2Taken >= box2.getItems().size()) {
+                    boxesFilled.add(new Box(box2));
+                    box2 = null;
+                    startCommand.append(productsUsed);
+                    productsUsed = 0;
+                    break;
+                }
+            }
+            if (productsWaiting.size() == 0) done = true;
+            arduino.write(command.toString());
+            arduino.write(startCommand.toString());
+
+            if (!done) {
+                while (true) {
+                    String input = arduino.read();
+                    if (input.equals("NextStop")) {
+                        break;
+                    }
+                }
+
+                continueControl.setEnabled(true);
+
+                while (true) {
+                    if (continued) break;
+                }
+            }
+
+            ++boxIndex;
+        }
 
         stopControl.setEnabled(false);
 
         started = false;
     }
 
+    /**
+     * Places box information onto a given JPanel
+     * @param boxes Information to be shown
+     * @param panel The panel that should hold the information
+     */
     private void displayBoxes(ArrayList<Box> boxes, JPanel panel) {
         panel.removeAll();
 
@@ -240,8 +331,12 @@ public class BppCFrame extends JFrame {
         stopControl.setEnabled(false);
     }
 
-    private void showStatistics() {
-
+    /**
+     * Continues packing boxes after a box became full
+     */
+    private void continuePacking() {
+        continued = true;
+        continueControl.setEnabled(false);
     }
 
 
@@ -268,22 +363,30 @@ public class BppCFrame extends JFrame {
         }
     }
 
+    /**
+     * Prepares the products and fills the itemData array for later use
+     * Called by BppCFrame
+     * @param products
+     */
     public void startBpp(ArrayList<Product> products) {
         ArrayList<Product> newProducts = new ArrayList<>(products);
         Collections.reverse(newProducts);
 
-        // itemData
         itemData = new Object[newProducts.size()][];
         int i = 0;
         for (Product p : newProducts) {
             itemData[i++] = new Object[] { p.getNaam(), p.getHoogte() };
         }
 
-        start();
+        Main.getThreadPool().submit(this::start);
     }
 
 
-
+    /**
+     * Sets the arduino variable to hold a connection to an Arduino
+     * Closes existing connections if necessary
+     * @param port
+     */
     public static void setArduino(String port) {
         if (arduino != null) {
             arduino.close();
@@ -291,12 +394,19 @@ public class BppCFrame extends JFrame {
         arduino = new ArduinoClass(port);
     }
 
+    /**
+     * Closes the existing connection
+     */
     public static void clearArduino() {
         if (arduino != null) {
             arduino.close();
         }
     }
 
+    /**
+     * Checks if a connection to an Arduino is available
+     * @return If the connection is available
+     */
     public static boolean arduinoHere() {
         return arduino != null;
     }

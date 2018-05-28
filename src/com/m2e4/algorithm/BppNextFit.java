@@ -25,6 +25,9 @@ public class BppNextFit extends BppAlgorithm {
         if (ran)
             throw new RuntimeException("Cannot run algorithm again");
 
+        if (items.size() == 0)
+            throw new RuntimeException("Must have at least one item");
+
         // Filling solution list with boxes
         solution = new ArrayList<>();
         for (int i = 0; i < boxCount; ++i)

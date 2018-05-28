@@ -27,13 +27,16 @@ public class BppFrame extends JFrame {
     private static final double boxSize = 10.0;
 
 
+    // itemData and columnNames are used for the JTable that displays the currently selected items
     private Object[][] itemData;
     private Object[] columnNames = new Object[]{ "Item", "Hoogte" };
 
+    // Important components
     private JPanel JpTop, JpBottom;
     private JPanel JpItems, JpSolution, JpOptions, JpLog;
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
 
+    // Components used for several methods
     private JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), columnNames);
     private JPanel solutionPanel = new JPanel();
     private JButton startControl = new JButton("Start");
@@ -49,6 +52,7 @@ public class BppFrame extends JFrame {
 
     private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
 
+    // Stores the currently running algorithm
     private BppAlgorithm algorithm = null;
 
     public BppFrame() {
@@ -60,7 +64,7 @@ public class BppFrame extends JFrame {
 
 
         /*
-        This frame contains many elements. Because of this, code can get quite messy.
+        This frame contains many components. Because of this, code can get quite messy.
         That issue was solved by placing child components in code blocks underneath the parent component.
         Some components, however, are defined outside the constructor.
          */
