@@ -124,6 +124,7 @@ public class TspCFrame extends JFrame {
         }
         // als hij alle producten heeft moet de arduino zijn producten afleveren
         arduino.write("NextStop;-1;0;");
+        logger.println("finishing up");
     }
 
     public void setItems(ArrayList<Product> products) {
