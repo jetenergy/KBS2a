@@ -2,6 +2,7 @@ package com.m2e4.gui;
 
 import com.m2e4.DataBase.Product;
 import com.m2e4.LoggerFactory;
+import com.m2e4.Main;
 import com.m2e4.algorithm.TspEigenOplossing;
 import com.m2e4.arduino.ArduinoClass;
 import com.m2e4.gui.tsp.ItemPanel;
@@ -87,18 +88,31 @@ public class TspCFrame extends JFrame {
         MainFrame.getInstance().getBppContFrame().startBpp(oplossing);
         repaint();
         // stuur de arduino aan
-        driveDruino(oplossing);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                driveDruino(oplossing);
+            }
+        };
+
+        Main.getThreadPool().submit(runnable);
+
     }
 
     private void driveDruino(ArrayList<Product> workingProducts) {
         // zolang er nog producten aanwezig zijn in de workingProducts array ga door
         String pos = "";
-        int prod = 4;
+        int prod =5;
+        boolean send = false;
         while (workingProducts.size() > 0) {
             // stuur de eerstvolgende product naar de arduino
             if (prod > 0) {
                 // stuur de arduino naar het volgende ophaal punt
-                arduino.write(String.format("NextStop;%d;%d;", workingProducts.get(0).getX(), workingProducts.get(0).getY()));
+                if (!send) {
+                    arduino.write(String.format("NextStop;%d;%d;", workingProducts.get(0).getX(), workingProducts.get(0).getY()));
+                    System.out.println(String.format("NextStop;%d;%d;", workingProducts.get(0).getX(), workingProducts.get(0).getY()));
+                    send = true;
+                }
                 while (pos.length() == 0) {
                     // wacht tot hij een response krijgt
                     pos = arduino.read();
@@ -106,24 +120,30 @@ public class TspCFrame extends JFrame {
                 if (pos.equals("NextStop")) {
                     workingProducts.remove(0);
                     prod--;
+                    send = false;
                 }
                 pos = "";
             } else {
                 // stuur de arduino naar het aflever punt
-                arduino.write("NextStop;-1;0;");
+                if (!send) {
+                    arduino.write("NextStop;5;0;");
+                    System.out.println("NextStop;5;0;");
+                    send = true;
+                }
                 while (pos.length() == 0) {
                     // wacht tot hij een response krijgt
                     pos = arduino.read();
                 }
                 if (pos.equals("NextStop")) {
                     workingProducts.remove(0);
-                    prod = 4;
+                    prod = 5;
+                    send = false;
                 }
                 pos = "";
             }
         }
         // als hij alle producten heeft moet de arduino zijn producten afleveren
-        arduino.write("NextStop;-1;0;");
+        arduino.write("NextStop;5;0;");
         logger.println("finishing up");
     }
 
@@ -136,6 +156,7 @@ public class TspCFrame extends JFrame {
 
     public boolean arduinoHere() {
         // checkt als hier een arduino en op het bpp frame een arduino aanwezig is
+        System.out.println((arduino != null) + " :  " + BppCFrame.arduinoHere());
         return arduino != null && BppCFrame.arduinoHere();
     }
 

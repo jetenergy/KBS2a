@@ -183,6 +183,7 @@ public class BppCFrame extends JFrame {
      * Runs the algorithm and communicates with the Arduino
      */
     private void start() {
+        System.out.println("START");
         started = true;
 
         // Placing the items into the item table
@@ -196,6 +197,7 @@ public class BppCFrame extends JFrame {
             items[i] = new Product((String)itemData[i][0], (double)itemData[i][1], 0, 0, 0);
 
 
+        System.out.println("ALGO");
         // Preparing and running algorithm
         BppAlgorithm algorithm = new BppCustom(5, 12.0);
         algorithm.setItems(items);
@@ -213,10 +215,12 @@ public class BppCFrame extends JFrame {
         System.out.println(algorithm.getSolution());
 
         // Communicating with the arduino
+        System.out.println("COMMUNICATE");
         stopControl.setEnabled(true);
 
         ArrayList<Box> solution = (ArrayList<Box>) algorithm.getSolution();
         displayBoxes(solution, filledPanel);
+        System.out.println("1");
 
         // NOTE: From this comment on, the code might send items to the wrong box if there are more than
         //   two boxes in the solution.
@@ -228,24 +232,37 @@ public class BppCFrame extends JFrame {
 
         boolean done = false;
 
+        System.out.println("2");
         // Keeps track of products that are queued for being packed
-        ArrayList<Product> productsWaiting = (ArrayList<Product>) Arrays.asList(items);
+        System.out.println(Arrays.toString(items));
+        ArrayList<Product> productsWaiting = new ArrayList<>();
+        productsWaiting.addAll(Arrays.asList(items));
+//        ArrayList<Product>  = (ArrayList<Product>) Arrays.asList(items);
+        System.out.println("2.5");
         int productsUsed = 0;
         ArrayList<Box> boxesFilled = new ArrayList<>();
 
+        System.out.println("3");
         while (!done) {
+            System.out.println("IN WHILE");
             // Replacing full box with the next one
             if (boxIndex < solution.size()) {
                 if (box1 == null) box1 = solution.get(boxIndex++);
                 else if (box2 == null) box2 = solution.get(boxIndex++);
             }
 
-            displayBoxes((ArrayList<Box>) Arrays.asList(new Box[]{}), currentPanel);
+            System.out.println("DISPLAY BOXES");
+            displayBoxes(new ArrayList<>(), currentPanel);
+            System.out.println("DISPLAY DONE");
 
             // Sending order info to the Arduino
             StringBuilder command = new StringBuilder("BPPOrder;");
             StringBuilder startCommand = new StringBuilder("PakIn;");
-            for (Product p : productsWaiting) {
+            System.out.println("BEFORE FOR");
+            System.out.println(productsWaiting);
+            ArrayList<Product> productsWaitingTemp = new ArrayList<>(productsWaiting);
+            for (Product p : productsWaitingTemp) {
+                System.out.println("INSIDE FOR, FIRST IF");
                 // Adding info to the command depending on what box the item is in
                 if (box1.getItems().contains(p)) {
                     command.append("-1;");
@@ -259,24 +276,35 @@ public class BppCFrame extends JFrame {
                     ++productsUsed;
                 }
 
+                System.out.println("INSIDE FOR, SECOND IF");
+                System.out.println(box1);
+                System.out.println(box1Taken);
                 // When a box is full...
                 if (box1Taken >= box1.getItems().size()) {
+                    System.out.println("INSIDE FIRST IF");
                     boxesFilled.add(new Box(box1));
                     box1 = null;
-                    startCommand.append(productsUsed);
+                    startCommand.append(productsUsed).append(";");
                     productsUsed = 0;
+                    System.out.println("BREAK 1");
                     break;
                 } else if (box2Taken >= box2.getItems().size()) {
+                    System.out.println("INSIDE SECOND IF");
                     boxesFilled.add(new Box(box2));
                     box2 = null;
-                    startCommand.append(productsUsed);
+                    startCommand.append(productsUsed).append(";");
                     productsUsed = 0;
+                    System.out.println("BREAK 1");
                     break;
                 }
+                System.out.println("LAST");
             }
+            System.out.println("4");
             if (productsWaiting.size() == 0) done = true;
             arduino.write(command.toString());
+            System.out.println(command.toString());
             arduino.write(startCommand.toString());
+            System.out.println(startCommand.toString());
 
             if (!done) {
                 while (true) {
