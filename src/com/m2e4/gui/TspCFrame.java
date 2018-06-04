@@ -12,9 +12,8 @@ import com.m2e4.gui.tsp.CSettingsPanel;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class TspCFrame extends JFrame {
     private PositionPanel CPosition;
@@ -40,7 +39,7 @@ public class TspCFrame extends JFrame {
         setMinimumSize(new Dimension(940, 420));
 
         Citems = new ItemPanel();
-        CPosition = new PositionPanel("Beste oplossing");
+        CPosition = new PositionPanel("Beste oplossing", true);
 
         // het controle frame is opgedeeld in 2 secties het JpTop en JpBottom
         // JpTop heeft de items (links boven) en de oplossing en positie van de arduino (rechts boven)
@@ -81,19 +80,17 @@ public class TspCFrame extends JFrame {
         // print naar het log paneel dat ge gestart zijn
         logger.println("Starten: ");
         // bereken de oplossing van de order
+        long startTime = System.nanoTime();
         ArrayList<Product> oplossing = TspEigenOplossing.EigenOplossing(producten);
+        long endTime = System.nanoTime();
+        logger.println(String.format("Oplossing gevonden in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)));
         // zet de producten in het position paneel
         CPosition.setProducten(oplossing);
         // stuur de oplossing naar het Bpp paneel
         MainFrame.getInstance().getBppContFrame().startBpp(oplossing);
         repaint();
         // stuur de arduino aan
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                driveDruino(oplossing);
-            }
-        };
+        Runnable runnable = () -> driveDruino(oplossing);
 
         Main.getThreadPool().submit(runnable);
 
@@ -111,6 +108,7 @@ public class TspCFrame extends JFrame {
                 if (!send) {
                     arduino.write(String.format("NextStop;%d;%d;", workingProducts.get(0).getX(), workingProducts.get(0).getY()));
                     System.out.println(String.format("NextStop;%d;%d;", workingProducts.get(0).getX(), workingProducts.get(0).getY()));
+                    CPosition.nextStop(workingProducts.get(0));
                     send = true;
                 }
                 while (pos.length() == 0) {
