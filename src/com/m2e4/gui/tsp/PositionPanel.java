@@ -1,13 +1,11 @@
 package com.m2e4.gui.tsp;
 
 import com.m2e4.DataBase.Product;
-import javafx.geometry.Pos;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.Line2D;
-import java.net.PortUnreachableException;
 import java.util.ArrayList;
 
 public class PositionPanel extends JPanel{

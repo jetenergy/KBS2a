@@ -52,21 +52,19 @@ public class LoggerFactory {
          */
         public synchronized void println(String text, ErrorLevel level) {
             synchronized (pane) {
-                pane.setCaretPosition(pane.getDocument().getLength());
+                AttributeSet set;
                 switch (level) {
-                    case INFO: pane.setCharacterAttributes(setInfo, false); break;
-                    case RESULT: pane.setCharacterAttributes(setResult, false); break;
-                    case DEBUG: pane.setCharacterAttributes(setDebug, false); break;
-                    case WARNING: pane.setCharacterAttributes(setWarning, false); break;
-                    case ERROR: pane.setCharacterAttributes(setError, false); break;
+                    case INFO: set = setInfo; break;
+                    case RESULT: set = setResult; break;
+                    case DEBUG: set = setDebug; break;
+                    case WARNING: set = setWarning; break;
+                    case ERROR: set = setError; break;
+                    default: set = setInfo;
                 }
-
-                boolean editable = true;
-                if (!pane.isEditable()) editable = false;
 
                 try {
                     pane.getDocument().insertString(pane.getDocument().getLength(), String.format("[%s][%s] %s\r\n",
-                            LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text), null);
+                            LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text), set);
                 } catch (BadLocationException e) {
                     e.printStackTrace();
                 }
