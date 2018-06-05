@@ -252,7 +252,7 @@ public class BppCFrame extends JFrame {
                 else if (box2 == null) box2 = solution.get(boxIndex++);
             }
 
-            displayBoxes((ArrayList<Box>) Arrays.asList(new Box[]{}), JpCurrentBoxes);
+            displayBoxes(new ArrayList<>(), JpCurrentBoxes);
 
             // Sending order info to the Arduino
             StringBuilder command = new StringBuilder("BPPOrder;");
