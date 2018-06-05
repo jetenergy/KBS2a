@@ -234,6 +234,7 @@ public class BppCFrame extends JFrame {
 
         for (int i = 0; i < solution.size(); i++) {
             Box b = solution.get(i);
+            if (b.getUsedHeight() == 0.0) continue;
             try {
                 // Opens and writes to a new file
                 PrintWriter writer = new PrintWriter(
