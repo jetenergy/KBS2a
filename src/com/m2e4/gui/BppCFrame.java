@@ -7,6 +7,7 @@ import com.m2e4.algorithm.Box;
 import com.m2e4.algorithm.BppAlgorithm;
 import com.m2e4.algorithm.BppCustom;
 import com.m2e4.arduino.ArduinoClass;
+import com.m2e4.gui.bpp.BoxDrawPanel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -37,7 +38,8 @@ public class BppCFrame extends JFrame {
 
     // Important components
     private JPanel JpTop, JpBottom;
-    private JPanel JpOrder, JpCurrentBoxes, JpFilledBoxes, JpOptions, JpLog;
+    private JPanel JpOrder, JpOptions, JpLog;
+    private BoxDrawPanel JpCurrentBoxes, JpFilledBoxes;
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
 
     // Components used for several methods
@@ -88,7 +90,7 @@ public class BppCFrame extends JFrame {
         }
 
         // Displays the boxes that are currently being filled
-        JpCurrentBoxes = new JPanel();
+        JpCurrentBoxes = new BoxDrawPanel();
         JpCurrentBoxes.setLayout(new BoxLayout(JpCurrentBoxes, BoxLayout.Y_AXIS));
         JpCurrentBoxes.setBorder(border);
         {
@@ -103,7 +105,7 @@ public class BppCFrame extends JFrame {
         }
 
         // Displays the boxes that have already been filled
-        JpFilledBoxes = new JPanel();
+        JpFilledBoxes = new BoxDrawPanel();
         JpFilledBoxes.setLayout(new BoxLayout(JpFilledBoxes, BoxLayout.Y_AXIS));
         JpFilledBoxes.setBorder(border);
         {
@@ -216,7 +218,7 @@ public class BppCFrame extends JFrame {
         stopControl.setEnabled(true);
 
         ArrayList<Box> solution = (ArrayList<Box>) algorithm.getSolution();
-        displayBoxes(solution, filledPanel);
+        displayBoxes(solution, JpFilledBoxes);
 
         // NOTE: From this comment on, the code might send items to the wrong box if there are more than
         //   two boxes in the solution.
@@ -240,7 +242,7 @@ public class BppCFrame extends JFrame {
                 else if (box2 == null) box2 = solution.get(boxIndex++);
             }
 
-            displayBoxes((ArrayList<Box>) Arrays.asList(new Box[]{}), currentPanel);
+            displayBoxes((ArrayList<Box>) Arrays.asList(new Box[]{}), JpCurrentBoxes);
 
             // Sending order info to the Arduino
             StringBuilder command = new StringBuilder("BPPOrder;");
@@ -306,22 +308,25 @@ public class BppCFrame extends JFrame {
      * @param boxes Information to be shown
      * @param panel The panel that should hold the information
      */
-    private void displayBoxes(ArrayList<Box> boxes, JPanel panel) {
-        panel.removeAll();
+    private void displayBoxes(ArrayList<Box> boxes, BoxDrawPanel panel) {
+//        panel.removeAll();
+//
+//        // Displaying all boxes
+//        for (int i = 0; i < boxes.size(); ++i) {
+//            panel.add(new JLabel(String.format("Doos %d:", i + 1)));
+//
+//            // Displaying all items
+//            for (Product item : boxes.get(i).getItems()) {
+//                panel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHoogte()))));
+//            }
+//            panel.add(new JLabel(" "));
+//        }
+//
+//        // Updating UI to display new components
+//        panel.updateUI();
 
-        // Displaying all boxes
-        for (int i = 0; i < boxes.size(); ++i) {
-            panel.add(new JLabel(String.format("Doos %d:", i + 1)));
-
-            // Displaying all items
-            for (Product item : boxes.get(i).getItems()) {
-                panel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHoogte()))));
-            }
-            panel.add(new JLabel(" "));
-        }
-
-        // Updating UI to display new components
-        panel.updateUI();
+        panel.setBoxes(new ArrayList<>(boxes));
+        panel.repaint();
     }
 
     /**

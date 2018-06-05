@@ -14,8 +14,8 @@ public class Product implements Comparable<Product> {
         this.x = x;
         this.y = y;
     }
-    public Product(double hoogte) {
-        this("", hoogte, 0.0, 0, 0);
+    public Product(String naam, double hoogte) {
+        this(naam, hoogte, 0.0, 0, 0);
     }
 
     public String getNaam() {

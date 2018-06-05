@@ -5,19 +5,14 @@ import com.m2e4.LoggerFactory;
 import com.m2e4.Main;
 import com.m2e4.algorithm.*;
 import com.m2e4.algorithm.Box;
+import com.m2e4.gui.bpp.BoxDrawPanel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -33,12 +28,12 @@ public class BppFrame extends JFrame {
 
     // Important components
     private JPanel JpTop, JpBottom;
-    private JPanel JpItems, JpSolution, JpOptions, JpLog;
+    private JPanel JpItems, JpOptions, JpLog;
+    private BoxDrawPanel JpSolution;
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
 
     // Components used for several methods
     private JTable itemTable = new JTable((itemData != null ? itemData : new Object[][]{}), columnNames);
-    private JPanel solutionPanel = new JPanel();
     private JButton startControl = new JButton("Start");
     private JButton stopControl = new JButton("Stop");
     private JRadioButton algoNextfit = new JRadioButton("Next Fit");
@@ -46,8 +41,8 @@ public class BppFrame extends JFrame {
     private JRadioButton algoBruteForce = new JRadioButton("Brute Force");
     private JRadioButton algoCustom = new JRadioButton("Eigen Oplossing", true);
     private JSpinner spAmount = new JSpinner(new SpinnerNumberModel(3, 1, 50, 1));
-    private JSpinner spSizeMin = new JSpinner(new SpinnerNumberModel(1.0, 1.0, 4.0, 0.01));
-    private JSpinner spSizeMax = new JSpinner(new SpinnerNumberModel(4.0, 2, 5.0, 0.01));
+    private JSpinner spSizeMin = new JSpinner(new SpinnerNumberModel(2.0, 1.5, 4.0, 0.01));
+    private JSpinner spSizeMax = new JSpinner(new SpinnerNumberModel(4.0, 2.0, 5.0, 0.01));
     private JTextPane TaLog = new JTextPane();
 
     private LoggerFactory.Logger logger = LoggerFactory.makeLogger(TaLog);
@@ -88,18 +83,14 @@ public class BppFrame extends JFrame {
         }
 
         // Displays the solution from running an algorithm
-        JpSolution = new JPanel();
+        JpSolution = new BoxDrawPanel();
         JpSolution.setLayout(new BoxLayout(JpSolution, BoxLayout.Y_AXIS));
         JpSolution.setBorder(border);
         {
             JLabel title = new JLabel("Oplossing");
             title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            solutionPanel.setLayout(new BoxLayout(solutionPanel, BoxLayout.Y_AXIS));
-            solutionPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
             JpSolution.add(title);
-            JpSolution.add(solutionPanel);
         }
 
         // A collection of panels displayed on the top half of the frame
@@ -224,8 +215,6 @@ public class BppFrame extends JFrame {
         startControl.setEnabled(false);
         stopControl.setEnabled(true);
 
-        solutionPanel.removeAll();
-
         // Generating random items and placing them in an array
         itemData = new Object[(int)spAmount.getValue()][];
         for (int i = 0; i < (int)spAmount.getValue(); ++i) {
@@ -274,7 +263,7 @@ public class BppFrame extends JFrame {
         // Creates an array of Items from the random item array
         Product[] items = new Product[itemData.length];
         for (int i = 0; i < itemData.length; ++i)
-            items[i] = new Product((double)itemData[i][1]);
+            items[i] = new Product(Integer.toString(i + 1), (double)itemData[i][1]);
 
         // Preparing and running algorithm
         algorithm.setItems(items);
@@ -309,33 +298,11 @@ public class BppFrame extends JFrame {
             logger.println("Items passen niet!", LoggerFactory.ErrorLevel.ERROR);
         }
         else {
-            StringBuilder logOut = new StringBuilder("\r\n");
-            for (int i = 0; i < solution.size(); i++) {
-                logOut.append(String.format("Doos %d:\r\n", i + 1));
+            logger.println(String.format("Algoritme afgerond in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)), LoggerFactory.ErrorLevel.RESULT);
 
-                for (Product item : solution.get(i).getItems()) {
-                    logOut.append(String.format("\tItem (grootte: %s)\r\n", new DecimalFormat("#.##").format(item.getHoogte())));
-                }
-
-                logOut.append("\r\n");
-            }
-            logger.println(logOut.toString(), LoggerFactory.ErrorLevel.RESULT);
-
-            logger.println(String.format("Oplossing gevonden in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)));
-
-            // Displaying all boxes
-            for (int i = 0; i < solution.size(); ++i) {
-                solutionPanel.add(new JLabel(String.format("Doos %d:", i + 1)));
-
-                // Displaying all items
-                for (Product item : solution.get(i).getItems()) {
-                    solutionPanel.add(new JLabel(String.format("Item (grootte: %s)", new DecimalFormat("#.##").format(item.getHoogte()))));
-                }
-                solutionPanel.add(new JLabel(" "));
-            }
-
+            JpSolution.setBoxes(new ArrayList<>(solution));
             // Updating UI to display new components
-            solutionPanel.updateUI();
+            JpSolution.repaint();
         }
     }
 

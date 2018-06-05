@@ -64,10 +64,12 @@ public class LoggerFactory {
                 boolean editable = true;
                 if (!pane.isEditable()) editable = false;
 
-                if (!editable) pane.setEditable(true);
-                pane.replaceSelection(String.format("[%s][%s] %s\r\n",
-                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text));
-                if (!editable) pane.setEditable(false);
+                try {
+                    pane.getDocument().insertString(pane.getDocument().getLength(), String.format("[%s][%s] %s\r\n",
+                            LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), level, text), null);
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
             }
         }
         public void println(String text) {
