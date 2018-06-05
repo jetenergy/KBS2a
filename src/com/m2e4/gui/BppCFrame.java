@@ -238,7 +238,7 @@ public class BppCFrame extends JFrame {
             try {
                 // Opens and writes to a new file
                 PrintWriter writer = new PrintWriter(
-                        String.format("%s/pakbon_%s_%d.txt", folder, LocalDate.now().toString(), files.length),
+                        String.format("%s/pakbon_doos%d_%s_%d.txt", folder, i + 1, LocalDate.now().toString(), files.length),
                         "UTF-8");
                 writer.println(String.format("Doos %d", i));
                 writer.println("==========");
