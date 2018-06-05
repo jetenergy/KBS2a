@@ -38,7 +38,7 @@ public class CSettingsPanel extends JPanel{
                 if (parent.arduinoHere()) startResume();
             });
             stopControl.setEnabled(false);
-            stopControl.addActionListener(e -> stop());
+            stopControl.addActionListener(e -> forceStop());
             addOrderControl.addActionListener(e -> addOrder());
 
             buttons.add(startControl);
@@ -57,7 +57,12 @@ public class CSettingsPanel extends JPanel{
         parent.startAlgo();
     }
 
-    private void stop() {
+    private void forceStop() {
+        parent.stopDuino();
+        stop();
+    }
+
+    public void stop() {
         startControl.setEnabled(true);
         stopControl.setEnabled(false);
     }
