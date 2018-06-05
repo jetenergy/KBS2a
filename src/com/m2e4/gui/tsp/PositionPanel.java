@@ -1,11 +1,13 @@
 package com.m2e4.gui.tsp;
 
 import com.m2e4.DataBase.Product;
+import javafx.geometry.Pos;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.net.PortUnreachableException;
 import java.util.ArrayList;
 
 public class PositionPanel extends JPanel{
@@ -15,12 +17,19 @@ public class PositionPanel extends JPanel{
     private int gridHeight = 5;
     private int gridWidth = 5;
     private int squareSize = 50 * 5;
+    private boolean isLive;
+    private Product currentPosition;
 
-    public PositionPanel(String label) {
+    public PositionPanel(String label, boolean isLive) {
         // maak een paneel met de titel label
         setBorder(border);
         JLabel title = new JLabel(label);
         add(title);
+        this.isLive = isLive;
+    }
+
+    public PositionPanel(String label) {
+        this(label, false);
     }
 
     public void setProducten(ArrayList<Product> producten) {
@@ -45,6 +54,10 @@ public class PositionPanel extends JPanel{
 
     public ArrayList<Product> getProducten() {
         return producten;
+    }
+
+    public void nextStop(Product location) {
+        currentPosition = location;
     }
 
     public void paintComponent(Graphics g) {
@@ -81,6 +94,7 @@ public class PositionPanel extends JPanel{
                 g2.setColor(Color.black);
                 g2.fillRect(x + 3, y - 3 - squareHeight + 6, squareWidth - 5,  squareHeight - 5);
             }
+            Color kleur = Color.green;
             for (int i = 1; i < this.producten.size(); i++) {
                 // teken een lijn in 3 kleuren tussen de producten zodat je makkelijk kan zien dat een rechte lijn onderbroken is
                 // bereken de positie van punt 1 en punt 2 (het midden van van het vakje van de bijbehorende product)
@@ -90,16 +104,24 @@ public class PositionPanel extends JPanel{
                 int y2 = (startY + gridHeight * squareHeight) - ((squareHeight / 2) + squareHeight * this.producten.get(i).getY());
 
                 // kies de kleur aan de hand van modulo
-                if (i % 3 == 0) {
-                    g2.setColor(Color.red);
-                } else if (i % 3 == 1) {
-                    g2.setColor(Color.green);
+                if (!isLive) {
+                    if (i % 3 == 0) {
+                        g2.setColor(Color.red);
+                    } else if (i % 3 == 1) {
+                        g2.setColor(Color.green);
+                    } else {
+                        g2.setColor(Color.yellow);
+                    }
                 } else {
-                    g2.setColor(Color.yellow);
+                    g2.setColor(kleur);
                 }
 
                 g2.setStroke(new BasicStroke(3));
                 g2.draw(new Line2D.Float(x1, y1, x2, y2));
+
+                if (this.producten.get(i) == currentPosition) {
+                    kleur = Color.red;
+                }
             }
         }
     }

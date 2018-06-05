@@ -56,7 +56,7 @@ public class Product implements Comparable<Product> {
     @Override
     public String toString() {
         // dit is voornamelijk voor test
-        return getNaam() + ", " + getHoogte() + ", " + getBreedte() + ", " + getX() + ", " + getY() + ";";
+        return String.format("Product: %s, X positie: %d, Y positie: %d", getNaam(), getX(), getY());
     }
 
     @Override

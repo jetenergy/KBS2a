@@ -13,6 +13,7 @@ import com.m2e4.gui.tsp.SSettingsPanel;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -78,7 +79,7 @@ public class TspFrame extends JFrame {
     }
 
     public void startAlgo(int algoritme, int amount, int maxX, int maxY) {
-        logger.println("starten: " + algoName(algoritme));
+        logger.println("Starten: " + algoName(algoritme));
         // als 1 van de spinners veranderd is dan maakt hij nieuwe random producten aan
         if (producten.size() != amount ||
                 SolutionPanel.getGridHeight() != maxY ||
@@ -95,6 +96,7 @@ public class TspFrame extends JFrame {
         SolutionPanel.setGridHeight(maxY);
         SolutionPanel.setGridWidth(maxX);
         ArrayList<Product> solution = new ArrayList<>();
+        long startTime = System.nanoTime();
         try {
             // als het gekozen algoritme gelijk is aan een van deze cijfers doe dat algoritme
             switch (algoritme) {
@@ -113,10 +115,13 @@ public class TspFrame extends JFrame {
                 case -1:
                     break;
             }
+            long endTime = System.nanoTime();
+
             // plaats de producten van de oplossing in de SolutionPanel
             if (solution.size() > 0) {
                 SolutionPanel.setProducten(solution);
-                //logger.println("FINISHED! :D");
+                logger.println(solutionFormat(solution), LoggerFactory.ErrorLevel.RESULT);
+                logger.println(String.format("Oplossing gevonden in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)));
             }
         } catch (InterruptedException e) {
             e.getMessage();
@@ -124,6 +129,14 @@ public class TspFrame extends JFrame {
             logger.println("Algoritme gestopt", LoggerFactory.ErrorLevel.WARNING);
         }
         repaint();
+    }
+
+    private String solutionFormat(ArrayList<Product> solution) {
+        StringBuilder retString = new StringBuilder("\n\t");
+        for (Product aSolution : solution) {
+            retString.append(aSolution.toString()).append("\n\t");
+        }
+        return retString.toString();
     }
 
     private ArrayList<Product> randomizeProducten(int amount, int maxX, int maxY) {
