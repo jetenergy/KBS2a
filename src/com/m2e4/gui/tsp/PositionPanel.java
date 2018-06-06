@@ -16,7 +16,7 @@ public class PositionPanel extends JPanel{
     private int gridWidth = 5;
     private int squareSize = 50 * 5;
     private boolean isLive;
-    private Product currentPosition;
+    private Product currentPosition = new Product("", 0, 0, 999, 999);
 
     public PositionPanel(String label, boolean isLive) {
         // maak een paneel met de titel label
@@ -31,7 +31,7 @@ public class PositionPanel extends JPanel{
     }
 
     public void setProducten(ArrayList<Product> producten) {
-        this.producten = producten;
+        this.producten = new ArrayList<>(producten);
     }
 
     public void setGridHeight(int height) {
@@ -55,7 +55,8 @@ public class PositionPanel extends JPanel{
     }
 
     public void nextStop(Product location) {
-        currentPosition = location;
+        currentPosition = new Product(location);
+        repaint();
     }
 
     public void paintComponent(Graphics g) {
@@ -117,7 +118,7 @@ public class PositionPanel extends JPanel{
                 g2.setStroke(new BasicStroke(3));
                 g2.draw(new Line2D.Float(x1, y1, x2, y2));
 
-                if (this.producten.get(i) == currentPosition) {
+                if (this.producten.get(i).compareXY(currentPosition)) {
                     kleur = Color.red;
                 }
             }

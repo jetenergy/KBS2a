@@ -106,10 +106,11 @@ public class TspCFrame extends JFrame {
     }
 
     private void driveDruino(ArrayList<Product> workingProducts) throws InterruptedException {
+        CPosition.nextStop(workingProducts.get(0));
         // zolang er nog producten aanwezig zijn in de workingProducts array ga door
         interruptDuino = false;
         String pos = "";
-        int prod =5;
+        int prod = 4;
         boolean send = false;
         while (workingProducts.size() > 0) {
             // stuur de eerstvolgende product naar de arduino
@@ -136,7 +137,7 @@ public class TspCFrame extends JFrame {
             } else {
                 // stuur de arduino naar het aflever punt
                 if (!send) {
-                    arduino.write("NextStop;5;1;");
+                    arduino.write("NextStop;5;2;");
                     send = true;
                 }
                 while (pos.length() == 0) {
@@ -147,15 +148,15 @@ public class TspCFrame extends JFrame {
                     }
                 }
                 if (pos.equals("NextStop")) {
-                    workingProducts.remove(0);
-                    prod = 5;
+                    //workingProducts.remove(0);
+                    prod = 4;
                     send = false;
                 }
                 pos = "";
             }
         }
         // als hij alle producten heeft moet de arduino zijn producten afleveren
-        arduino.write("NextStop;5;1;");
+        arduino.write("NextStop;5;2;");
         logger.println("finishing up");
     }
 
