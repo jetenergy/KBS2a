@@ -28,7 +28,7 @@ import java.util.Collections;
 public class BppCFrame extends JFrame {
 
     private static final int boxCount = 2;
-    private static final double boxSize = 10.0;
+    private static final double boxSize = 12.0;
 
     private static ArduinoClass arduino;
 
@@ -202,7 +202,7 @@ public class BppCFrame extends JFrame {
 
         System.out.println("ALGO");
         // Preparing and running algorithm
-        BppAlgorithm algorithm = new BppCustom(2, 12.0);
+        BppAlgorithm algorithm = new BppCustom(boxCount, boxSize);
         algorithm.setItems(items);
         long startTime = System.nanoTime();
         try {
