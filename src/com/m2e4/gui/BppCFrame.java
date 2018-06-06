@@ -333,20 +333,20 @@ public class BppCFrame extends JFrame {
             arduino.write(startCommand.toString());
             System.out.println(startCommand.toString());
 
-            if (!done) {
-                while (true) {
-                    String input = arduino.read();
-                    if (input.equals("NextStop")) {
-                        break;
-                    }
-                }
-
-                continueControl.setEnabled(true);
-
-                while (true) {
-                    if (continued) break;
-                }
-            }
+//            if (!done) {
+//                while (true) {
+//                    String input = arduino.read();
+//                    if (input.equals("NextStop")) {
+//                        break;
+//                    }
+//                }
+//
+//                continueControl.setEnabled(true);
+//
+//                while (true) {
+//                    if (continued) break;
+//                }
+//            }
 
             ++boxIndex;
         }
