@@ -276,6 +276,11 @@ public class BppCFrame extends JFrame {
         }
         arduino.write(command.toString());
         startCommand.append(items.length).append(";");
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         arduino.write(startCommand.toString());
 
         // Awaiting packed signals from the Arduino
@@ -309,7 +314,7 @@ public class BppCFrame extends JFrame {
                 displayBoxes(packed, JpFilledBoxes);
 
                 // All products packed
-                if (++itemsPacked == items.length) break;
+                if (itemsPacked++ == items.length) break;
             }
         }
 
