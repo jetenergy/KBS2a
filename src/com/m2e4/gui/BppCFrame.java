@@ -277,7 +277,7 @@ public class BppCFrame extends JFrame {
         arduino.write(command.toString());
         startCommand.append(items.length).append(";");
         try {
-            Thread.sleep(500);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -297,6 +297,12 @@ public class BppCFrame extends JFrame {
                     ++box2ItemsPacked;
 
                 // Box packed, turning LED on
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 if (box1ItemsPacked == box1.getItems().size() && box1ItemsPacked != 0) {
                     box1ItemsPacked = 0;
                     arduino.write("LedOn;-1;");
