@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -222,6 +223,33 @@ public class BppCFrame extends JFrame {
 
         ArrayList<Box> solution = (ArrayList<Box>) algorithm.getSolution();
         displayBoxes(solution, JpFilledBoxes);
+
+        // Creating pakbon
+        // Opens, and if necessary creates, a directory
+        String folder = "pakbon";
+        File dir = new File(folder);
+        if (!dir.exists()) dir.mkdir();
+
+        File[] files = dir.listFiles();
+
+        for (int i = 0; i < solution.size(); i++) {
+            Box b = solution.get(i);
+            if (b.getUsedHeight() == 0.0) continue;
+            try {
+                // Opens and writes to a new file
+                PrintWriter writer = new PrintWriter(
+                        String.format("%s/pakbon_doos%d_%s_%d.txt", folder, i + 1, LocalDate.now().toString(), files.length),
+                        "UTF-8");
+                writer.println(String.format("Doos %d", i));
+                writer.println("==========");
+                for (Product p : b.getItems()) {
+                    writer.println(String.format("%s: x=%d, y=%d, b=%f, h=%f", p.getNaam(), p.getX(), p.getY(), p.getBreedte(), p.getHoogte()));
+                }
+                writer.close();
+            } catch (FileNotFoundException | UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
 
         // NOTE: From this comment on, the code might send items to the wrong box if there are more than
         //   two boxes in the solution.
