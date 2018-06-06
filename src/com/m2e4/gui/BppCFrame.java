@@ -242,7 +242,7 @@ public class BppCFrame extends JFrame {
                 writer.println(String.format("Doos %d", i));
                 writer.println("==========");
                 for (Product p : b.getItems()) {
-                    writer.println(String.format("%s: x=%d, y=%d, b=%f, h=%f", p.getNaam(), p.getX(), p.getY(), p.getBreedte(), p.getHoogte()));
+                    writer.println(String.format("%s: x=%d, y=%d, h=%f", p.getNaam(), p.getX(), p.getY(), p.getHoogte()));
                 }
                 writer.close();
             } catch (FileNotFoundException | UnsupportedEncodingException e) {
