@@ -94,13 +94,13 @@ public class PositionPanel extends JPanel{
                 g2.fillRect(x + 3, y - 3 - squareHeight + 6, squareWidth - 5,  squareHeight - 5);
             }
             Color kleur = Color.green;
-            for (int i = 1; i < this.producten.size(); i++) {
+            for (int i = 0; i < this.producten.size() - 1; i++) {
                 // teken een lijn in 3 kleuren tussen de producten zodat je makkelijk kan zien dat een rechte lijn onderbroken is
                 // bereken de positie van punt 1 en punt 2 (het midden van van het vakje van de bijbehorende product)
-                int x1 = this.producten.get(i - 1).getX() * squareWidth + startX + squareWidth /2;
-                int y1 = (startY + gridHeight * squareHeight) - ((squareHeight / 2) + squareHeight * this.producten.get(i - 1).getY());
-                int x2 = this.producten.get(i).getX() * squareWidth + startX + squareWidth /2;
-                int y2 = (startY + gridHeight * squareHeight) - ((squareHeight / 2) + squareHeight * this.producten.get(i).getY());
+                int x1 = this.producten.get(i).getX() * squareWidth + startX + squareWidth /2;
+                int y1 = (startY + gridHeight * squareHeight) - ((squareHeight / 2) + squareHeight * this.producten.get(i).getY());
+                int x2 = this.producten.get(i + 1).getX() * squareWidth + startX + squareWidth /2;
+                int y2 = (startY + gridHeight * squareHeight) - ((squareHeight / 2) + squareHeight * this.producten.get(i + 1).getY());
 
                 // kies de kleur aan de hand van modulo
                 if (!isLive) {
@@ -112,15 +112,14 @@ public class PositionPanel extends JPanel{
                         g2.setColor(Color.yellow);
                     }
                 } else {
+                    if (this.producten.get(i).compareXY(currentPosition)) {
+                        kleur = Color.red;
+                    }
                     g2.setColor(kleur);
                 }
 
                 g2.setStroke(new BasicStroke(3));
                 g2.draw(new Line2D.Float(x1, y1, x2, y2));
-
-                if (this.producten.get(i).compareXY(currentPosition)) {
-                    kleur = Color.red;
-                }
             }
         }
     }
