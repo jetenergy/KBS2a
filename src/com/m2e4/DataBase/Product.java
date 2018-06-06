@@ -18,6 +18,10 @@ public class Product implements Comparable<Product> {
         this(naam, hoogte, 0.0, 0, 0);
     }
 
+    public Product(Product product) {
+        this(product.getNaam(), product.getHoogte(), product.getBreedte(), product.getX(), product.getY());
+    }
+
     public String getNaam() {
         return naam;
     }
@@ -69,5 +73,9 @@ public class Product implements Comparable<Product> {
     @Override
     public int compareTo(Product product) {
         return Double.compare(this.hoogte, product.hoogte);
+    }
+
+    public boolean compareXY(Product product) {
+        return this.x == product.getX() && this.y == product.getY();
     }
 }
