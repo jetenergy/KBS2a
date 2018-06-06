@@ -265,6 +265,7 @@ public class BppCFrame extends JFrame {
 
         // Sending order info to the Arduino
         StringBuilder command = new StringBuilder("BPPOrder;");
+        StringBuilder startCommand = new StringBuilder("PakIn;");
         for (Product p : items) {
             // Adding info to the command depending on what box the item is in
             if (box1.getItems().contains(p)) {
@@ -274,7 +275,8 @@ public class BppCFrame extends JFrame {
             }
         }
         arduino.write(command.toString());
-        arduino.write(String.format("PakIn;%d;", items.length));
+        startCommand.append(items.length).append(";");
+        arduino.write(startCommand.toString());
 
         // Awaiting packed signals from the Arduino
         int itemsPacked = 0;
