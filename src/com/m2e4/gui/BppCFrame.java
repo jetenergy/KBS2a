@@ -28,7 +28,7 @@ import java.util.Collections;
 public class BppCFrame extends JFrame {
 
     private static final int boxCount = 2;
-    private static final double boxSize = 10.0;
+    private static final double boxSize = 12.0;
 
     private static ArduinoClass arduino;
 
@@ -62,8 +62,8 @@ public class BppCFrame extends JFrame {
         setLayout(new BorderLayout());
         setTitle("BPP controlepaneel");
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        setSize(960, 500);
-        setMinimumSize(new Dimension(940, 420));
+        setSize(1000, 500);
+        setMinimumSize(new Dimension(1000, 420));
 
 
         /*
@@ -202,7 +202,7 @@ public class BppCFrame extends JFrame {
 
         System.out.println("ALGO");
         // Preparing and running algorithm
-        BppAlgorithm algorithm = new BppCustom(5, 12.0);
+        BppAlgorithm algorithm = new BppCustom(boxCount, boxSize);
         algorithm.setItems(items);
         long startTime = System.nanoTime();
         try {
@@ -222,7 +222,6 @@ public class BppCFrame extends JFrame {
         stopControl.setEnabled(true);
 
         ArrayList<Box> solution = (ArrayList<Box>) algorithm.getSolution();
-        displayBoxes(solution, JpFilledBoxes);
 
         // Creating pakbon
         // Opens, and if necessary creates, a directory
@@ -243,7 +242,7 @@ public class BppCFrame extends JFrame {
                 writer.println(String.format("Doos %d", i));
                 writer.println("==========");
                 for (Product p : b.getItems()) {
-                    writer.println(String.format("%s: x=%d, y=%d, b=%f, h=%f", p.getNaam(), p.getX(), p.getY(), p.getBreedte(), p.getHoogte()));
+                    writer.println(String.format("%s: x=%d, y=%d, h=%f", p.getNaam(), p.getX(), p.getY(), p.getHoogte()));
                 }
                 writer.close();
             } catch (FileNotFoundException | UnsupportedEncodingException e) {
@@ -251,105 +250,68 @@ public class BppCFrame extends JFrame {
             }
         }
 
-        // NOTE: From this comment on, the code might send items to the wrong box if there are more than
-        //   two boxes in the solution.
+
         Box box1 = solution.get(0);
-        int box1Taken = 0;
         Box box2 = solution.get(1);
-        int box2Taken = 0;
-        int boxIndex = 2;
+        int box1ItemsPacked = 0;
+        int box2ItemsPacked = 0;
 
-        boolean done = false;
+        ArrayList<Box> current = new ArrayList<>();
+        ArrayList<Box> packed = new ArrayList<>();
+        current.add(box1);
+        current.add(box2);
+        displayBoxes(current, JpCurrentBoxes);
+        displayBoxes(packed, JpFilledBoxes);
 
-        System.out.println("2");
-        // Keeps track of products that are queued for being packed
-        System.out.println(Arrays.toString(items));
-        ArrayList<Product> productsWaiting = new ArrayList<>();
-        productsWaiting.addAll(Arrays.asList(items));
-//        ArrayList<Product>  = (ArrayList<Product>) Arrays.asList(items);
-        System.out.println("2.5");
-        int productsUsed = 0;
-        ArrayList<Box> boxesFilled = new ArrayList<>();
-
-        System.out.println("3");
-        while (!done) {
-            System.out.println("IN WHILE");
-            // Replacing full box with the next one
-            if (boxIndex < solution.size()) {
-                if (box1 == null) box1 = solution.get(boxIndex++);
-                else if (box2 == null) box2 = solution.get(boxIndex++);
+        // Sending order info to the Arduino
+        StringBuilder command = new StringBuilder("BPPOrder;");
+        StringBuilder startCommand = new StringBuilder("PakIn;");
+        for (Product p : items) {
+            // Adding info to the command depending on what box the item is in
+            if (box1.getItems().contains(p)) {
+                command.append("-1;");
+            } else if (box2.getItems().contains(p)) {
+                command.append("1;");
             }
-
-            displayBoxes(new ArrayList<>(), JpCurrentBoxes);
-
-            // Sending order info to the Arduino
-            StringBuilder command = new StringBuilder("BPPOrder;");
-            StringBuilder startCommand = new StringBuilder("PakIn;");
-            System.out.println("BEFORE FOR");
-            System.out.println(productsWaiting);
-            ArrayList<Product> productsWaitingTemp = new ArrayList<>(productsWaiting);
-            for (Product p : productsWaitingTemp) {
-                System.out.println("INSIDE FOR, FIRST IF");
-                // Adding info to the command depending on what box the item is in
-                if (box1.getItems().contains(p)) {
-                    command.append("-1;");
-                    productsWaiting.remove(p);
-                    ++box1Taken;
-                    ++productsUsed;
-                } else if (box2.getItems().contains(p)) {
-                    command.append("1;");
-                    productsWaiting.remove(p);
-                    ++box2Taken;
-                    ++productsUsed;
-                }
-
-                System.out.println("INSIDE FOR, SECOND IF");
-                System.out.println(box1);
-                System.out.println(box1Taken);
-                // When a box is full...
-                if (box1Taken >= box1.getItems().size()) {
-                    System.out.println("INSIDE FIRST IF");
-                    boxesFilled.add(new Box(box1));
-                    box1 = null;
-                    startCommand.append(productsUsed).append(";");
-                    productsUsed = 0;
-                    System.out.println("BREAK 1");
-                    break;
-                } else if (box2Taken >= box2.getItems().size()) {
-                    System.out.println("INSIDE SECOND IF");
-                    boxesFilled.add(new Box(box2));
-                    box2 = null;
-                    startCommand.append(productsUsed).append(";");
-                    productsUsed = 0;
-                    System.out.println("BREAK 1");
-                    break;
-                }
-                System.out.println("LAST");
-            }
-            System.out.println("4");
-            if (productsWaiting.size() == 0) done = true;
-            arduino.write(command.toString());
-            System.out.println(command.toString());
-            arduino.write(startCommand.toString());
-            System.out.println(startCommand.toString());
-
-//            if (!done) {
-//                while (true) {
-//                    String input = arduino.read();
-//                    if (input.equals("NextStop")) {
-//                        break;
-//                    }
-//                }
-//
-//                continueControl.setEnabled(true);
-//
-//                while (true) {
-//                    if (continued) break;
-//                }
-//            }
-
-            ++boxIndex;
         }
+        arduino.write(command.toString());
+        arduino.write(startCommand.toString());
+
+        // Awaiting packed signals from the Arduino
+        int itemsPacked = 0;
+        while (true) {
+            String input = arduino.read();
+            if (input.equals("NextStop")) {
+                JpCurrentBoxes.setItemFilled(items[itemsPacked].getNaam());
+
+                // Counting item in box
+                if (box1.getItems().contains(items[itemsPacked]))
+                    ++box1ItemsPacked;
+                else
+                    ++box2ItemsPacked;
+
+                // Box packed, turning LED on
+                if (box1ItemsPacked == box1.getItems().size() && box1ItemsPacked != 0) {
+                    box1ItemsPacked = 0;
+                    arduino.write("LedOn;-1;");
+                    current.remove(box1);
+                    packed.add(box1);
+                } else if (box2ItemsPacked == box2.getItems().size() && box2ItemsPacked != 0) {
+                    box2ItemsPacked = 0;
+                    arduino.write("LedOn;1;");
+                    current.remove(box2);
+                    packed.add(box2);
+                }
+
+                // Updating boxes display
+                displayBoxes(current, JpCurrentBoxes);
+                displayBoxes(packed, JpFilledBoxes);
+
+                // All products packed
+                if (++itemsPacked == items.length) break;
+            }
+        }
+
 
         stopControl.setEnabled(false);
 

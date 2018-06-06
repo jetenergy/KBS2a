@@ -10,10 +10,15 @@ import java.util.ArrayList;
 
 public class BoxDrawPanel extends JPanel {
     private ArrayList<Box> boxes = new ArrayList<>();
+    private ArrayList<String> itemsFilled = new ArrayList<>();
     private int sizeFactor = 25;
 
     public void setBoxes(ArrayList<Box> boxes) {
         this.boxes = boxes;
+    }
+
+    public void setItemFilled(String item) {
+        itemsFilled.add(item);
     }
 
     @Override
@@ -34,7 +39,11 @@ public class BoxDrawPanel extends JPanel {
             int pIndex = 0;
             double xOffset = xItemOffset;
             for (Product p : b.getItems()) {
-                g2.setColor((pIndex % 2) == 1 ? Color.ORANGE : Color.YELLOW);
+                if (itemsFilled.contains(p.getNaam())) {
+                    g2.setColor(Color.GREEN);
+                } else {
+                    g2.setColor((pIndex % 2) == 1 ? Color.ORANGE : Color.YELLOW);
+                }
                 g2.fillRect((int)Math.round(xBoxOffset + xOffset), yBoxOffset + yItemOffset, (int)(p.getHoogte() * (double)sizeFactor), 50);
                 g2.setColor(Color.BLACK);
                 g2.drawString(new DecimalFormat("#.##").format(p.getHoogte()), (int)Math.round(xBoxOffset + xOffset) + 5, yBoxOffset + yItemOffset + 15);
