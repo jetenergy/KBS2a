@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class PositionPanel extends JPanel{
 
     private Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
-    private ArrayList<Product> producten;
+    private ArrayList<Product> producten = new ArrayList<>();
     private int gridHeight = 5;
     private int gridWidth = 5;
     private int squareSize = 50 * 5;
