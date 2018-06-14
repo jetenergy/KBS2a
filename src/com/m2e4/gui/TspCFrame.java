@@ -177,6 +177,10 @@ public class TspCFrame extends JFrame {
         return arduino != null && BppCFrame.arduinoHere();
     }
 
+    public boolean orderHere() {
+        return producten != null;
+    }
+
     public static void setArduino(String port) {
         // sluit de verbinding met de arduino als hij al een arduino had
         if (arduino != null) {

@@ -186,7 +186,6 @@ public class BppCFrame extends JFrame {
      * Runs the algorithm and communicates with the Arduino
      */
     private void start() {
-        System.out.println("START");
         started = true;
 
         // Placing the items into the item table
@@ -200,7 +199,6 @@ public class BppCFrame extends JFrame {
             items[i] = new Product((String)itemData[i][0], (double)itemData[i][1], 0, 0, 0);
 
 
-        System.out.println("ALGO");
         // Preparing and running algorithm
         BppAlgorithm algorithm = new BppCustom(boxCount, boxSize);
         algorithm.setItems(items);
@@ -215,10 +213,8 @@ public class BppCFrame extends JFrame {
         long endTime = System.nanoTime();
 
         logger.println(String.format("Algoritme afgerond in %s milliseconden", new DecimalFormat("#.####").format((endTime - startTime) / 1000000.0)), LoggerFactory.ErrorLevel.RESULT);
-        System.out.println(algorithm.getSolution());
 
         // Communicating with the arduino
-        System.out.println("COMMUNICATE");
         stopControl.setEnabled(true);
 
         ArrayList<Box> solution = (ArrayList<Box>) algorithm.getSolution();

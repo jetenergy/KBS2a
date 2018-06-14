@@ -35,7 +35,7 @@ public class CSettingsPanel extends JPanel{
         {
             // parent is het "parent" element en arduinoHere() vraagd aan het tsp paneel of hij een arduino heeft
             startControl.addActionListener(e -> {
-                if (parent.arduinoHere()) startResume();
+                if (parent.arduinoHere() && parent.orderHere()) startResume();
             });
             stopControl.setEnabled(false);
             stopControl.addActionListener(e -> forceStop());
